@@ -1,4 +1,6 @@
 var app = require('express')();
+exports.app; 
+
 app.get('/', function(req, res){
   res.end('Hello World');
 });
