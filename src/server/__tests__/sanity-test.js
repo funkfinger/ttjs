@@ -1,6 +1,8 @@
+var assert = require('chai').assert;
+
 describe('sanity', function() {
   console.log('server tests....');
   it('is sane', function() {
-    expect(true).toBe(true);
+    assert(true);
   });
 });
