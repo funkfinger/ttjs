@@ -4,5 +4,6 @@ var app = module.exports = express();
 app.get('/', function(req, res){
   res.end('Hello World');
 });
-app.listen(process.env.PORT || 3000);
-console.log('running...');
+var port = process.env.PORT || 3000
+app.listen(port);
+console.log('running... port is:' + port);
