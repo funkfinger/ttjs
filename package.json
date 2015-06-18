@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Tongue Tied as JS",
   "main": "index.js",
+  "engine": "node 0.12.4",
   "scripts": {
     "test": "npm run karma & npm run mocha",
     "karma": "karma start --single-run",
