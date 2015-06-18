@@ -4,7 +4,7 @@
   "description": "Tongue Tied as JS",
   "main": "index.js",
   "scripts": {
-    "test": "npm run karma & npm run mocha &",
+    "test": "npm run karma & npm run mocha",
     "karma": "karma start --single-run",
     "mocha": "mocha src/server/__tests__/"
   },
