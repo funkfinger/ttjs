@@ -10,7 +10,8 @@
     "start": "node src/server/index",
     "test": "npm run karma && npm run mocha",
     "karma": "karma start --single-run",
-    "mocha": "mocha src/server/__tests__/"
+    "mocha": "mocha src/server/__tests__/",
+    "mocha-watch": "mocha src/server/__tests__/ --watch"
   },
   "repository": {
     "type": "git",
