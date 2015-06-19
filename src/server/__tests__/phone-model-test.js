@@ -1,4 +1,4 @@
-var utils = require('../utils');
+var utils = require('./utils');
 var Phone = require('../models/phone');
 
 describe('phone model tests', function() {
