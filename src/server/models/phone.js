@@ -1,12 +1,22 @@
-var mongoose = require('../mongo.js').mongoose;
+//var mongoose = require('../db.js').mongoose;
 
 //var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var ObjectId = Schema.ObjectId;
-   
-var phoneSchema = new Schema({
-  number: { type: Number, unique: true },
-  active: { type: Boolean, required: true, default: true }
-});
+module.exports = function(mongoose){
+  var Schema = mongoose.Schema;
+  var phoneSchema = new Schema({
+    number: { type: Number, unique: true }
+  });
+  var Phone = mongoose.model('Phone', phoneSchema);
+  return Phone
+};
+// function(mongoose) {
+  // var Schema = mongoose.Schema;
+  // var ObjectId = Schema.ObjectId;
+  //
+  // var phoneSchema = new Schema({
+  //   number: { type: Number, unique: true },
+  //   active: { type: Boolean, required: true, default: true }
+  // });
+// }
 
-module.exports = mongoose.model('Phone', phoneSchema);
+//var Phone = mongoose.model('Phone', phoneSchema);

@@ -8,10 +8,10 @@
   },
   "scripts": {
     "start": "node src/server/index",
-    "test": "NODE_ENV=test npm run karma && npm run mocha",
-    "karma": "NODE_ENV=test karma start --single-run",
-    "mocha": "NODE_ENV=test mocha src/server/__tests__/",
-    "mocha-watch": "NODE_ENV=test mocha src/server/__tests__/ --watch"
+    "test": "MONGO_CONNECTION_STRING=mongodb://localhost/test NODE_ENV=test npm run karma && npm run mocha",
+    "karma": "MONGO_CONNECTION_STRING=mongodb://localhost/test NODE_ENV=test karma start --single-run",
+    "mocha": "MONGO_CONNECTION_STRING=mmongodb://localhost/test NODE_ENV=test mocha src/server/__tests__/*-test.js",
+    "mocha-watch": "MONGO_CONNECTION_STRING=mongodb://localhost/test NODE_ENV=test mocha src/server/__tests__/*-test.js --watch"
   },
   "repository": {
     "type": "git",
