@@ -1,3 +1,33 @@
+require('./db-helper.js');
+var Phone = db.Phone;
+
+p = new Phone({number: 8005551212}, function(err) {
+  if (err) return console.error(err);
+  Phone.count(function (err, count) {
+    if (err) return console.error(err);
+    // if (err) return console.error(err);
+    console.log('count: ' + count);
+  });
+});
+
+describe('phone model tests', function(done) {
+  
+  it('should be able to be saved', function() {
+    Phone.count(function (err, count) {
+      if (err) return console.error(err);
+      console.log('count: ' + count);
+    });
+    
+  });
+  
+  it('should exist and have number', function() {
+    var p = new Phone({number: 8005551212});
+    assert.equal(p.number, 8005551212);
+  });
+  
+});
+
+
 // var utils = require('./utils');
 // var Phone = require('../models/phone');
 //
