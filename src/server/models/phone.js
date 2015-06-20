@@ -1,14 +1,20 @@
-//var mongoose = require('../db.js').mongoose;
-
-//var mongoose = require('mongoose');
 module.exports = function(mongoose){
   var Schema = mongoose.Schema;
   var phoneSchema = new Schema({
     number: { type: Number, unique: true }
   });
-  var Phone = mongoose.model('Phone', phoneSchema);
-  return Phone
+  try {
+    mongoose.model('Phone', phoneSchema);
+  }
+  catch (error) {
+    console.log('model already exists.');
+  }
+  return mongoose.model('Phone');
 };
+
+
+
+
 // function(mongoose) {
   // var Schema = mongoose.Schema;
   // var ObjectId = Schema.ObjectId;

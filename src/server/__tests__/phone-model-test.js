@@ -1,23 +1,34 @@
 require('./db-helper.js');
 var Phone = db.Phone;
+var count;
 
-p = new Phone({number: 8005551212}, function(err) {
-  if (err) return console.error(err);
-  Phone.count(function (err, count) {
-    if (err) return console.error(err);
-    // if (err) return console.error(err);
-    console.log('count: ' + count);
-  });
-});
-
-describe('phone model tests', function(done) {
+describe('phone model tests', function() {
   
-  it('should be able to be saved', function() {
-    Phone.count(function (err, count) {
-      if (err) return console.error(err);
-      console.log('count: ' + count);
+  it('should increment count to 1 on save', function(done) {
+    count = -1;
+    Phone.count(function (err, c) {
+      if (err) throw err;
+      count = c;
+      assert.equal(count, 0);
+      var p = new Phone({number: 8005551212});
+      p.save(function(err) {
+        Phone.count(function (err, c) {
+          count = c;
+          assert.equal(count, 1);
+          done();
+        });
+      });
+    })
+  })
+  
+  it('should start at count 0', function(done) {
+    count = -1;
+    Phone.count(function (err, c) {
+      if (err) throw err;
+      count = c;
+      assert.equal(count, 0, 'count should be 0 but is: ' + count);
+      done();
     });
-    
   });
   
   it('should exist and have number', function() {
