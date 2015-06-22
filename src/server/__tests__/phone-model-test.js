@@ -1,13 +1,23 @@
 require('./db-helper.js');
 var Phone = db.Phone;
-var count;
 
 describe('phone model tests', function() {
-  
+
+  it('should work with promise syntax', function() {
+    var r = Promise.all([
+      new Phone({number: 8005551211}).save(),
+      new Phone({number: 8005551212}).save(),
+      new Phone({number: 8005551213}).save()
+    ]).then(
+      function(){
+        return Phone.count();
+    });
+    return assert.eventually.equal(r, 3, 'r: ' + r);
+  });
+    
   it('should increment count to 1 on save', function(done) {
     count = -1;
     Phone.count(function (err, c) {
-      if (err) throw err;
       count = c;
       assert.equal(count, 0);
       var p = new Phone({number: 8005551212});

@@ -1,4 +1,8 @@
-global.assert = require('chai').assert;
+var chai = require('chai');
+var chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
+
+global.assert = chai.assert;
 global.db = require('../db');
 
 function dropCollections(done) {

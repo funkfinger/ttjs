@@ -1,4 +1,5 @@
-var mongoose = require('mongoose')
+var Promise = require('bluebird');
+var mongoose = Promise.promisifyAll(require('mongoose'));
 
 mongoose.connection.on('connected', function(ref) {
   console.log('connected to db.');

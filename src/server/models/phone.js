@@ -1,6 +1,7 @@
+var Promise = require('bluebird');
+
 module.exports = function(mongoose){
-  var Schema = mongoose.Schema;
-  var phoneSchema = new Schema({
+  var phoneSchema = new mongoose.Schema({
     number: { type: Number, unique: true }
   });
   try {
@@ -9,6 +10,8 @@ module.exports = function(mongoose){
   catch (error) {
     console.log('model already exists.');
   }
+  var Phone = mongoose.model('Phone');
+  
   return mongoose.model('Phone');
 };
 

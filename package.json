@@ -24,12 +24,14 @@
   },
   "homepage": "https://github.com/funkfinger/ttjs",
   "dependencies": {
+    "bluebird": "^2.9.30",
     "express": "^4.12.4",
     "mongodb": "^2.0.34",
     "mongoose": "^4.0.5"
   },
   "devDependencies": {
     "chai": "^3.0.0",
+    "chai-as-promised": "^5.1.0",
     "gulp": "^3.9.0",
     "gulp-mocha": "^2.1.1",
     "jasmine": "^2.3.1",
