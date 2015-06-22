@@ -2,9 +2,12 @@ global.Promise = require('bluebird');
 var express = require('express');
 var app = module.exports = express();
 
-app.get('/', function(req, res){
-  res.end('Hello World');
-});
+var router = require('./routes/index')(app);
+
+
+// app.get('/', function(req, res){
+//   res.end('Hello World');
+// });
 
 var port = process.env.PORT || 3000
 app.listen(port);
