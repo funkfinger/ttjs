@@ -1,5 +1,4 @@
 var assert = require('chai').assert;
-var Promise = require('bluebird');
 
 describe('sanity tests', function() {
     

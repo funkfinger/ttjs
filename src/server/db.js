@@ -1,4 +1,3 @@
-var Promise = require('bluebird');
 var mongoose = Promise.promisifyAll(require('mongoose'));
 
 mongoose.connection.on('connected', function(ref) {
