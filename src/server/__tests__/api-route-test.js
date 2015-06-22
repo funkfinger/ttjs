@@ -11,7 +11,6 @@ describe('api express tests', function() {
       .expect('Content-Type', /json/)
       .expect(200)
       .end(function(err, result){
-        console.log('result.body: ', result.body);
         assert.equal(result.body.app_name, 'ttapi');
         assert.equal(result.body.ver, 1);
         // assert.equal(JSON.parse(result.body).app_name, 'ttapi');

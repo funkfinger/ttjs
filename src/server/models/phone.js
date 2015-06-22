@@ -1,7 +1,10 @@
 module.exports = function(mongoose){
   var phoneSchema = new mongoose.Schema({
     number: { type: Number, unique: true },
-    active: { type: Boolean, required: true, default: true }
+    active: { type: Boolean, required: true, default: true },
+    incomingMessages: [{ 
+      body: { type: String }
+    }]
   });
   try {
     mongoose.model('Phone', phoneSchema);
@@ -9,7 +12,5 @@ module.exports = function(mongoose){
   catch (error) {
     console.log('model already exists.');
   }
-  var Phone = mongoose.model('Phone');
-  
   return mongoose.model('Phone');
 };

@@ -1,7 +1,19 @@
 require('./db-helper.js');
 var Phone = db.Phone;
+var IncomingMessage = db.IncomingMessage;
 
 describe('phone model tests', function() {
+
+  it('should have incoming messages', function() {
+    var p = new Phone({number: 3, incomingMessages: [{body: 'raw'}] });
+    // p.incomingMessages.push({raw: 'raw'});
+    return p.save()
+      .then(function(res){
+        return Phone.findOne({number: 3}).populate('incomingMessages').execAsync();
+      }).then(function(num){
+        return assert.equal(num.incomingMessages[0].body, 'raw');
+      });
+  })
 
   it('should be able to set active to false', function() {
     return new Phone({number: 1}).save()
