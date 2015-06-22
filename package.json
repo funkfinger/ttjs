@@ -25,6 +25,7 @@
   "homepage": "https://github.com/funkfinger/ttjs",
   "dependencies": {
     "bluebird": "^2.9.30",
+    "body-parser": "^1.13.1",
     "express": "^4.12.4",
     "mongodb": "^2.0.34",
     "mongoose": "^4.0.5"
