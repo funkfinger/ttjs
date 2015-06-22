@@ -3,6 +3,37 @@ var Phone = db.Phone;
 
 describe('phone model tests', function() {
 
+  it('should be able to set active to false', function() {
+    return new Phone({number: 1}).save()
+      .then(function() {
+        return Phone.findOne({number: 1})
+      }).then(function(num) {
+        num.active = false;
+        num.save();
+        return num;
+      }).then(function(num) {
+        return assert.isFalse(num.active);
+      })
+  });
+
+  it('should have an active property which defaults to true', function(){
+    return new Phone({number: 1}).save()
+      .then(function(){
+        return Phone.findOne({number: 1})
+      })
+      .then(function(num){
+        return assert.isTrue(num.active);
+      });
+  });
+
+  it('should have a number that is unique', function(done) {
+    var x = new Phone({number: 1}).save().then(function(){return(Phone.count());});
+    assert.isFulfilled(x);
+    assert.eventually.equal(x, 1);
+    var y = new Phone({number: 1}).save().then(function(){return(Phone.count());});
+    assert.isRejected(y).notify(done);
+  });
+
   it('should work with promise syntax', function() {
     var r = Promise.all([
       new Phone({number: 8005551211}).save(),
@@ -48,46 +79,3 @@ describe('phone model tests', function() {
   
 });
 
-
-// var utils = require('./utils');
-// var Phone = require('../models/phone');
-//
-// describe('phone model tests', function() {
-//
-//   beforeEach(function(done){
-//     for (var i in mongoose.connection.collections) {
-//        mongoose.connection.collections[i].remove(function() {});
-//     }
-//     done();
-//   });
-//
-//   afterEach(function(done){
-//     mongoose.models = {};
-//     mongoose.modelSchemas = {};
-//     done();
-//   });
-//
-//   it('should be able to save', function() {
-//     assert.equal(Phone.count({}, function(err, count){}), 0);
-//     var n = new Phone({number: 9999999999});
-//     n.save(function(err) {
-//       if (err) {
-//         console.log(err);
-//         assert(false)
-//       }
-//       else {
-//         assert(true);
-//       };
-//     });
-//   });
-//
-//   it('should have a number', function() {
-//     var n = new Phone({number: 9999999999});
-//     assert(n);
-//   });
-//
-//   it('should exist as a model', function() {
-//     assert(Phone);
-//   });
-//
-// });

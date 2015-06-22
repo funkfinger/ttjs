@@ -3,6 +3,11 @@ Tongue Tied as JS
 
 
 ### notes:
+
+mocha watch command:
+
+    foreman run npm run mocha-watch
+
 these were the codeship setup commands prior to making it a JS project...
 
     rvm use ruby-2.2.0

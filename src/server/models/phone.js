@@ -2,7 +2,8 @@ var Promise = require('bluebird');
 
 module.exports = function(mongoose){
   var phoneSchema = new mongoose.Schema({
-    number: { type: Number, unique: true }
+    number: { type: Number, unique: true },
+    active: { type: Boolean, required: true, default: true }
   });
   try {
     mongoose.model('Phone', phoneSchema);
