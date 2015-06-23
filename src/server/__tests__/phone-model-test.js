@@ -3,15 +3,25 @@ var Phone = db.Phone;
 var IncomingMessage = db.IncomingMessage;
 
 describe('phone model tests', function() {
+  
+  it('should have a raw property on incoming message', function () {
+    var p = new Phone({number: 4})
+    p.incomingMessages.push({raw: 'raw'})
+    return p.save()
+      .then(function(res) {
+        console.log('res: ', res.incomingMessages[0].raw);
+        return assert.equal(res.incomingMessages[0].raw, 'raw');
+      });
+  });
 
   it('should have incoming messages', function() {
-    var p = new Phone({number: 3, incomingMessages: [{body: 'raw'}] });
+    var p = new Phone({number: 3, incomingMessages: [{body: 'body'}] });
     // p.incomingMessages.push({raw: 'raw'});
     return p.save()
       .then(function(res){
-        return Phone.findOne({number: 3}).populate('incomingMessages').execAsync();
+        return Phone.findOne({number: 3});
       }).then(function(num){
-        return assert.equal(num.incomingMessages[0].body, 'raw');
+        return assert.equal(num.incomingMessages[0].body, 'body');
       });
   })
 

@@ -13,7 +13,6 @@ describe('api express tests', function() {
       .end(function(err, result){
         assert.equal(result.body.app_name, 'ttapi');
         assert.equal(result.body.ver, 1);
-        // assert.equal(JSON.parse(result.body).app_name, 'ttapi');
         done();
       })
   });

@@ -2,7 +2,8 @@ module.exports = function(mongoose){
   var phoneSchema = new mongoose.Schema({
     number: { type: Number, unique: true },
     active: { type: Boolean, required: true, default: true },
-    incomingMessages: [{ 
+    incomingMessages: [{
+      raw: { type: String },
       body: { type: String }
     }]
   });
