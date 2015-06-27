@@ -1,6 +1,12 @@
-var assert = require('chai').assert;
+var chai = require('chai');
+var assert = chai.assert;
+var helper = require('./test-helper');
 
 describe('sanity tests', function() {
+  
+  it('should have a test helper', function(){
+    assert.isTrue(helper.exists);
+  });
     
   it('should have environment variables set', function() {
     assert.equal(process.env.FOO, 'bar', 'FOO env var is: ' + process.env.FOO);

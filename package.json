@@ -10,7 +10,7 @@
     "start": "node src/server/index",
     "test": "MONGO_CONNECTION_STRING=mongodb://localhost/test NODE_ENV=test npm run karma && npm run mocha",
     "karma": "MONGO_CONNECTION_STRING=mongodb://localhost/test NODE_ENV=test karma start --single-run",
-    "mocha": "MONGO_CONNECTION_STRING=mmongodb://localhost/test NODE_ENV=test mocha src/server/__tests__/*-test.js",
+    "mocha": "MONGO_CONNECTION_STRING=mongodb://localhost/test NODE_ENV=test mocha src/server/__tests__/*-test.js",
     "mocha-watch": "MONGO_CONNECTION_STRING=mongodb://localhost/test NODE_ENV=test mocha src/server/__tests__/*-test.js --watch"
   },
   "repository": {
@@ -43,6 +43,7 @@
     "karma-phantomjs-launcher": "^0.2.0",
     "mocha": "^2.2.5",
     "phantomjs": "^1.9.17",
+    "sinon": "^1.15.3",
     "supertest": "^1.0.1"
   }
 }

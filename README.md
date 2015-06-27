@@ -7,6 +7,14 @@ Tongue Tied as JS
 mocha watch command:
 
     foreman run npm run mocha-watch
+    
+alternate to above:
+
+    npm install nodemon -g
+
+and then:
+
+    nodemon -w . -d 0 --exec foreman run npm run mocha
 
 these were the codeship setup commands prior to making it a JS project...
 

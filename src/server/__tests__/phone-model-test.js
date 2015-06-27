@@ -1,15 +1,44 @@
-require('./db-helper.js');
+var helper = require('./test-helper');
 var Phone = db.Phone;
 var IncomingMessage = db.IncomingMessage;
 
-describe('phone model tests', function() {
+describe('phone model tests', function(done) {
+
+  it('should create a record when createFromParams method is executed', function(){
+    return Phone.count()
+      .then(function(c1){
+        assert.equal(c1, 0, 'count should start at 0');
+      }).then(function(){
+        return Phone.handleIncomingMessage(helper.samplePlivoParams);
+      }).then(function(p){
+        return Phone.count();
+      }).then(function(c){
+        assert.equal(c, 1, 'count should be 1 but is: ' + c);
+      })
+  });
+  
+  it('should have a create method - not sure this it the mongoose / node way...', function(){
+    assert.isDefined(Phone.handleIncomingMessage);
+    //
+    //
+    // ;
+    // c.then()
+    // Phone.count(function (err, c) {
+    //   if (err) throw err;
+    //   count = c;
+    //   assert.equal(count, 0, 'count should be 0 but is: ' + count);
+    //   done();
+    // });
+    //
+    // var p = Phone.creteFromParams(helper.samplePlivoParams);
+  });
+  
   
   it('should have a raw property on incoming message', function () {
     var p = new Phone({number: 4})
     p.incomingMessages.push({raw: 'raw'})
     return p.save()
-      .then(function(res) {
-        console.log('res: ', res.incomingMessages[0].raw);
+      .then(function(res) {        
         return assert.equal(res.incomingMessages[0].raw, 'raw');
       });
   });

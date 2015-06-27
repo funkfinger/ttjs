@@ -6,7 +6,7 @@ var app = module.exports = express();
 
 app.use(bodyParser.json());
 
-var router = require('./routes/index')(app);
+require('./routes/index')(app);
 
 var port = process.env.PORT || 3000
 app.listen(port);
