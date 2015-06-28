@@ -18,9 +18,6 @@ Phone.handleIncomingMessage = function(params) {
       phone = phone ? phone : new Phone({ number : parseInt(params.From), active: true });
       phone.incomingMessages.push({ raw: JSON.stringify(params), body: params.Text} );
       return phone.save();
-      // phone.save(function(err){
-      //   Phone.count().then(function(c){console.log('c: ', c);});
-      // });
     }).catch(function(e){
       throw 'error! ' + e;
     });
@@ -29,16 +26,3 @@ Phone.handleIncomingMessage = function(params) {
 module.exports = {
   Phone: Phone
 }
-  
-//   try {
-//     mongoose.model('Phone', phoneSchema);
-//   }
-//   catch (error) {
-//     console.log('model already exists.');
-//   }
-//   return mongoose.model('Phone');
-// };
-//
-// phone.createPhoneFromParams = function(params) {
-//   console.log(params);
-// }

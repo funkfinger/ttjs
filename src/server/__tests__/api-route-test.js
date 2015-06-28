@@ -1,29 +1,42 @@
 var helper = require('./test-helper');
 
 var app = require('../index.js');
-var request = require('supertest');
-
-// Promise.promisifyAll(request)
+// var request = require('supertest');
+var request = require('supertest-as-promised');
 
 var bodyParser = require('body-parser');
 var sinon = require('sinon');
-var db = require('../db');
+// var db = require('../db');
+
+// db.Phone.handleIncomingMessage = function() {console.log('got here!!!')}
 
 var sample = helper.samplePlivoParams;
 
 describe('api express tests', function() {
+
+  it('should create a phone entry when a post is made to im', function() {
+    return request(app)
+      .post('/api/v1/im')
+      .send(sample)
+      .expect(200)
+      .then(function() {
+        return db.Phone.count();
+      }).then(function(c){
+        assert.equal(c, 1, 'should be created')
+      })
+  });
   
-  // it('should call create on phone model', function(done) {
-  //   var spy = sinon.spy(db.Phone.create);
-  //   console.log('db.Phone.create: ', db.Phone.create)
-  //   request(app)
+  // i can't get spys working, not sure i need to, but it would probably be nice...
+  // it('should call handleIncomingMessage on phone model', function() {
+  //   // var spy = sinon.spy(db.Phone, 'handleIncomingMessage');
+  //   // sinon.assert.called(spy);
+  //   return request(app)
   //     .post('/api/v1/im')
   //     .send(sample)
   //     .expect(200)
-  //     .end(function(err, result) {
-  //       sinon.assert.called(spy);
-  //       done();
-  //     });
+  //     .then(function(){
+  //       // assert.ok(spy.called);
+  //     })
   // });
     
   it('should have a incoming message endpoint', function(done) {
