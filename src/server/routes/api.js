@@ -6,7 +6,7 @@ var db = require('../db');
 var Phone = db.Phone;
 
 router.post('/im', function(req, res) {
-  Phone.create(req.params);
+  Phone.handleIncomingMessage(req.body);
   res.send({ok: true});
 })
 

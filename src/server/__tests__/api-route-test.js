@@ -12,18 +12,41 @@ var sinon = require('sinon');
 
 var sample = helper.samplePlivoParams;
 
-describe('api express tests', function() {
+describe('api tests', function() {
+
+  it('should create one phone and multiple incoming messages when incoming meesage is called', function() {
+    return request(app).post('/api/v1/im').send(sample)
+      .then(function() {
+        return request(app).post('/api/v1/im').send(sample)
+      }).then(function() {
+        return request(app).post('/api/v1/im').send(sample)
+      }).then(function() {
+        return db.Phone.count();
+      }).then(function(c) {
+        assert.equal(c, 1, 'should only be one');
+      }).then(function() {
+        return db.Phone.findOne({}).exec();
+      }).then(function(p) {
+        assert.equal(p.incomingMessages.length, 3, 'should have 3 incoming messages');
+      });
+  });
+
+
 
   it('should create a phone entry when a post is made to im', function() {
-    return request(app)
-      .post('/api/v1/im')
-      .send(sample)
-      .expect(200)
-      .then(function() {
+    return request(app).post('/api/v1/im').send(sample)
+      // .expect(200)
+      .then(function(){
         return db.Phone.count();
-      }).then(function(c){
-        assert.equal(c, 1, 'should be created')
-      })
+      }).then(function(c) {
+        assert.equal(c, 1, 'should equal 1');
+      });
+      // .then(function() {
+      //   return db.Phone.count();
+      // }).then(function(c){
+      //   console.log('c: ', c);
+      //   assert.equal(c, 1, 'should be created')
+      // }).end(done())
   });
   
   // i can't get spys working, not sure i need to, but it would probably be nice...

@@ -4,6 +4,27 @@ var IncomingMessage = db.IncomingMessage;
 
 describe('phone model tests', function(done) {
 
+  it('should create on phone and multiple incoming messages', function() {
+    return Phone.handleIncomingMessage(helper.samplePlivoParams)
+      .then(function() {
+        return Phone.handleIncomingMessage(helper.samplePlivoParams);
+      }).then(function() {
+        return Phone.count();
+      }).then(function(c) {
+        assert.equal(c, 1, 'count should be 1');
+      }).then(function() {
+        return Phone.handleIncomingMessage(helper.samplePlivoParams);
+      }).then(function() {
+        return Phone.count();
+      }).then(function(c) {
+        assert.equal(c, 1, 'count should still be 1');
+      }).then(function() {
+        return Phone.findOne({number: parseInt(helper.samplePlivoParams.From)}).exec()
+      }).then(function(p) {
+        assert.equal(p.incomingMessages.length, 3, 'should have 2 incoming messages');
+      })
+  });
+
   it('should create a record when createFromParams method is executed', function(){
     return Phone.count()
       .then(function(c1){
@@ -19,18 +40,6 @@ describe('phone model tests', function(done) {
   
   it('should have a create method - not sure this it the mongoose / node way...', function(){
     assert.isDefined(Phone.handleIncomingMessage);
-    //
-    //
-    // ;
-    // c.then()
-    // Phone.count(function (err, c) {
-    //   if (err) throw err;
-    //   count = c;
-    //   assert.equal(count, 0, 'count should be 0 but is: ' + count);
-    //   done();
-    // });
-    //
-    // var p = Phone.creteFromParams(helper.samplePlivoParams);
   });
   
   

@@ -5,6 +5,9 @@ var bodyParser = require('body-parser')
 var app = module.exports = express();
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 require('./routes/index')(app);
 
