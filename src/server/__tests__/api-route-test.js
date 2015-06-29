@@ -1,14 +1,10 @@
 var helper = require('./test-helper');
 
 var app = require('../index.js');
-// var request = require('supertest');
 var request = require('supertest-as-promised');
 
 var bodyParser = require('body-parser');
 var sinon = require('sinon');
-// var db = require('../db');
-
-// db.Phone.handleIncomingMessage = function() {console.log('got here!!!')}
 
 var sample = helper.samplePlivoParams;
 
@@ -31,8 +27,6 @@ describe('api tests', function() {
       });
   });
 
-
-
   it('should create a phone entry when a post is made to im', function() {
     return request(app).post('/api/v1/im').send(sample)
     .expect(200)
@@ -41,12 +35,6 @@ describe('api tests', function() {
       }).then(function(c) {
         assert.equal(c, 1, 'should create a phone record and therefore count should equal 1');
       });
-      // .then(function() {
-      //   return db.Phone.count();
-      // }).then(function(c){
-      //   console.log('c: ', c);
-      //   assert.equal(c, 1, 'should be created')
-      // }).end(done())
   });
   
   // i can't get spys working, not sure i need to, but it would probably be nice...
