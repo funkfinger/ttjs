@@ -17,7 +17,7 @@ Phone.handleIncomingMessage = function(values) {
     .then(function(p) {
       p = p ? p : new Phone({number: values.From})
       p.incomingMessages.push({ raw: JSON.stringify(values), body: values.Text});
-      return p.save();
+      return p.saveAsync();
     })
 
   // return Phone.findOne({number: values.From}, function(err, p) {

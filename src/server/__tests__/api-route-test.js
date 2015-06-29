@@ -35,11 +35,11 @@ describe('api tests', function() {
 
   it('should create a phone entry when a post is made to im', function() {
     return request(app).post('/api/v1/im').send(sample)
-      // .expect(200)
-      .then(function(){
+    .expect(200)
+    .then(function(){
         return db.Phone.count();
       }).then(function(c) {
-        assert.equal(c, 1, 'should equal 1');
+        assert.equal(c, 1, 'should create a phone record and therefore count should equal 1');
       });
       // .then(function() {
       //   return db.Phone.count();
