@@ -1,0 +1,22 @@
+body {
+  padding-top: 0;
+}
+
+.prize-container {
+  position: relative;
+}
+
+.prize button {
+  margin-top: 1em;
+}
+
+.tongue-tied-head, .prize {
+  text-align: center;
+}
+
+.sold-out {
+  position: absolute;
+  top: 10%;
+  left: 0%;
+  z-index: 1;
+}

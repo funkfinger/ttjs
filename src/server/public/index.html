@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
+        <title>Tongue Tied</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -13,6 +13,24 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+        
+        
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"> -->
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        
+        <link rel="stylesheet" href="css/tt.css">
+
+
+        
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -20,12 +38,57 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <p>Hello world! This is HTML5 Boilerplate.</p>
+        
+        <div class="jumbotron tongue-tied-head">
+          <div class="container">
+            <h1>You're a Tongue Tied WINNER!</h1>
+            <h2>Go ahead and select one of these awesome prizes... once you do instructions... blah blah blah ... </h2>
+          </div>
+        </div>
+        
+      <div class="container">
+        
+        <div class="prize-container">
+        <div class="panel panel-default prize">
+          <div class="panel-body">
+              <img src="http://tonguetied.rocks.s3.amazonaws.com/images/prizes/sold-out-stamp.png" class="img-responsive sold-out" alt="Responsive image">
+              
+              <img src="http://tonguetied.rocks.s3.amazonaws.com/images/prizes/pyrraha.jpg" class="center-block img-responsive" alt="Responsive image">
+              
+            
+              <p class="lead">Pair of passes to "Dark Cabaret" at Palazzo 3rd Fri. @ 8:00 PM</p>
+            <button type="button" class="btn btn-primary btn-block btn-lg disabled">sorry, all claimed.</button>
+          </div>
+        </div>
+      </div>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.3.min.js"><\/script>')</script>
+        <div class="panel panel-default prize">
+          <div class="panel-body">
+            <p><img src="http://tonguetied.rocks.s3.amazonaws.com/images/prizes/stand-up-live.jpg" class="center-block img-responsive" alt="Responsive image"></p>
+            <p class="lead">Stand Up Live Comedy Ticket (for 2) - you pick the show</p>
+            <button type="button" class="btn btn-primary btn-block btn-lg">CLAIM IT!</button>
+          </div>
+        </div>        
+
+        <div class="panel panel-default prize">
+          <div class="panel-heading">
+            <h3 class="panel-title">Panel title</h3>
+          </div>
+          <div class="panel-body">
+            Panel content
+          </div>
+        </div>        
+      </div>
+      
+      <div id='content'></div>        
+      
+
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-2.1.1.min.js"><\/script>')</script>
         <script src="js/plugins.js"></script>
-        <script src="js/main.js"></script>
+        <script type="text/jsx" src="js/main.js"></script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>
