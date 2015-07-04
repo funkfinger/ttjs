@@ -1,0 +1,5 @@
+[
+  {"id": 1, "name": "A drink on Linger Longer Lounge - specific beers, wines, and wells. Gratuity not included", "numAvailable": 5, "numClaimed": 3, "imageUrl": "http://tonguetied.rocks.s3.amazonaws.com/images/prizes/lll.jpg"},
+  {"id": 2, "name": "prize name 2", "numAvailable": 3, "numClaimed": 2, "imageUrl": "http://tonguetied.rocks.s3.amazonaws.com/images/prizes/stand-up-live.jpg"},
+  {"id": 3, "name": "prize name 3", "numAvailable": 1, "numClaimed": 1, "imageUrl": "http://tonguetied.rocks.s3.amazonaws.com/images/prizes/stand-up-live.jpg"}
+]
