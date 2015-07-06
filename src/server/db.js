@@ -43,6 +43,7 @@ catch(err) {
 module.exports = {
   mongoose: mongoose,
   Phone: require('./models/phone').Phone,
-  Prize: require('./models/prize').Prize
+  Prize: require('./models/prize').Prize,
+  PhoneGroup: require('./models/phone-group').PhoneGroup
 }
 

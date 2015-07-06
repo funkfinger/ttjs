@@ -18,23 +18,7 @@ Phone.handleIncomingMessage = function(values) {
       p = p ? p : new Phone({number: values.From})
       p.incomingMessages.push({ raw: JSON.stringify(values), body: values.Text});
       return p.saveAsync();
-    })
-
-  // return Phone.findOne({number: values.From}, function(err, p) {
-  //   p = p ? p : new Phone({number: values.From})
-  //   p.incomingMessages.push({ raw: JSON.stringify(values), body: values.Text});
-  //   p.save();
-  // });
-  
-  // return Phone.findOne({number: params.From}).exec()
-  //   .then(function(phone){
-  //     console.log('phone: ', phone);
-  //     phone = phone ? phone : new Phone({ number : parseInt(params.From), active: true });
-  //     phone.incomingMessages.push({ raw: JSON.stringify(params), body: params.Text} );
-  //     return phone.save();
-  //   }).catch(function(e){
-  //     throw 'error! ' + e;
-  //   });
+  });
 }
 
 module.exports = {
