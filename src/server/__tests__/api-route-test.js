@@ -10,6 +10,59 @@ var sample = helper.samplePlivoParams;
 
 describe('api tests', function() {
   
+  it('should delete prize with delete request', function() {
+    p = new db.Prize({"name": "prize name", "numAvailable": 1, "numClaimed": 0, "imageUrl": "http://example.org/image.jpg"})
+    return p.save()
+      .then(function() {
+        return db.Prize.find({}).execAsync();
+      }).then(function(prize) {
+        assert.equal(prize.length, 1);
+        pid = prize[0].id;
+      }).then(function() {
+        return request(app).delete('/api/v1/prize/' + pid)
+      }).then(function() {
+        return db.Prize.count()
+      }).then(function(c) {
+        assert.equal(c, 0);
+      })
+  });
+  
+  
+  it('should return 404 if id does not exist delete', function() {
+    return request(app).delete('/api/v1/phones/blah')
+      .expect(404)
+      .then(function(res) {
+        assert.equal(res.status, 404);
+      });
+  });
+  
+  it('should delete phone with delete request', function() {
+    var pid;
+    return request(app).post('/api/v1/im').send(sample)
+      .then(function() {
+        return db.Phone.find({});
+      }).then(function(phones) {
+        assert.equal(phones.length, 1);
+        pid = phones[0].id;
+      }).then(function() {
+        console.log('/api/v1/phones/ + pid: ', '/api/v1/phones/' + pid);
+        return request(app).delete('/api/v1/phones/' + pid)
+      }).then(function() {
+        return db.Phone.count()
+      }).then(function(c) {
+        assert.equal(c, 0);
+      })
+  });
+  
+  it('should list phones with get request', function() {
+    return request(app).post('/api/v1/im').send(sample)
+      .then(function() {
+        return request(app).get('/api/v1/phones')
+      }).then(function(res) {
+        assert.equal(res.body[0].number, sample["From"], res.body)
+      });    
+  });
+  
   it('should list prizes with get request', function() {
     p = new db.Prize({"name": "prize name", "numAvailable": 1, "numClaimed": 0, "imageUrl": "http://example.org/image.jpg"})
     return p.saveAsync()
