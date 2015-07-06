@@ -9,6 +9,21 @@ var sinon = require('sinon');
 var sample = helper.samplePlivoParams;
 
 describe('api tests', function() {
+
+  it('should update prize with put request', function() {
+    p = new db.Prize({"name": "prize name", "numAvailable": 1, "numClaimed": 0, "imageUrl": "http://example.org/image.jpg"})
+    return p.save()
+      .then(function() {
+        return request(app).put('/api/v1/prize/' + p.id)
+          .send({"name": "new name", "numAvailable": 1, "numClaimed": 1, "imageUrl": "http://example.org/image.jpg"});
+      }).then(function() {
+        return db.Prize.findById(p.id).execAsync();
+      }).then(function(prize) {
+        console.log('prize: ', prize);
+        assert.equal(prize.name, 'new name');
+        assert.equal(prize.numClaimed, 1);
+      })
+  });
   
   it('should delete prize with delete request', function() {
     p = new db.Prize({"name": "prize name", "numAvailable": 1, "numClaimed": 0, "imageUrl": "http://example.org/image.jpg"})
@@ -27,7 +42,6 @@ describe('api tests', function() {
       })
   });
   
-  
   it('should return 404 if id does not exist delete', function() {
     return request(app).delete('/api/v1/phones/blah')
       .expect(404)
@@ -45,7 +59,6 @@ describe('api tests', function() {
         assert.equal(phones.length, 1);
         pid = phones[0].id;
       }).then(function() {
-        console.log('/api/v1/phones/ + pid: ', '/api/v1/phones/' + pid);
         return request(app).delete('/api/v1/phones/' + pid)
       }).then(function() {
         return db.Phone.count()
@@ -77,6 +90,7 @@ describe('api tests', function() {
   it('should create a prize when posted to', function() {
     var post = {"name": "A drink on Linger Longer Lounge - specific beers, wines, and wells. Gratuity not included", "numAvailable": 5, "numClaimed": 3, "imageUrl": "http://tonguetied.rocks.s3.amazonaws.com/images/prizes/lll.jpg"}
     return request(app).post('/api/v1/prizes').send(post)
+      .expect(201)
       .then(function() {
         return db.Prize.count();
       }).then(function(c) {
@@ -111,8 +125,8 @@ describe('api tests', function() {
 
   it('should create a phone entry when a post is made to im', function() {
     return request(app).post('/api/v1/im').send(sample)
-    .expect(200)
-    .then(function(){
+      .expect(201)
+      .then(function(){
         return db.Phone.count();
       }).then(function(c) {
         assert.equal(c, 1, 'should create a phone record and therefore count should equal 1');
