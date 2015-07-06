@@ -23,16 +23,26 @@ router.get('/prizes', function (req, res) {
 
 // update prizes
 router.put('/prize/:id', function(req, res) {
-  Prize.findById(req.params.id).execAsync()
-    .then(function(prize) {
-      prize.name = req.body.name;
-      prize.numAvailable = req.body.numAvailable;
-      prize.numClaimed = req.body.numClaimed;
-      prize.imageUrl = req.body.imageUrl;
-      return prize.save();
-  }).then(function() {
-    res.send({ok: true});
-  })
+  if (db.mongoose.Types.ObjectId.isValid(req.params.id)) {
+    Prize.findById(req.params.id).execAsync()
+      .then(function(prize) {
+        if (prize) {
+          prize.name = req.body.name;
+          prize.numAvailable = req.body.numAvailable;
+          prize.numClaimed = req.body.numClaimed;
+          prize.imageUrl = req.body.imageUrl;
+          return prize.save();
+        }
+        else {
+          res.status(404).send('not found');
+        }
+    }).then(function() {
+      res.send({ok: true});
+    });
+  }
+  else {
+    res.status(404).send('not found');
+  }
 })
 
 // delete prizes

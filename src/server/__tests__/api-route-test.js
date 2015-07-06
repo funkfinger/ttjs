@@ -10,6 +10,23 @@ var sample = helper.samplePlivoParams;
 
 describe('api tests', function() {
 
+  it('should return 404 if prize id does not exist update', function() {
+    return request(app).put('/api/v1/prize/0')
+      .send({"name": "new name", "numAvailable": 1, "numClaimed": 1, "imageUrl": "http://example.org/image.jpg"})
+      .expect(404)
+      .then(function(res) {
+        assert.equal(res.status, 404);
+      });
+  });
+
+  it('should return 404 if prize id does not exist delete', function() {
+    return request(app).delete('/api/v1/prize/0')
+      .expect(404)
+      .then(function(res) {
+        assert.equal(res.status, 404);
+      });
+  });
+
   it('should update prize with put request', function() {
     p = new db.Prize({"name": "prize name", "numAvailable": 1, "numClaimed": 0, "imageUrl": "http://example.org/image.jpg"})
     return p.save()
@@ -19,7 +36,6 @@ describe('api tests', function() {
       }).then(function() {
         return db.Prize.findById(p.id).execAsync();
       }).then(function(prize) {
-        console.log('prize: ', prize);
         assert.equal(prize.name, 'new name');
         assert.equal(prize.numClaimed, 1);
       })
@@ -42,7 +58,7 @@ describe('api tests', function() {
       })
   });
   
-  it('should return 404 if id does not exist delete', function() {
+  it('should return 404 if phone id does not exist delete', function() {
     return request(app).delete('/api/v1/phones/blah')
       .expect(404)
       .then(function(res) {
