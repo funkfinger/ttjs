@@ -12,7 +12,7 @@ var PrizeList = React.createClass({
   
   loadFromServer: function() {
     $.ajax({
-      url: '/prizes.json',
+      url: '/prizes/prizes.json',
       dataType: 'json',
       cache: false,
       success: function(data) {

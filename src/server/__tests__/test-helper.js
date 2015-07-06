@@ -19,3 +19,5 @@ helper.samplePlivoParams = {
   "Type": "sms",
   "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae383ea"
 };
+
+require('./db-helper.js');

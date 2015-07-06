@@ -7,7 +7,8 @@ describe('prize model tests', function(done) {
     var p = new Prize({
       name: 'name',
       numAvailable: 1,
-      numClaimed: 0
+      numClaimed: 0,
+      imageUrl: 'http://blah.com/image.jpg'
     });
     assert.equal(p.name, 'name');
     assert.equal(p.numAvailable, 1);

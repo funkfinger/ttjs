@@ -1,27 +1,24 @@
 global.db = require('../db');
 
-function dropCollections(done) {
-  for (var i in db.mongoose.connection.collections) {
-    db.mongoose.connection.collections[i].remove(function(err){
-      // console.log('collection ' + i + ' dropped');
+function dropCollections() {
+  return db.Prize.remove({}).execAsync()
+    .then(function() {
+      db.Phone.remove({}).execAsync();
     });
-    // db.mongoose.models = {};
-    return done;
-  }
 }
 
 before(function(done) {
-  return done();
+  done();
 });
 
 beforeEach(function(done) {
-  dropCollections(done);
-  return done();
+  done();
 });
 
 afterEach(function(done) {
-  // db.mongoose.connection.close(done);
-  return done();
+  dropCollections().then(function() {
+    done();
+  })
 });
 
 after(function(done) {

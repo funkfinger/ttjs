@@ -9,6 +9,35 @@ var sinon = require('sinon');
 var sample = helper.samplePlivoParams;
 
 describe('api tests', function() {
+  
+  it('should list prizes with get request', function() {
+    p = new db.Prize({"name": "prize name", "numAvailable": 1, "numClaimed": 0, "imageUrl": "http://example.org/image.jpg"})
+    return p.saveAsync()
+      .then(function() {
+        return request(app).get('/api/v1/prizes')
+      }).then(function(res) {
+        assert.equal(res.status, 200);
+        assert.equal(res.body[0].name, 'prize name');
+      })
+  })
+  
+  it('should create a prize when posted to', function() {
+    var post = {"name": "A drink on Linger Longer Lounge - specific beers, wines, and wells. Gratuity not included", "numAvailable": 5, "numClaimed": 3, "imageUrl": "http://tonguetied.rocks.s3.amazonaws.com/images/prizes/lll.jpg"}
+    return request(app).post('/api/v1/prizes').send(post)
+      .then(function() {
+        return db.Prize.count();
+      }).then(function(c) {
+        assert.equal(c, 1, 'should only be one');
+      });
+  });
+  
+  it('should have a prizes endpoint', function() {
+    return request(app).get('/api/v1/prizes')
+      .expect(200)
+      .then(function(res) {
+        assert.equal(res.status, 200, 'should be 200 error');
+      })
+  });
 
   it('should create one phone and multiple incoming messages when incoming meesage is called', function() {
     return request(app).post('/api/v1/im').send(sample)
