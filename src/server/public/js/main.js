@@ -12,14 +12,14 @@ var PrizeList = React.createClass({
   
   loadFromServer: function() {
     $.ajax({
-      url: '/prizes/prizes.json',
+      url: '/api/v1/prizes',
       dataType: 'json',
       cache: false,
       success: function(data) {
         this.setState({prizes: data});
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error('/prizes.json', status, err.toString());
+        console.error('/api/v1/prizes', status, err.toString());
       }.bind(this)
     });
   },
