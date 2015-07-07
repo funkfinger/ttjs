@@ -10,6 +10,28 @@ var sample = helper.samplePlivoParams;
 
 describe('api tests', function() {
   
+  it('should list keywords on get with phones', function() {
+    var pg1 = new db.PhoneGroup({keyword: 'k1'});
+    var pg2 = new db.PhoneGroup({keyword: 'k2'});
+    var p = new db.Phone({number: 8005551212});
+    return p.saveAsync()
+      .then(function() {return pg1.saveAsync();})
+      .then(function(pg) {
+        pg[0].phones.push(p);
+        return pg[0].saveAsync();
+      }).then(function() { pg2.saveAsync(); })
+      .then(function() {
+        return request(app).get('/api/v1/keywords')
+          .expect(200)
+      }).then(function(resp) {
+        console.log('resp.body: ', resp.body);
+        assert.equal(resp.body.length, 2, resp.body);
+        assert.equal(resp.body[0].keyword, 'k1');
+        assert.equal(resp.body[1].keyword, 'k2');
+        assert.equal(resp.body[0].phones[0].number, 8005551212);
+      })
+  });
+  
   it('should update keyword on put', function() {
     var pg = new db.PhoneGroup({keyword: 'get_keyword'});
     return pg.saveAsync()
@@ -24,7 +46,7 @@ describe('api tests', function() {
       })
   });
 
-  it('should find keyword on get', function() {
+  it('should find keyword on get with id', function() {
     var pg = new db.PhoneGroup({keyword: 'get_keyword'});
     return pg.saveAsync()
       .then(function() {

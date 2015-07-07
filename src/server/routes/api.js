@@ -15,13 +15,21 @@ router.post('/keyword', function (req, res) {
     });
 });
 
-// read phonegroup keyword
+// read single phonegroup keyword
 router.get('/keyword/:id', function (req, res) {
   PhoneGroup.findById(req.params.id).execAsync()
     .then(function(pg) {
       res.send(pg);
     });
 });
+
+// read list of phonegroup keywords
+router.get('/keywords', function (req, res) {
+  PhoneGroup.find().populate('phones').execAsync()
+    .then(function(pgs) {
+      res.send(pgs);
+    })
+})
 
 // update phonegroup keyword
 router.put('/keyword/:id', function (req, res) {
