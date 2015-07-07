@@ -9,6 +9,52 @@ var sinon = require('sinon');
 var sample = helper.samplePlivoParams;
 
 describe('api tests', function() {
+  
+  it('should update keyword on put', function() {
+    var pg = new db.PhoneGroup({keyword: 'get_keyword'});
+    return pg.saveAsync()
+      .then(function() {
+        return request(app).put('/api/v1/keyword/' + pg._id)
+          .send({keyword: 'new_keyword'})
+          .expect(200)
+      }).then(function() {
+        return db.PhoneGroup.findById(pg._id).execAsync();
+      }).then(function(pg2) {
+        assert.equal(pg2.keyword, 'new_keyword');
+      })
+  });
+
+  it('should find keyword on get', function() {
+    var pg = new db.PhoneGroup({keyword: 'get_keyword'});
+    return pg.saveAsync()
+      .then(function() {
+        return db.PhoneGroup.findById(pg._id).execAsync()
+      }).then(function(pg2) {
+        return assert.equal(pg2.keyword, 'get_keyword');
+      }).then(function() {
+        return request(app).get('/api/v1/keyword/' + pg._id)
+          .expect(200);
+      }).then(function(r) {
+        assert.equal(r.body.keyword, 'get_keyword');
+      })
+  });
+
+  it('should create keyword on post', function() {
+    return db.PhoneGroup.count().execAsync()
+      .then(function(c) {
+        return assert.equal(c, 0);
+      })
+      .then(function() {
+        return request(app).post('/api/v1/keyword')
+        .send({keyword: 'new_keyword'})
+        .expect(201)
+      })
+      .then(function(res) {
+        return db.PhoneGroup.count().execAsync();
+      }).then(function(c) {
+        return assert.equal(c, 1);
+      })
+  });
 
   it('should on incoming message add phone to a phone group if the keyword exists', function() {
     var p;

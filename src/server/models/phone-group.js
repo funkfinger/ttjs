@@ -9,13 +9,11 @@ var PhoneGroup = mongoose.model('PhoneGroup', phoneGroupSchema);
 
 PhoneGroup.findKeywordAndAddToGroup = function(keyword, phone) {
   var pid = phone._id;
-  console.log('phone,id: ', pid);
   return PhoneGroup.findOne({keyword: keyword}).execAsync()
     .then(function(pg) {
       if(pg) {
         if (pid) {
           pg.phones.push(pid);
-          console.log('pg: ', pg);
           return pg.saveAsync();
         }
       }

@@ -5,6 +5,34 @@ var router = express.Router();
 var db = require('../db');
 var Phone = db.Phone;
 var Prize = db.Prize;
+var PhoneGroup = db.PhoneGroup;
+
+// create phonegroup (keyword)
+router.post('/keyword', function (req, res) {
+  pg = new PhoneGroup({keyword: req.body.keyword}).saveAsync()
+    .then(function() {
+      res.status(201).send({ok: true});
+    });
+});
+
+// read phonegroup keyword
+router.get('/keyword/:id', function (req, res) {
+  PhoneGroup.findById(req.params.id).execAsync()
+    .then(function(pg) {
+      res.send(pg);
+    });
+});
+
+// update phonegroup keyword
+router.put('/keyword/:id', function (req, res) {
+  PhoneGroup.findById(req.params.id).execAsync()
+    .then(function(pg) {
+      pg.keyword = req.body.keyword;
+      return pg.saveAsync();
+    }).then(function() {
+      res.send({ok: true});
+    })
+});
 
 // create prizes
 router.post('/prizes', function (req, res) {
