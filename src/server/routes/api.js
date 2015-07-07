@@ -54,8 +54,10 @@ router.delete('/prize/:id', function (req, res) {
 
 // create phone
 router.post('/im', function (req, res) {
-  Phone.handleIncomingMessage(req.body).then(function() {
-    res.status(201).send({ok: true});    
+  Phone.handleIncomingMessage(req.body).then(function(p) {
+    if(p) {
+      res.status(201).send({ok: true});      
+    }
   });
 })
 

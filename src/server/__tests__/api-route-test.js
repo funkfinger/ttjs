@@ -10,6 +10,23 @@ var sample = helper.samplePlivoParams;
 
 describe('api tests', function() {
 
+  it('should on incoming message add phone to a phone group if the keyword exists', function() {
+    var p;
+    return new db.PhoneGroup({keyword: 'im_a_keyword'}).saveAsync()
+      .then(function() {
+        newSam = JSON.parse(JSON.stringify(sample));
+        newSam['Text'] = 'im_a_keyword yes';
+        return request(app).post('/api/v1/im').send(newSam)
+      }).then(function() {
+        return db.PhoneGroup.findOne({keyword: 'im_a_keyword'}).populate('phones').execAsync();
+      }).then(function(pg) {
+        assert.equal(pg.phones.length, 1, pg);
+        assert.equal(pg.phones[0].number, sample.From);
+      })
+    
+  });
+
+
   it('should return 404 if prize id does not exist update', function() {
     return request(app).put('/api/v1/prize/0')
       .send({"name": "new name", "numAvailable": 1, "numClaimed": 1, "imageUrl": "http://example.org/image.jpg"})

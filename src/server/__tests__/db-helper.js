@@ -4,6 +4,8 @@ function dropCollections() {
   return db.Prize.remove({}).execAsync()
     .then(function() {
       db.Phone.remove({}).execAsync();
+    }).then(function() {
+      db.PhoneGroup.remove({}).execAsync();
     });
 }
 

@@ -3,7 +3,7 @@ var PhoneGroup = db.PhoneGroup;
 var Phone = db.Phone;
 
 describe('phone group model tests', function(done) {
-  
+    
   it('phone group should have a keyword', function() {
     pg = new PhoneGroup({keyword: 'keyw'});
     return pg.save()
