@@ -24,7 +24,6 @@ describe('api tests', function() {
         return request(app).get('/api/v1/keywords')
           .expect(200)
       }).then(function(resp) {
-        console.log('resp.body: ', resp.body);
         assert.equal(resp.body.length, 2, resp.body);
         assert.equal(resp.body[0].keyword, 'k1');
         assert.equal(resp.body[1].keyword, 'k2');
