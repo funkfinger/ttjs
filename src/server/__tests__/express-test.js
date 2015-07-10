@@ -4,6 +4,16 @@ var request = require('supertest');
 
 describe('express acceptance tests', function() {
   
+  it('should not have x-header', function(done) {
+    request(app)
+      .get('/')
+      .expect(200)
+      .end(function(err, result){
+        assert.notProperty(result.header, 'x-powered-by');
+        done();
+      })
+  })
+  
   it('should load fb react from cloud (for now)', function(done) {
     request(app)
       .get('/')
