@@ -1,6 +1,8 @@
 var gulp = require('gulp');
 var karma = require('karma').server;
 var mocha = require('gulp-mocha');
+var eslint = require('gulp-eslint');
+
 
 
 gulp.task('test', ['karma', 'mocha']);
@@ -24,3 +26,13 @@ gulp.task('karma', function(done){
     singleRun: true
   }, done);  
 });
+
+gulp.task('eslint', function() {
+  return gulp.src([
+    'src/**/*.js',
+    '!**/__tests__/*.*'
+  ])
+  .pipe(eslint())
+  .pipe(eslint.format())
+  .pipe(eslint.failOnError());
+});  
