@@ -1,11 +1,11 @@
-require("../css/normalize.css");
-require("../vendor/bootstrap-3.3.5-dist/css/bootstrap.min.css");
-require("../css/main.css");
-require("../css/tt.css");
+require("../assets/css/normalize.css");
+require("../assets/vendor/bootstrap-3.3.5-dist/css/bootstrap.min.css");
+require("../assets/css/main.css");
+require("../assets/css/tt.css");
 // require("./vendor/modernizr-2.8.3.min.js");
 // require("./vendor/jquery-2.1.1.min.js");
-require("../vendor/bootstrap-3.3.5-dist/js/bootstrap.min.js");
-require("./vendor/react.js");
+require("../assets/vendor/bootstrap-3.3.5-dist/js/bootstrap.min.js");
+require("../assets/vendor/react.js");
 
 var PrizeList = React.createClass({
   getInitialState: function() {
