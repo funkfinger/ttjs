@@ -4,6 +4,12 @@ var helper = require('./test-helper');
 
 describe('sanity tests', function() {
   
+  it('should use spies', function() {
+    var sendMessage = sinon.spy();
+    sendMessage();
+    assert.ok(sendMessage.called);
+  });
+  
   it('should have a test helper', function(){
     assert.isTrue(helper.exists);
   });

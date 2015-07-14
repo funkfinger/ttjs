@@ -57,6 +57,7 @@
     "mocha": "^2.2.5",
     "phantomjs": "^1.9.17",
     "sinon": "^1.15.3",
+    "sinon-chai": "^2.8.0",
     "supertest": "^1.0.1",
     "supertest-as-promised": "^2.0.1",
     "webpack-dev-server": "^1.10.1"
