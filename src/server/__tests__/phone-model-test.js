@@ -4,6 +4,14 @@ var IncomingMessage = db.IncomingMessage;
 
 describe('phone model tests', function(done) {
 
+  it('should contain list of outgoing messages', function() {
+    var p = new Phone({number: 10});
+    p.outgoingMessages.push({uuid: '6cfd5fa7-c708-4eef-8a77-ce79573b2f94'});
+    p.save().then(function() {
+      return assert.equal(p.outgoingMessages.length, 1);      
+    })
+  });
+
   it('should create on phone and multiple incoming messages', function() {
     return Phone.handleIncomingMessage(helper.samplePlivoParams)
       .then(function() {

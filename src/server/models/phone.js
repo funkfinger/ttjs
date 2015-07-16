@@ -7,6 +7,9 @@ var phoneSchema = new mongoose.Schema({
   incomingMessages: [{
     raw: { type: String },
     body: { type: String }
+  }],
+  outgoingMessages: [{
+    uuid: { type: String }
   }]
 });
 

@@ -15,13 +15,16 @@ var requestOptions = {
   }
 }
 
-var send = function(toNum, text) {
+var send = function(dst, text, cb) {
   requestOptions.json = {
     'src': process.env.PLIVO_NUMBER,
-    'dst': toNum,
+    'dst': dst,
     'text': text
   };
-  return request(requestOptions);
+  return request(requestOptions)
+    .then(function(res){
+      return cb instanceof Function ? cb(res) : res;
+    });
 };
 
 module.exports = {
