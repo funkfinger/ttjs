@@ -12,6 +12,8 @@ chai.use(sinonChai);
 global.sinon = sinon;
 global.expect = chai.expect;
 
+var nock = require('nock');
+
 var helper = module.exports = {};
 
 helper.exists = true;
@@ -28,3 +30,9 @@ helper.samplePlivoParams = {
 };
 
 require('./db-helper.js');
+
+helper.mockReq = function() {
+  var m = nock('https://api.plivo.com');
+  m.post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/').reply(202, "{ api_id: '2195615a-2a6d-11e5-9250-22000ac88fb7',\n  message: 'message(s) queued',\n  message_uuid: [ '6cfd5fa7-c708-4eef-8a77-ce79573b2f94' ] }");
+  return m;
+}

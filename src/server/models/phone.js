@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var PhoneGroup = require('./phone-group').PhoneGroup;
+var textMessage = require('../text_message.js');
 
 var phoneSchema = new mongoose.Schema({
   number: { type: Number, unique: true },
@@ -12,6 +13,13 @@ var phoneSchema = new mongoose.Schema({
     uuid: { type: String }
   }]
 });
+
+phoneSchema.methods.sendMessage = function(message) {
+  return textMessage.send(this.model.number, message)
+    .then(function(res){
+      return(res);
+    });
+};
 
 var Phone = mongoose.model('Phone', phoneSchema);
 

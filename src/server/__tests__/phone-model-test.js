@@ -4,6 +4,17 @@ var IncomingMessage = db.IncomingMessage;
 
 describe('phone model tests', function(done) {
 
+  it('should have a send text instance method', function() {
+    var m = helper.mockReq();
+    var p = new Phone({number: 11});
+    return p.save().then(function() {
+      return p.sendMessage('text message body');
+    }).then(function(res) {
+      assert.ok(m.isDone()); // mock is done...
+      return assert.equal(res[0].statusCode, 202); // response has 202 status code...
+    });
+  });
+
   it('should contain list of outgoing messages', function() {
     var p = new Phone({number: 10});
     p.outgoingMessages.push({uuid: '6cfd5fa7-c708-4eef-8a77-ce79573b2f94'});
