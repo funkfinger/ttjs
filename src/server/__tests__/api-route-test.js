@@ -10,6 +10,51 @@ var sample = helper.samplePlivoParams;
 
 describe('api tests', function() {
   
+  it('should create an access log entry on outgoing message access', function() {
+    return db.AccessLog.count().execAsync()
+      .then(function(count) {
+        assert.equal(count, 0);
+      }).then(function() {
+        return request(app)
+          .post('/api/v1/om')
+          .send({
+            "To": process.env.PLIVO_NUMBER,
+            "From": 555,
+            "Status": "sent",
+            "MessageUUID": "blah",
+            "ParentMessageUUID": "blah"
+          });
+      }).then(function(res) {
+        return assert.equal(res.statusCode, 200);
+      }).then(function() {
+        return db.AccessLog.count().execAsync()
+      }).then(function(count) {
+        assert.equal(count, 1);
+      })
+  })
+  
+  it('should have outgoing message endpoint', function(done) {
+    
+// To - receiver number of the SMS
+// From - sender number of the SMS
+// Status - status value of the message, is one of "queued", "sent", "failed", "delivered", "undelivered" or "rejected"
+// MessageUUID - a unique ID for the message
+// ParentMessageUUID - ID of the first part (see notes about long SMS below)
+// PartInfo - Specifies sequence information (useful for split parts in a long SMS; see notes about long SMS below)
+    
+    request(app)
+      .post('/api/v1/om')
+      .send({
+        "To": process.env.PLIVO_NUMBER,
+        "From": 555,
+        "Status": "sent",
+        "MessageUUID": "blah",
+        "ParentMessageUUID": "blah"
+      })
+      .expect(200)
+      .end(done);
+  });
+  
   it('should list keywords on get with phones', function() {
     var pg1 = new db.PhoneGroup({keyword: 'k1'});
     var pg2 = new db.PhoneGroup({keyword: 'k2'});

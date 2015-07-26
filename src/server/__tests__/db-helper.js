@@ -6,7 +6,9 @@ function dropCollections() {
       db.Phone.remove({}).execAsync();
     }).then(function() {
       db.PhoneGroup.remove({}).execAsync();
-    });
+    }).then(function() {
+      db.AccessLog.remove({}).execAsync();
+    })
 }
 
 before(function(done) {

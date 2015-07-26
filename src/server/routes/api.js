@@ -6,6 +6,17 @@ var db = require('../db');
 var Phone = db.Phone;
 var Prize = db.Prize;
 var PhoneGroup = db.PhoneGroup;
+var AccessLog = db.AccessLog;
+
+// update om status
+router.post('/om', function (req, res) {
+  var jsonReq =  JSON.stringify(req.body);
+  var al = new AccessLog({data: jsonReq});
+  al.saveAsync()
+    .then(function(){
+      res.send({ok: true});
+    })
+});
 
 // create phonegroup (keyword)
 router.post('/keyword', function (req, res) {
