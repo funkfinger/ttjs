@@ -9,15 +9,15 @@ describe('phone model tests', function(done) {
 
   var toNum = 18005551212
 
-  it('should set uuid from plivo response', function() {
+  it.only('should set uuid from plivo response', function() {
     helper.nock('https://api.plivo.com:443')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"uuid should be set"})
-      .reply(202, {"api_id":"575e4f50-3025-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["71b3533b-eba3-4450-8473-49538XXXXXX"]}, { 'content-type': 'application/json',
-      date: 'Wed, 22 Jul 2015 03:54:24 GMT',
+      .reply(202, {"api_id":"dc355646-336e-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["451eb6f2-58c5-49bc-b58f-3f2ed7XXXXXX"]}, { 'content-type': 'application/json',
+      date: 'Sun, 26 Jul 2015 08:18:13 GMT',
       server: 'nginx/1.8.0',
       'content-length': '156',
       connection: 'Close' });
-
+      
     var p = new Phone({number: toNum});
     return p.save()
       .then(function() {
@@ -25,7 +25,7 @@ describe('phone model tests', function(done) {
       }).then(function() {
         return Phone.findById(p._id).populate('outgoingMessages').execAsync();
       }).then(function(phone) {
-        return assert.equal(phone.outgoingMessages[0].uuid, '575e4f50-3025-11e5-a541-22000aXXXXXX');
+        return assert.equal(phone.outgoingMessages[0].uuid, 'dc355646-336e-11e5-a541-22000aXXXXXX');
       });
   });
 
