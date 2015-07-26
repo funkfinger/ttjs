@@ -9,9 +9,14 @@ describe('phone model tests', function(done) {
 
   var toNum = 18005551212
 
-  it.only('should set uuid from plivo response', function() {
+  it('should have plivo callback url set in env var', function() {
+    assert.ok(process.env.PLIVO_CALLBACK_URL);
+  });
+
+
+  it('should set uuid from plivo response', function() {
     helper.nock('https://api.plivo.com:443')
-      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"uuid should be set"})
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"uuid should be set","url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"dc355646-336e-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["451eb6f2-58c5-49bc-b58f-3f2ed7XXXXXX"]}, { 'content-type': 'application/json',
       date: 'Sun, 26 Jul 2015 08:18:13 GMT',
       server: 'nginx/1.8.0',
@@ -32,7 +37,7 @@ describe('phone model tests', function(done) {
 
   it('should set status to outgoing message when send', function() {    
     helper.nock('https://api.plivo.com:443')
-      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"set status"})
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"set status","url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"575e4f50-3025-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["71b3533b-eba3-4450-8473-49538XXXXXX"]}, { 'content-type': 'application/json',
       date: 'Wed, 22 Jul 2015 03:54:24 GMT',
       server: 'nginx/1.8.0',
@@ -55,7 +60,7 @@ describe('phone model tests', function(done) {
   it('should set outgoing message when send', function() {
     
     helper.nock('https://api.plivo.com:443')
-      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"text message"})
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"text message","url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"c1bbfa9a-3026-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["512c8a20-3a8b-425b-924b-fc2b5eXXXXXX"]}, { 'content-type': 'application/json',
       date: 'Wed, 22 Jul 2015 04:04:32 GMT',
       server: 'nginx/1.8.0',
@@ -87,7 +92,7 @@ describe('phone model tests', function(done) {
   it('should have a send text instance method', function() {
     
     var m = helper.nock('https://api.plivo.com:443')
-      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"text message body"})
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"text message body","url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"c1bbfa9a-3026-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["512c8a20-3a8b-425b-924b-fc2b5eXXXXXX"]}, { 'content-type': 'application/json',
       date: 'Wed, 22 Jul 2015 04:10:51 GMT',
       server: 'nginx/1.8.0',

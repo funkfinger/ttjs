@@ -19,7 +19,8 @@ var send = function(dst, text, cb) {
   requestOptions.json = {
     'src': process.env.PLIVO_NUMBER,
     'dst': dst,
-    'text': text
+    'text': text,
+    'url': process.env.PLIVO_CALLBACK_URL
   };
   return request(requestOptions)
     .then(function(res){
