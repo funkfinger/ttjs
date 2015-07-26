@@ -1,24 +1,106 @@
 var helper = require('./test-helper');
 var Phone = db.Phone;
 var IncomingMessage = db.IncomingMessage;
+var OutgoingMessage = db.OutgoingMessage;
+
+// helper.nock.disableNetConnect();
 
 describe('phone model tests', function(done) {
 
+  var toNum = 16023218695
+  // it('should create outgoing message', function() {
+  //   var m = helper.mockReq();
+  //   var p = new Phone({number: 12});
+  //   return p.save()
+  //     .then(function() {
+  //       assert.equal(p.outgoingMessages.length, 0);
+  //       p.sendMessage('test meessage should create outgoing');
+  //     }).then(function() {
+  //       return Phone.findById(p._id)
+  //     }).then(function(phone) {
+  //       return assert.equal(phone.outgoingMessages.length, 1);
+  //     });
+  // });
+
+  it('should set status to outgoing message when send', function() {
+    
+    helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"set status"})
+      .reply(202, {"api_id":"575e4f50-3025-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["71b3533b-eba3-4450-8473-49538XXXXXX"]}, { 'content-type': 'application/json',
+      date: 'Wed, 22 Jul 2015 03:54:24 GMT',
+      server: 'nginx/1.8.0',
+      'content-length': '156',
+      connection: 'Close' });
+    
+    var p = new Phone({number: toNum});
+    return p.save()
+      .then(function() {
+        return p.sendMessage('set status')
+      }).then(function() {
+        return Phone.findById(p._id).populate('outgoingMessages').execAsync();
+      }).then(function(phone) {
+        console.log('phone: ', phone);
+        assert.equal(phone.outgoingMessages[0].body, 'set status');
+        return assert.equal(phone.outgoingMessages[0].messageStatus, 'queued');
+      });
+  });
+
+
+  it('should set outgoing message when send', function() {
+    
+    helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"text message"})
+      .reply(202, {"api_id":"c1bbfa9a-3026-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["512c8a20-3a8b-425b-924b-fc2b5eXXXXXX"]}, { 'content-type': 'application/json',
+      date: 'Wed, 22 Jul 2015 04:04:32 GMT',
+      server: 'nginx/1.8.0',
+      'content-length': '156',
+      connection: 'Close' });
+    
+    var p = new Phone({number: toNum});
+    return p.save()
+      .then(function() {
+        return p.sendMessage('text message')
+      }).then(function() {
+        return Phone.findById(p._id).populate('outgoingMessages').execAsync();
+      }).then(function(phone) {
+        return assert.equal(phone.outgoingMessages[0].body, 'text message');
+      });
+  });
+
+  it('should have text associated with outgoing messages', function() {
+    var p = new Phone({number: toNum});
+    var om = new OutgoingMessage({body: 'outgoing message body'});
+    p.outgoingMessages.push(om);
+    return p.save().then(function() {
+      return Phone.findById(p._id);
+    }).then(function(phone) {
+      return assert.equal(phone.outgoingMessages.length, 1);
+    });
+  });
+
   it('should have a send text instance method', function() {
-    var m = helper.mockReq();
-    var p = new Phone({number: 11});
+    
+    var m = helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"text message body"})
+      .reply(202, {"api_id":"c1bbfa9a-3026-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["512c8a20-3a8b-425b-924b-fc2b5eXXXXXX"]}, { 'content-type': 'application/json',
+      date: 'Wed, 22 Jul 2015 04:10:51 GMT',
+      server: 'nginx/1.8.0',
+      'content-length': '156',
+      connection: 'Close' });
+    
+    var p = new Phone({number: toNum});
     return p.save().then(function() {
       return p.sendMessage('text message body');
     }).then(function(res) {
-      assert.ok(m.isDone()); // mock is done...
-      return assert.equal(res[0].statusCode, 202); // response has 202 status code...
+      return assert.ok(m.isDone()); // mock is done...
     });
   });
 
   it('should contain list of outgoing messages', function() {
-    var p = new Phone({number: 10});
-    p.outgoingMessages.push({uuid: '6cfd5fa7-c708-4eef-8a77-ce79573b2f94'});
-    p.save().then(function() {
+    var p = new Phone({number: toNum});
+    var om = new OutgoingMessage({uuid: '6cfd5fa7-c708-4eef-8a77-ce79573b2f94', body: 'om'});
+    p.outgoingMessages.push(om);
+    return p.save().then(function() {
       return assert.equal(p.outgoingMessages.length, 1);      
     })
   });
@@ -63,7 +145,7 @@ describe('phone model tests', function(done) {
   
   
   it('should have a raw property on incoming message', function () {
-    var p = new Phone({number: 4})
+    var p = new Phone({number: toNum})
     p.incomingMessages.push({raw: 'raw'})
     return p.save()
       .then(function(res) {        
@@ -72,20 +154,20 @@ describe('phone model tests', function(done) {
   });
 
   it('should have incoming messages', function() {
-    var p = new Phone({number: 3, incomingMessages: [{body: 'body'}] });
+    var p = new Phone({number: toNum, incomingMessages: [{body: 'body'}] });
     // p.incomingMessages.push({raw: 'raw'});
     return p.save()
       .then(function(res){
-        return Phone.findOne({number: 3});
+        return Phone.findOne({number: toNum});
       }).then(function(num){
         return assert.equal(num.incomingMessages[0].body, 'body');
       });
   })
 
   it('should be able to set active to false', function() {
-    return new Phone({number: 1}).save()
+    return new Phone({number: toNum}).save()
       .then(function() {
-        return Phone.findOne({number: 1})
+        return Phone.findOne({number: toNum})
       }).then(function(num) {
         num.active = false;
         num.save();
@@ -96,9 +178,9 @@ describe('phone model tests', function(done) {
   });
 
   it('should have an active property which defaults to true', function(){
-    return new Phone({number: 1}).save()
+    return new Phone({number: toNum}).save()
       .then(function(){
-        return Phone.findOne({number: 1})
+        return Phone.findOne({number: toNum})
       })
       .then(function(num){
         return assert.isTrue(num.active);
@@ -106,10 +188,10 @@ describe('phone model tests', function(done) {
   });
 
   it('should have a number that is unique', function(done) {
-    var x = new Phone({number: 1}).save().then(function(){return(Phone.count());});
+    var x = new Phone({number: toNum}).save().then(function(){return(Phone.count());});
     assert.isFulfilled(x);
-    assert.eventually.equal(x, 1);
-    var y = new Phone({number: 1}).save().then(function(){return(Phone.count());});
+    assert.eventually.equal(x, toNum);
+    var y = new Phone({number: toNum}).save().then(function(){return(Phone.count());});
     assert.isRejected(y).notify(done);
   });
 
@@ -152,8 +234,8 @@ describe('phone model tests', function(done) {
   });
   
   it('should exist and have number', function() {
-    var p = new Phone({number: 8005551212});
-    assert.equal(p.number, 8005551212);
+    var p = new Phone({number: toNum});
+    assert.equal(p.number, toNum);
   });
   
 });
