@@ -22,7 +22,6 @@ phoneSchema.methods.sendMessage = function(message) {
   var self = this;
   var om = new OutgoingMessage({body: message})
   return om.save().then(function() {
-    console.log(om);
     self.outgoingMessages.push(om);
     return self.saveAsync();
   }).then(function() {
@@ -30,28 +29,13 @@ phoneSchema.methods.sendMessage = function(message) {
   }).then(function(res) {
     if(/queued/.test(res[0].body.message)) {
       om.messageStatus = 'queued';
-      return om.save();
+      om.uuid = res[0].body.api_id;
+      return om.saveAsync();
     }
     else {
       throw new Error('something went wrong with text message creation');
     }
   });
-  
-  // var id = this.outgoingMessages[this.outgoingMessages.length-1];
-  // return this.save()
-  //   .then(function() {
-  //     return textMessage.send(self.number, message);
-  //   }).then(function(res) {
-  //     if (/queued/.test(res[0].body.message)) {
-  //       OutgoingMessage.find(function(err, res) {
-  //         console.log(res);
-  //       })
-  //       OutgoingMessage.findById(id).execAsync().then(function(om){
-  //         om.status = 'queued';
-  //         return om.saveAsync();
-  //       })
-  //     }
-  //   });
 };
 
 var Phone = mongoose.model('Phone', phoneSchema);

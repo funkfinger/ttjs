@@ -7,23 +7,30 @@ var OutgoingMessage = db.OutgoingMessage;
 
 describe('phone model tests', function(done) {
 
-  var toNum = 16023218695
-  // it('should create outgoing message', function() {
-  //   var m = helper.mockReq();
-  //   var p = new Phone({number: 12});
-  //   return p.save()
-  //     .then(function() {
-  //       assert.equal(p.outgoingMessages.length, 0);
-  //       p.sendMessage('test meessage should create outgoing');
-  //     }).then(function() {
-  //       return Phone.findById(p._id)
-  //     }).then(function(phone) {
-  //       return assert.equal(phone.outgoingMessages.length, 1);
-  //     });
-  // });
+  var toNum = 18005551212
 
-  it('should set status to outgoing message when send', function() {
-    
+  it('should set uuid from plivo response', function() {
+    helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"uuid should be set"})
+      .reply(202, {"api_id":"575e4f50-3025-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["71b3533b-eba3-4450-8473-49538XXXXXX"]}, { 'content-type': 'application/json',
+      date: 'Wed, 22 Jul 2015 03:54:24 GMT',
+      server: 'nginx/1.8.0',
+      'content-length': '156',
+      connection: 'Close' });
+
+    var p = new Phone({number: toNum});
+    return p.save()
+      .then(function() {
+        return p.sendMessage('uuid should be set');
+      }).then(function() {
+        return Phone.findById(p._id).populate('outgoingMessages').execAsync();
+      }).then(function(phone) {
+        return assert.equal(phone.outgoingMessages[0].uuid, '575e4f50-3025-11e5-a541-22000aXXXXXX');
+      });
+  });
+
+
+  it('should set status to outgoing message when send', function() {    
     helper.nock('https://api.plivo.com:443')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"set status"})
       .reply(202, {"api_id":"575e4f50-3025-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["71b3533b-eba3-4450-8473-49538XXXXXX"]}, { 'content-type': 'application/json',
@@ -39,7 +46,6 @@ describe('phone model tests', function(done) {
       }).then(function() {
         return Phone.findById(p._id).populate('outgoingMessages').execAsync();
       }).then(function(phone) {
-        console.log('phone: ', phone);
         assert.equal(phone.outgoingMessages[0].body, 'set status');
         return assert.equal(phone.outgoingMessages[0].messageStatus, 'queued');
       });
