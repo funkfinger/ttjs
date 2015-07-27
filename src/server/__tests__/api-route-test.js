@@ -12,6 +12,32 @@ var toNum = 18005551212
 
 describe('api tests', function() {
   
+  it('should be able to populate phone group keyword signupResponse on create', function() {
+    return request(app).post('/api/v1/keyword')
+      .send({keyword: 'kw', signupResponse: 'created'})
+      .expect(201)
+      .then(function() {
+        return db.PhoneGroup.findOne({keyword: 'kw'}).execAsync();
+      }).then(function(npg) {
+        return assert.equal(npg.signupResponse, 'created');
+      });
+  });
+  
+  it('should be able to update phone group keyword signupResponse', function() {
+    pg = new db.PhoneGroup({keyword: 'update_sr', signupResponse: 'first'})
+    return pg.saveAsync()
+      .then(function() {
+        return request(app).put('/api/v1/keyword/' + pg._id)
+          .send({signupResponse: 'second'})
+          .expect(200)
+      }).then(function(){
+        return db.PhoneGroup.findById(pg._id).execAsync();
+      }).then(function(npg) {
+        assert.equal(npg.keyword, 'update_sr'); // sanity...
+        return assert.equal(npg.signupResponse, 'second');
+      })
+  });
+  
   it('should on incoming message to keyword group, respond with a welcome message', function() {
     
     helper.nock('https://api.plivo.com:443')

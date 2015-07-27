@@ -20,7 +20,10 @@ router.post('/om', function (req, res) {
 
 // create phonegroup (keyword)
 router.post('/keyword', function (req, res) {
-  pg = new PhoneGroup({keyword: req.body.keyword}).saveAsync()
+  var kw = req.body.keyword;
+  var sr = req.body.signupResponse
+  var vals = sr ? {keyword: kw, signupResponse: sr} : {keyword: kw};
+  var pg = new PhoneGroup(vals).saveAsync()
     .then(function() {
       res.status(201).send({ok: true});
     });
@@ -46,7 +49,8 @@ router.get('/keywords', function (req, res) {
 router.put('/keyword/:id', function (req, res) {
   PhoneGroup.findById(req.params.id).execAsync()
     .then(function(pg) {
-      pg.keyword = req.body.keyword;
+      pg.keyword = req.body.keyword ? req.body.keyword : pg.keyword;
+      pg.signupResponse = req.body.signupResponse ? req.body.signupResponse : pg.signupResponse;
       return pg.saveAsync();
     }).then(function() {
       res.send({ok: true});
