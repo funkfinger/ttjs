@@ -4,8 +4,24 @@ var Phone = db.Phone;
 
 describe('phone group model tests', function(done) {
   
-  it('should be able to send messages to group', function() {
-    
+  // it('should be able to send messages to group', function() {
+  //
+  // });
+
+  it('should have signup text response text', function() {
+    pg = new PhoneGroup({keyword: 'signup', signupResponse: 'welcome you'});
+    return pg.saveAsync()
+      .then(function() {
+        return assert.equal(pg.signupResponse, 'welcome you');
+      })
+  });
+
+  it('should be case insensitive (downcase)', function() {
+    pg = new PhoneGroup({keyword: 'CaSe'});
+    return pg.save()
+      .then(function() {
+        assert.equal(pg.keyword, 'case');
+      })
   });
   
   it('phone group should have a keyword', function() {

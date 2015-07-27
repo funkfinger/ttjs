@@ -8,7 +8,38 @@ var sinon = require('sinon');
 
 var sample = helper.samplePlivoParams;
 
+var toNum = 18005551212
+
 describe('api tests', function() {
+  
+  it('should on incoming message to keyword group, respond with a welcome message', function() {
+    
+    helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"howdy","url":process.env.PLIVO_CALLBACK_URL})
+      .reply(202, {"api_id":"44adaf8e-342d-11e5-a188-22000aXXXXXX","message":"message(s) queued","message_uuid":["5954b6ca-f5e6-4e59-87a4-7ae2a0XXXXXX"]}, { 'content-type': 'application/json',
+      date: 'Mon, 27 Jul 2015 07:01:13 GMT',
+      server: 'nginx/1.6.2',
+      'content-length': '156',
+      connection: 'Close' });
+    
+    return new db.PhoneGroup({keyword: 'welcome', signupResponse: 'howdy'}).saveAsync()
+      .then(function() {
+        return request(app).post('/api/v1/im').send({
+          "From": toNum,
+          "TotalRate": "0.00000",
+          "Text": "WeLcOmE",
+          "To": process.env.PLIVO_NUMBER,
+          "Units": "1",
+          "TotalAmount": "0.00000",
+          "Type": "sms",
+          "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae3XXXX"
+        });
+      }).then(function() {
+        return db.PhoneGroup.findOne({keyword: 'welcome'}).populate('phones').execAsync();
+      }).then(function(res) {
+        return assert.equal(res.phones.length, 1);
+      });
+  });
   
   it('should create an access log entry on outgoing message access', function() {
     return db.AccessLog.count().execAsync()
@@ -133,7 +164,7 @@ describe('api tests', function() {
         return db.PhoneGroup.findOne({keyword: 'im_a_keyword'}).populate('phones').execAsync();
       }).then(function(pg) {
         assert.equal(pg.phones.length, 1, pg);
-        assert.equal(pg.phones[0].number, sample.From);
+        return assert.equal(pg.phones[0].number, sample.From);
       })
     
   });
