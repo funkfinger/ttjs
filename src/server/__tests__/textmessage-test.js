@@ -1,5 +1,4 @@
 var helper = require('./test-helper');
-var Phone = db.Phone;
 var textMessage = require('../text_message');
 
 describe('text message tests', function() {

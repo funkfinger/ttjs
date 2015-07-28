@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var Phone = require('./phone').Phone;
 
 var phoneGroupSchema = new mongoose.Schema( {
   keyword: { type: String, required: true, unique: true },
@@ -11,6 +12,16 @@ phoneGroupSchema.pre('save', function(next) {
   this.keyword = this.keyword.toLowerCase();
   next();
 });
+
+phoneGroupSchema.methods.sendMessage = function(message) {
+  var self = this;
+  self.phones.forEach(function(pid) {
+    return mongoose.model('Phone').findById(pid).execAsync()
+      .then(function(phone) {
+        return phone.sendMessage(message);
+      })
+  });
+};
 
 var PhoneGroup = mongoose.model('PhoneGroup', phoneGroupSchema);
 
@@ -33,7 +44,7 @@ PhoneGroup.findKeywordAndAddToGroup = function(keyword, phone) {
       // i probably just don't understand how promises should work...
       return function(){};
     });
-}
+};
 
 module.exports = {
   PhoneGroup: PhoneGroup

@@ -27,6 +27,7 @@ phoneSchema.methods.sendMessage = function(message) {
   }).then(function() {
     return textMessage.send(self.number, message);
   }).then(function(res) {
+    // TODO: move to callback?...
     if(/queued/.test(res[0].body.message)) {
       om.messageStatus = 'queued';
       om.uuid = res[0].body.api_id;
@@ -53,9 +54,9 @@ Phone.handleIncomingMessage = function(values) {
     }).then(function(p) {
       return PhoneGroup.findKeywordAndAddToGroup(firstWord, p[0]);
     });
-}
+};
 
 module.exports = {
   Phone: Phone,
   OutgoingMessage: OutgoingMessage
-}
+};
