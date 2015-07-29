@@ -8,22 +8,20 @@ describe('phone group model tests', function(done) {
     
     var toNum1 = 18005551212;
     
-    helper.nock('https://api.plivo.com:443')
+    var nock1 = helper.nock('https://api.plivo.com:443')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum1,"text":"group_message","url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"34489f3c-34f0-11e5-bfa2-22000afaa73b","message":"message(s) queued","message_uuid":["a1d67e58-f35a-47da-ab0b-5d1cd06a8d32"]}, { 'content-type': 'application/json',
       date: 'Tue, 28 Jul 2015 06:16:37 GMT',
       server: 'nginx/1.8.0',
-      'content-length': '156',
-      connection: 'Close' });
+    connection: 'Close' });
 
     var toNum2 = 18005551222;
       
-    helper.nock('https://api.plivo.com:443')
+    var nock2 = helper.nock('https://api.plivo.com:443')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum2,"text":"group_message","url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"3449fe68-34f0-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["0579a9bb-02f6-48c8-aee6-1cb2c2XXXXXX"]}, { 'content-type': 'application/json',
       date: 'Tue, 28 Jul 2015 06:16:37 GMT',
       server: 'nginx/1.8.0',
-      'content-length': '156',
       connection: 'Close' });
       
       
@@ -38,10 +36,11 @@ describe('phone group model tests', function(done) {
       .then(function() {
         return pg.sendMessage('group_message');
       }).then(function() {
-        return Phone.findById(ph1._id);
+        return Phone.findById(ph1._id).populate('outgoingMessages');
       }).then(function(p) {
-        //console.log(p);
-      })
+        assert.equal(p.outgoingMessages.length, 1);
+        return assert.equal(p.outgoingMessages[0].body, 'group_message');
+      });
   });
 
   it('should have signup text response text', function() {

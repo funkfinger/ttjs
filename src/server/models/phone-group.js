@@ -15,12 +15,14 @@ phoneGroupSchema.pre('save', function(next) {
 
 phoneGroupSchema.methods.sendMessage = function(message) {
   var self = this;
-  self.phones.forEach(function(pid) {
-    return mongoose.model('Phone').findById(pid).execAsync()
-      .then(function(phone) {
-        return phone.sendMessage(message);
-      })
-  });
+  var phonesList = [];
+  // this seems horrible - but can't figure out a way to populate self...
+  return PhoneGroup.findById(this._id).populate('phones').execAsync()
+    .then(function(res){
+      return res.phones;
+    }).each(function(phone) {
+      return phone.sendMessage(message);
+    });
 };
 
 var PhoneGroup = mongoose.model('PhoneGroup', phoneGroupSchema);
