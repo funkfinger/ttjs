@@ -7,7 +7,19 @@ var prizeSchema = new mongoose.Schema({
   imageUrl: { type: String }
 });
 
+prizeSchema.statics.findByIdAnddecrementNumAvail = function(did) {
+  return Prize.findById(did).exec()
+    .then(function(p) {
+      if(!p) {throw new Error('can not find prize with did: ' + did);}
+      if (p.numClaimed < p.numAvailable) {
+        p.numClaimed++;
+      }
+      return p.save();
+    });
+};
+
 var Prize = mongoose.model('Prize', prizeSchema);
+
 
 Prize.createNewFromPost = function(values) {
   prize = new Prize({
@@ -21,4 +33,4 @@ Prize.createNewFromPost = function(values) {
 
 module.exports = {
   Prize: Prize
-}
+};
