@@ -3,7 +3,7 @@ var Prize = db.Prize;
 
 describe('prize model tests', function(done) {
 
-  it('should have a findByIdAnddecrementNumAvail method', function() {
+  it('should have a findByIdAndDecrementNumAvail method', function() {
     var p = new Prize({
       name: 'name',
       numAvailable: 1,
@@ -18,7 +18,7 @@ describe('prize model tests', function(done) {
       }).then(function(c) {
         assert.equal(c.length, 1);
       }).then(function() {
-        return Prize.findByIdAnddecrementNumAvail(p._id);
+        return Prize.findByIdAndDecrementNumAvail(p._id);
       }).then(function() {
         return Prize.findById(p._id).execAsync();
       }).then(function(prize) {

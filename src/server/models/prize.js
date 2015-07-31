@@ -7,8 +7,8 @@ var prizeSchema = new mongoose.Schema({
   imageUrl: { type: String }
 });
 
-prizeSchema.statics.findByIdAnddecrementNumAvail = function(did) {
-  return Prize.findById(did).exec()
+prizeSchema.statics.findByIdAndDecrementNumAvail = function(did) {
+  return Prize.findById(did).execAsync()
     .then(function(p) {
       if(!p) {throw new Error('can not find prize with did: ' + did);}
       if (p.numClaimed < p.numAvailable) {

@@ -57,6 +57,15 @@ router.put('/keyword/:id', function (req, res) {
     })
 });
 
+// decrement prize availabilty (actuall increment numClaimed)
+router.get('/prize/dec/:id', function (req, res) {
+  return Prize.findByIdAndDecrementNumAvail(req.params.id)
+    .then(function(p) {
+      return res.status(200).send({ok: true});
+    });
+});
+
+
 // create prizes
 router.post('/prizes', function (req, res) {
   Prize.createNewFromPost(req.body)

@@ -12,6 +12,22 @@ var toNum = 18005551212
 
 describe('api tests', function() {
   
+  it('should inc num claimed prize count on get', function() {
+    p = new db.Prize({"name": "prize name", "numAvailable": 2, "numClaimed": 0, "imageUrl": "http://example.org/image.jpg"});
+    return p.saveAsync()
+      .then(function() {
+        return assert.equal(p.numClaimed, 0);
+      }).then(function() {
+        return request(app).get('/api/v1/prize/dec/' + p._id)        
+          .expect(200)
+      }).then(function() {
+        return db.Prize.findById(p._id).execAsync()
+      }).then(function(prize) {
+        return assert.equal(prize.numClaimed, 1);
+      });
+  }),
+  
+  
   it('should be able to populate phone group keyword signupResponse on create', function() {
     return request(app).post('/api/v1/keyword')
       .send({keyword: 'kw', signupResponse: 'created'})
