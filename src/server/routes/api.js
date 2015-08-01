@@ -95,10 +95,10 @@ router.put('/prize/:id', function(req, res) {
     Prize.findById(req.params.id).execAsync()
       .then(function(prize) {
         if (prize) {
-          prize.name = req.body.name;
-          prize.numAvailable = req.body.numAvailable;
-          prize.numClaimed = req.body.numClaimed;
-          prize.imageUrl = req.body.imageUrl;
+          prize.name = req.body.name ? req.body.name : prize.name;
+          prize.numAvailable = req.body.numAvailable ? req.body.numAvailable : prize.numAvailable;
+          prize.numClaimed = req.body.numClaimed ? req.body.numClaimed : prize.numClaimed;
+          prize.imageUrl = req.body.imageUrl ? req.body.imageUrl : prize.imageUrl;
           return prize.save();
         }
         else {
