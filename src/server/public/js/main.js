@@ -27,7 +27,7 @@ var PrizeBox = React.createClass({
   },
   componentDidMount: function() {
     this.loadFromServer();
-    setInterval(this.loadFromServer, 3000);
+    setInterval(this.loadFromServer, 2000);
   },
   render: function() {
     return React.createElement("div", {className: "prize-box"}, React.createElement(PrizeList, {data: this.state.data}))
@@ -50,9 +50,10 @@ var Prize = React.createClass({
   getInitialState: function() {
     return this.props.prize;
   },
-  clickButt: function() {
+  
+  buttonAjax: function(url) {
     $.ajax({
-      url: '/api/v1/prize/dec/' + this.props.prize._id,
+      url: url + this.props.prize._id,
       dataType: 'json',
       cache: false,
       success: function(data) {
@@ -60,9 +61,17 @@ var Prize = React.createClass({
         // this.setState({prize: data});
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error('/api/v1/prize/dec/' + this.props.prize._id, status, err.toString());
+        console.error(url + this.props.prize._id, status, err.toString());
       }.bind(this)
-    });
+    });    
+  },
+  
+  clickDecButt: function() {
+    this.buttonAjax('/api/v1/prize/dec/');
+  },
+
+  clickIncButt: function() {
+    this.buttonAjax('/api/v1/prize/inc/');
   },
   
   render: function() {
@@ -74,7 +83,8 @@ var Prize = React.createClass({
     var buttonClass = avail ? ' btn-primary ' : ' disabled ';
     var labelClasses = avail ? 'label label-primary' : 'label label-default';
     var claimText = avail ? "CLAIM ME!" : "sorry, all claimed.";
-    var decButton = window.location.search.match(/blah/) ? React.createElement("button", {className: 'btn btn-danger', onClick: this.clickButt}, "subtract 1") : "";
+    var decButton = window.location.search.match(/blah/) ? React.createElement("button", {className: 'btn btn-danger', onClick: this.clickDecButt}, "subtract 1") : "";
+    var incButton = window.location.search.match(/blah/) ? React.createElement("button", {className: 'btn btn-success', onClick: this.clickIncButt}, "add 1") : "";
     
     return (
       React.createElement("div", {className: "panel panel-default prize"}, 
@@ -82,7 +92,7 @@ var Prize = React.createClass({
           soldOutImage, 
           React.createElement("img", {src: this.props.prize.imageUrl, className: "center-block img-responsive", alt: "Responsive image"}), 
           React.createElement("p", {className: "lead"}, this.props.prize.name, " ", React.createElement("span", {className: labelClasses}, "Available ", this.props.prize.numRemaining, " ")),
-          decButton
+          decButton, incButton
         )
       )
     )
