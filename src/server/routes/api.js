@@ -57,11 +57,19 @@ router.put('/keyword/:id', function (req, res) {
     })
 });
 
+// increment prize availabilty (actuall dec numClaimed)
+router.get('/prize/inc/:id', function (req, res) {
+  return Prize.findByIdAndIncrementNumAvail(req.params.id)
+    .then(function(p) {
+      return res.status(200).send(p);
+    });
+});
+
 // decrement prize availabilty (actuall increment numClaimed)
 router.get('/prize/dec/:id', function (req, res) {
   return Prize.findByIdAndDecrementNumAvail(req.params.id)
     .then(function(p) {
-      return res.status(200).send({ok: true});
+      return res.status(200).send(p);
     });
 });
 

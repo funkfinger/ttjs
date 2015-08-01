@@ -5,7 +5,25 @@ var prizeSchema = new mongoose.Schema({
   numAvailable: { type: Number },
   numClaimed: { type: Number },
   imageUrl: { type: String }
+}, {
+  toObject: { virtuals: true },
+  toJSON: { virtuals: true }
 });
+
+prizeSchema.virtual('numRemaining').get(function() {
+  return this.numAvailable - this.numClaimed;
+});
+
+prizeSchema.statics.findByIdAndIncrementNumAvail = function(did) {
+  return Prize.findById(did).execAsync()
+    .then(function(p) {
+      if(!p) {throw new Error('can not find prize with did: ' + did);}
+      if (p.numClaimed > 0) {
+        p.numClaimed--;
+      }
+      return p.save();
+    });
+};
 
 prizeSchema.statics.findByIdAndDecrementNumAvail = function(did) {
   return Prize.findById(did).execAsync()

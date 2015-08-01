@@ -3,6 +3,27 @@ var Prize = db.Prize;
 
 describe('prize model tests', function(done) {
 
+  it('should have num remaining as math on num avail - num claimed', function(){
+    var p = new Prize({
+      name: 'num remaining',
+      numAvailable: 2,
+      numClaimed: 0,
+      imageUrl: 'http://blah.com/image.jpg'      
+    });
+    return p.saveAsync()
+      .then(function() {
+        return Prize.findById(p._id);
+      }).then(function(prize) {
+        assert.equal(prize.numRemaining, 2);
+        prize.numClaimed = 1;
+        return prize.saveAsync();
+      }).then(function() {
+        return Prize.findById(p._id);
+      }).then(function(prize) {
+        return assert.equal(prize.numRemaining, 1);
+      });
+  });
+
   it('should have a findByIdAndDecrementNumAvail method', function() {
     var p = new Prize({
       name: 'name',

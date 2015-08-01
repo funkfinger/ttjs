@@ -7,6 +7,10 @@ body {
   position: relative;
 }
 
+.prize {
+  position: relative;
+}
+
 .prize button {
   margin-top: 1em;
 }

@@ -7,16 +7,7 @@
 require("../assets/vendor/bootstrap-3.3.5-dist/js/bootstrap.min.js");
 require("../assets/vendor/react.js");
 
-var PrizeList = React.createClass({
-  getInitialState: function() {
-    return {prizes: []};
-  },
-  
-  componentDidMount: function() {
-    this.loadFromServer();
-    setInterval(this.loadFromServer, 2000);
-  },
-  
+var PrizeBox = React.createClass({
   loadFromServer: function() {
     var self = this;
     $.ajax({
@@ -24,20 +15,33 @@ var PrizeList = React.createClass({
       dataType: 'json',
       cache: false,
       success: function(data) {
-        self.setState({prizes: data});
+        this.setState({data: data});
       }.bind(this),
       error: function(xhr, status, err) {
         console.error('/api/v1/prizes', status, err.toString());
       }.bind(this)
     });
   },
-  
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.loadFromServer();
+    setInterval(this.loadFromServer, 3000);
+  },
   render: function() {
-    var prizes = [];
-    this.state.prizes.forEach(function(prize) {
-      prizes.push(React.createElement(Prize, {prize: prize, key: prize._id}));
+    return React.createElement("div", {className: "prize-box"}, React.createElement(PrizeList, {data: this.state.data}))
+  }
+});
+
+var PrizeList = React.createClass({
+  render: function() {
+    var prizes = this.props.data.map(function(prize) {
+      return React.createElement(Prize, {prize: prize, key: prize._id});
     });
-      
+    // this.state.prizes.forEach(function(prize) {
+    //   this.prizes.push(React.createElement(Prize, {prize: prize, key: prize._id}));
+    // }.bind(this));
     return (React.createElement("div", {className: "prize-container"}, prizes));
   }
 });
@@ -46,30 +50,26 @@ var Prize = React.createClass({
   getInitialState: function() {
     return this.props.prize;
   },
-  
   clickButt: function() {
-    console.log('this.state: ', this.state);
     $.ajax({
-      url: '/api/v1/prize/dec/' + this.state._id,
+      url: '/api/v1/prize/dec/' + this.props.prize._id,
       dataType: 'json',
       cache: false,
       success: function(data) {
-        console.log(data);
         // do nothing?
-        // this.setState({prizes: data});
+        // this.setState({prize: data});
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error('/api/v1/prize/dec/' + this.state._id, status, err.toString());
+        console.error('/api/v1/prize/dec/' + this.props.prize._id, status, err.toString());
       }.bind(this)
     });
-    
   },
   
   render: function() {
-    var prize = this.state;
-    var imgUrl = prize.imageUrl;
-    var numAvail = prize.numAvailable - prize.numClaimed
-    var avail = numAvail > 0 ? true : false;
+    console.log('this.props: ', this.props);
+    var prize = this.props.prize;
+    console.log('prize: ', prize)
+    var avail = this.props.prize.numRemaining > 0 ? true : false;
     var soldOutImage = avail ? React.createElement("span", null) : React.createElement("img", {src: "http://tonguetied.rocks.s3.amazonaws.com/images/prizes/sold-out-stamp.png", className: "img-responsive sold-out", alt: "Responsive image"});
     var buttonClass = avail ? ' btn-primary ' : ' disabled ';
     var labelClasses = avail ? 'label label-primary' : 'label label-default';
@@ -80,8 +80,8 @@ var Prize = React.createClass({
       React.createElement("div", {className: "panel panel-default prize"}, 
         React.createElement("div", {className: "panel-body"}, 
           soldOutImage, 
-          React.createElement("img", {src: imgUrl, className: "center-block img-responsive", alt: "Responsive image"}), 
-          React.createElement("p", {className: "lead"}, prize.name, " ", React.createElement("span", {className: labelClasses}, "Available ", numAvail, " ")),
+          React.createElement("img", {src: this.props.prize.imageUrl, className: "center-block img-responsive", alt: "Responsive image"}), 
+          React.createElement("p", {className: "lead"}, this.props.prize.name, " ", React.createElement("span", {className: labelClasses}, "Available ", this.props.prize.numRemaining, " ")),
           decButton
         )
       )
@@ -92,7 +92,7 @@ var Prize = React.createClass({
 
 React.render(
   // React.createElement(PrizeList, {prizes: prizes}),
-  React.createElement(PrizeList, {}),
+  React.createElement(PrizeBox, {}),
 //  <PrizeList url='/api/v1/phones' />,
   document.getElementById('content')
 );
