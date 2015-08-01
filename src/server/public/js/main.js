@@ -75,9 +75,7 @@ var Prize = React.createClass({
   },
   
   render: function() {
-    console.log('this.props: ', this.props);
     var prize = this.props.prize;
-    console.log('prize: ', prize)
     var avail = this.props.prize.numRemaining > 0 ? true : false;
     var soldOutImage = avail ? React.createElement("span", null) : React.createElement("img", {src: "http://tonguetied.rocks.s3.amazonaws.com/images/prizes/sold-out-stamp.png", className: "img-responsive sold-out", alt: "Responsive image"});
     var buttonClass = avail ? ' btn-primary ' : ' disabled ';
