@@ -13,6 +13,10 @@ global.sinon = sinon;
 global.expect = chai.expect;
 
 var nock = require('nock');
+nock.disableNetConnect();
+// nock.enableNetConnect(/(127\.0\.0\.1|plivo\.com)/);
+nock.enableNetConnect(/127\.0\.0\.1/);
+
 
 var helper = module.exports = {};
 

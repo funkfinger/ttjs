@@ -20,6 +20,9 @@ var phoneSchema = new mongoose.Schema({
 
 phoneSchema.methods.sendMessage = function(message) {
   var self = this;
+  if (!self.active) {
+    throw new Error('can not send to inactive phone');
+  }
   var om = new OutgoingMessage({body: message})
   return om.save().then(function() {
     self.outgoingMessages.push(om);
@@ -43,17 +46,25 @@ var Phone = mongoose.model('Phone', phoneSchema);
 var OutgoingMessage = mongoose.model('OutgoingMessage', outgoingMessageSchema);
 
 Phone.handleIncomingMessage = function(values) {
-  if ( !values['From'] ) { throw 'from value is undef.' }
+  //if ( !values['From'] ) { throw 'from value is undef.' }
   var im = { raw: JSON.stringify(values), body: values.Text };
   var firstWord = im.body.trim().split(' ')[0];
-  return Phone.findOne({number: values.From}).execAsync()
+  var phoneId;
+  return Promise.resolve(Phone.findOne({number: values.From}).execAsync()
     .then(function(p) {
       p = p ? p : new Phone({number: values.From})
       p.incomingMessages.push(im);
+      p.active = true;
+      phoneId = p._id;
       return p.saveAsync();
-    }).then(function(p) {
-      return PhoneGroup.findKeywordAndAddToGroup(firstWord, p[0]);
-    });
+    }).then(function(p1) {
+      return PhoneGroup.findKeywordAndAddToGroup(firstWord, p1[0]);
+    }).then(function(){
+      return Phone.findById(phoneId).execAsync();
+    }).then(function(rp) {
+      return rp;
+    })
+  );
 };
 
 module.exports = {

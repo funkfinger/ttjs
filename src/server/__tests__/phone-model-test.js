@@ -3,11 +3,41 @@ var Phone = db.Phone;
 var IncomingMessage = db.IncomingMessage;
 var OutgoingMessage = db.OutgoingMessage;
 
-// helper.nock.disableNetConnect();
-
 describe('phone model tests', function(done) {
 
   var toNum = 18005551212
+
+
+  it('should set active on incoming message', function() {
+    // db.mongoose.set('debug', true)
+    return new Phone({number: toNum, active: false}).saveAsync()
+      .then(function(newPhone) {
+        return assert.isFalse(newPhone[0].active, 'should be false');
+      }).then(function() {
+        return Phone.handleIncomingMessage(helper.samplePlivoParams)
+      }).then(function(p) {
+        return Phone.findOne({number: toNum})
+      }).then(function(num) {
+        return assert.ok(num.active, 'should be true');
+      });
+  });
+
+
+  it('should not send to non-active number', function(){
+    var m = helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"should not send","url":process.env.PLIVO_CALLBACK_URL})
+      .reply(202, {"api_id":"c1bbfa9a-3026-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["512c8a20-3a8b-425b-924b-fc2b5eXXXXXX"]}, { 'content-type': 'application/json',
+      date: 'Wed, 22 Jul 2015 04:10:51 GMT',
+      server: 'nginx/1.8.0',
+      'content-length': '156',
+      connection: 'Close' });
+    var p = new Phone({number: toNum, active: false});
+    return p.saveAsync().then(function() {
+      assert.throws(function() {
+        p.sendMessage('should not sendx');
+      })
+    });    
+  });
 
   it('should have plivo callback url set in env var', function() {
     assert.ok(process.env.PLIVO_CALLBACK_URL);
@@ -24,7 +54,7 @@ describe('phone model tests', function(done) {
       connection: 'Close' });
       
     var p = new Phone({number: toNum});
-    return p.save()
+    return p.saveAsync()
       .then(function() {
         return p.sendMessage('uuid should be set');
       }).then(function() {
