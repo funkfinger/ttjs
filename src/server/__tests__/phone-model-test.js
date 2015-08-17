@@ -7,6 +7,30 @@ describe('phone model tests', function(done) {
 
   var toNum = 18005551212
 
+  it('should deactivate on stop keyword', function() {
+    var phoneId;
+    return new Phone({number: toNum}).saveAsync()
+      .then(function(newNum) {
+        phoneId = newNum[0]._id;
+        return assert.ok(newNum[0].active, 'should be true');
+      }).then(function() {
+        var stopMessage = {
+          "From": toNum,
+          "TotalRate": "0.00000",
+          "Text": "StOp",
+          "To": "18005551313",
+          "Units": "1",
+          "TotalAmount": "0.00000",
+          "Type": "sms",
+          "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae383ea"
+        };
+        return Phone.handleIncomingMessage(stopMessage);
+      }).then(function() {
+        return Phone.findById(phoneId).execAsync()
+      }).then(function(updatedNum) {
+        return assert.isFalse(updatedNum.active);
+      });
+  });
 
   it('should set active on incoming message', function() {
     // db.mongoose.set('debug', true)
@@ -14,7 +38,7 @@ describe('phone model tests', function(done) {
       .then(function(newPhone) {
         return assert.isFalse(newPhone[0].active, 'should be false');
       }).then(function() {
-        return Phone.handleIncomingMessage(helper.samplePlivoParams)
+        return Phone.handleIncomingMessage(helper.samplePlivoParams);
       }).then(function(p) {
         return Phone.findOne({number: toNum})
       }).then(function(num) {

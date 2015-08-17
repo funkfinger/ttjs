@@ -42,6 +42,10 @@ phoneSchema.methods.sendMessage = function(message) {
   });
 };
 
+phoneSchema.methods.processStopKeywords = function(kw) {
+  this.active = kw.toLowerCase() == 'stop' ? false : true;
+};
+
 var Phone = mongoose.model('Phone', phoneSchema);
 var OutgoingMessage = mongoose.model('OutgoingMessage', outgoingMessageSchema);
 
@@ -54,7 +58,7 @@ Phone.handleIncomingMessage = function(values) {
     .then(function(p) {
       p = p ? p : new Phone({number: values.From})
       p.incomingMessages.push(im);
-      p.active = true;
+      p.processStopKeywords(firstWord);
       phoneId = p._id;
       return p.saveAsync();
     }).then(function(p1) {
