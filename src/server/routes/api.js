@@ -9,6 +9,14 @@ var PhoneGroup = db.PhoneGroup;
 var AccessLog = db.AccessLog;
 var OutgoingMessage = db.OutgoingMessage;
 
+// list access log (al)
+router.get('/al', function (req, res) {
+  AccessLog.find().execAsync()
+    .then(function (als) {
+      res.send(als);
+    })
+});
+
 // list outgoing messages (om)
 router.get('/om', function (req, res) {
   OutgoingMessage.find().execAsync()

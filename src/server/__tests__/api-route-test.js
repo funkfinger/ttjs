@@ -12,6 +12,17 @@ var toNum = 18005551212
 
 describe('api tests', function() {
 
+  it('should list access logs', function() {
+    var al = new db.AccessLog({data: 'data'}).saveAsync()
+      .then(function() {
+        return request(app).get('/api/v1/al')
+        .expect(200);        
+      }).then(function(res) {
+        console.log(res.body);
+        assert.equal(res.body[0].data, 'data');
+      });
+  });
+
   it('should list outgoing messages', function() {
     var uuid = "5954b6ca-f5e6-4e59-87a4-7ae2a0XXXXXX";
     helper.nock('https://api.plivo.com:443')
@@ -29,7 +40,7 @@ describe('api tests', function() {
           .expect(200)
       }).then(function(res){
         assert.equal(res.body[0].uuid, uuid);
-      })
+      });
   });
 
   it('should dec num claimed prize count on get', function() {
