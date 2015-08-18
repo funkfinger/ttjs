@@ -30,7 +30,14 @@ router.post('/om', function (req, res) {
   var jsonReq =  JSON.stringify(req.body);
   var al = new AccessLog({data: jsonReq});
   al.saveAsync()
-    .then(function(){
+    .then(function() {
+      return OutgoingMessage.findOne({uuid: req.body.ParentMessageUUID}).execAsync();      
+    }).then(function(om) {
+      if (om) {
+        om.messageStatus = req.body.Status;
+        return om.saveAsync();
+      }
+    }).then(function(){
       res.send({ok: true});
     })
 });
