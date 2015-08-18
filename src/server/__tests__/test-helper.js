@@ -23,13 +23,24 @@ var helper = module.exports = {};
 helper.nock = nock;
 // nock.recorder.rec();
 
+helper.makeGenericNock = function() {
+  var toNum = 18005551212;
+  return nock('https://api.plivo.com:443')
+    .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":process.env.GENERIC_TEXT_RESPONSE,"url":process.env.PLIVO_CALLBACK_URL})
+    .reply(202, {"api_id":"caf37bd6-4572-11e5-bfa2-22000aXXXXXX","message":"message(s) queued","message_uuid":["fbf30c47-e717-4eba-8041-cefc93XXXXXX"]}, { 'content-type': 'application/json',
+    date: 'Tue, 18 Aug 2015 06:31:43 GMT',
+    server: 'nginx/1.8.0',
+    'content-length': '156',
+    connection: 'Close' });
+};
+
 helper.exists = true;
 
 helper.samplePlivoParams = {
   "From": "18005551212",
   "TotalRate": "0.00000",
   "Text": "SmS TeXt",
-  "To": "18005551313",
+  "To": process.env.PLIVO_NUMBER,
   "Units": "1",
   "TotalAmount": "0.00000",
   "Type": "sms",

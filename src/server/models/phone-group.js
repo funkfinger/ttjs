@@ -25,55 +25,53 @@ phoneGroupSchema.methods.sendMessage = function(message) {
     });
 };
 
-var PhoneGroup = mongoose.model('PhoneGroup', phoneGroupSchema);
-
-PhoneGroup.findKeywordAndAddToGroup = function(keyword, phone) {
-
-  // return new Promise(function (resolve, reject) {
-  //   return PhoneGroup.findOne({keyword: keyword.toLowerCase()}).execAsync()
-  //     .then(function(phoneGroup) {
-  //       if(phoneGroup) {
-  //         phoneGroup.phones.push(phone._id);
-  //         return phoneGroup.saveAsync()
-  //           .then(function() {
-  //             if(phoneGroup.signupResponse) {
-  //               return phone.sendMessage(phoneGroup.signupResponse);
-  //             }
-  //             else {
-  //               return;
-  //             }
-  //           }).then(function() {
-  //             resolve();
-  //           }).catch(function() {
-  //             throw new Error('something went wrong');
-  //           })
-  //       }
-  //     })
-  // });
-  
-  
-  
+phoneGroupSchema.statics.findKeywordAndAddToGroup = function(keyword, phone) {
+  var genericResponse = process.env.GENERIC_TEXT_RESPONSE;
   var pid = phone._id;
   var pg;
   return Promise.resolve(PhoneGroup.findOne({keyword: keyword.toLowerCase()}).execAsync()
     .then(function(g) {
       pg = g;
-      if(pg) {
-        if (pid) {
+      if (pg) {
+        // if (pid) {
           pg.phones.push(pid);
           return pg.saveAsync()
             .then(function() {
-              return pg.signupResponse ? phone.sendMessage(pg.signupResponse) : function(){};
+              return pg.signupResponse ? phone.sendMessage(pg.signupResponse) : phone.sendMessage(genericResponse);
             });
-        }
+        // }
       }
-      // this seems weird to me... may need to revisit, but it needs to return a 'promise
-      // i probably just don't understand how promises should work...
-      return function(){};
+      else {
+        return phone.sendMessage(genericResponse);
+      }
     }));
 
 
 };
+
+var PhoneGroup = mongoose.model('PhoneGroup', phoneGroupSchema);
+
+// PhoneGroup.findKeywordAndAddToGroup = function(keyword, phone) {
+//   var genericResponse = Phone.genericResponse();
+//   var pid = phone._id;
+//   var pg;
+//   return Promise.resolve(PhoneGroup.findOne({keyword: keyword.toLowerCase()}).execAsync()
+//     .then(function(g) {
+//       pg = g;
+//       if (pg) {
+//         // if (pid) {
+//           pg.phones.push(pid);
+//           return pg.saveAsync()
+//             .then(function() {
+//               return pg.signupResponse ? phone.sendMessage(pg.signupResponse) : phone.sendMessage(genericResponse);
+//             });
+//         // }
+//       }
+//       else {
+//         return phone.sendMessage(genericResponse);
+//       }
+//     }));
+// };
 
 module.exports = {
   PhoneGroup: PhoneGroup

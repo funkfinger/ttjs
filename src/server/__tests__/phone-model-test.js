@@ -3,9 +3,35 @@ var Phone = db.Phone;
 var IncomingMessage = db.IncomingMessage;
 var OutgoingMessage = db.OutgoingMessage;
 
+var toNum = 18005551212
+
+
 describe('phone model tests', function(done) {
 
-  var toNum = 18005551212
+  it('should have a catchall keyword', function(done) {
+
+    var m = helper.makeGenericNock();
+    
+    return new Phone({number: toNum}).saveAsync()
+      .then(function(newNum) {
+        var noKeywordMessage = {
+          "From": toNum,
+          "TotalRate": "0.00000",
+          "Text": 'nokey',
+          "To": "18005551313",
+          "Units": "1",
+          "TotalAmount": "0.00000",
+          "Type": "sms",
+          "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae383ea"
+        };
+        return Phone.handleIncomingMessage(noKeywordMessage);
+      }).then(function() {
+        return assert.ok(m.isDone(), "m is not done");
+      }).then(function() {
+        done();
+      })
+    
+  });
 
   it('should send unsubscribe message upon end keyword', function(done) {
     
@@ -48,6 +74,8 @@ describe('phone model tests', function(done) {
   });
 
   it('should only create one phone on handleIncomingMessage', function() {
+    helper.makeGenericNock();
+    helper.makeGenericNock();
     return Phone.handleIncomingMessage({
       "From": toNum,
       "TotalRate": "0.00000",
@@ -76,6 +104,7 @@ describe('phone model tests', function(done) {
   });
 
   it('should deactivate on end keyword', function() {
+    helper.makeGenericNock();
     var phoneId;
     var word;
     return new Phone({number: toNum}).saveAsync()
@@ -268,6 +297,9 @@ describe('phone model tests', function(done) {
   });
 
   it('should create on phone and multiple incoming messages', function() {
+    helper.makeGenericNock();
+    helper.makeGenericNock();
+    helper.makeGenericNock();
     return Phone.handleIncomingMessage(helper.samplePlivoParams)
       .then(function() {
         return Phone.handleIncomingMessage(helper.samplePlivoParams);
@@ -288,7 +320,8 @@ describe('phone model tests', function(done) {
       })
   });
 
-  it('should create a record when createFromParams method is executed', function(){
+  it('should create a record when createFromParams method is executed', function(){    
+    var m = helper.makeGenericNock();
     return Phone.count()
       .then(function(c1){
         assert.equal(c1, 0, 'count should start at 0');

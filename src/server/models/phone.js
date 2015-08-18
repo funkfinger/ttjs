@@ -70,7 +70,8 @@ Phone.handleIncomingMessage = function(values) {
       phoneId = p._id;
       return p.saveAsync();
     }).then(function(p1) {
-      return PhoneGroup.findKeywordAndAddToGroup(firstWord, p1[0]);
+      return p1[0].active ? PhoneGroup.findKeywordAndAddToGroup(firstWord, p1[0]) : null;
+      // return PhoneGroup.findKeywordAndAddToGroup(firstWord, p1[0]);
     }).then(function(){
       return Phone.findById(phoneId).execAsync();
     }).then(function(rp) {
@@ -78,6 +79,11 @@ Phone.handleIncomingMessage = function(values) {
     })
   );
 };
+
+Phone.genericResponse = function() {
+  return "Thanks for your interest in Tongue Tied. We party the 1st Saturday of every month at Linger Longer Lounge. If you want to unsubscribe, txt STOP";
+}
+
 
 module.exports = {
   Phone: Phone,

@@ -224,6 +224,7 @@ describe('api tests', function() {
   });
 
   it('should on incoming message add phone to a phone group if the keyword exists', function() {
+    helper.makeGenericNock();
     var p;
     return new db.PhoneGroup({keyword: 'im_a_keyword'}).saveAsync()
       .then(function() {
@@ -297,6 +298,7 @@ describe('api tests', function() {
   });
   
   it('should delete phone with delete request', function() {
+    helper.makeGenericNock();
     var pid;
     return request(app).post('/api/v1/im').send(sample)
       .then(function() {
@@ -314,6 +316,7 @@ describe('api tests', function() {
   });
   
   it('should list phones with get request', function() {
+    helper.makeGenericNock();
     return request(app).post('/api/v1/im').send(sample)
       .then(function() {
         return request(app).get('/api/v1/phones')
@@ -353,6 +356,9 @@ describe('api tests', function() {
   });
 
   it('should create one phone and multiple incoming messages when incoming meesage is called', function() {
+    helper.makeGenericNock();
+    helper.makeGenericNock();
+    helper.makeGenericNock();
     return request(app).post('/api/v1/im').send(sample)
       .then(function() {
         return request(app).post('/api/v1/im').send(sample)
@@ -370,6 +376,7 @@ describe('api tests', function() {
   });
 
   it('should create a phone entry when a post is made to im', function() {
+    helper.makeGenericNock();
     return request(app).post('/api/v1/im').send(sample)
       .expect(201)
       .then(function(){
