@@ -43,7 +43,14 @@ phoneSchema.methods.sendMessage = function(message) {
 };
 
 phoneSchema.methods.processStopKeywords = function(kw) {
-  this.active = kw.toLowerCase() == 'stop' ? false : true;
+  var deactivate = false;
+  var stopKeywords = ['stop', 'end', 'unsubscribe', 'remove', 'quit', 'block']
+  stopKeywords.forEach(function(skw) {
+    if(kw.toLowerCase() == skw.toLowerCase()) {
+      deactivate = true;
+    }
+  })
+  this.active = deactivate ? false : true;
 };
 
 var Phone = mongoose.model('Phone', phoneSchema);

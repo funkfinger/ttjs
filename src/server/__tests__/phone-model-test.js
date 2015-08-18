@@ -7,17 +7,47 @@ describe('phone model tests', function(done) {
 
   var toNum = 18005551212
 
-  it('should deactivate on stop keyword', function() {
+  it('should only create one phone on handleIncomingMessage', function() {
+    return Phone.handleIncomingMessage({
+      "From": toNum,
+      "TotalRate": "0.00000",
+      "Text": 'word1',
+      "To": "18005551313",
+      "Units": "1",
+      "TotalAmount": "0.00000",
+      "Type": "sms",
+      "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae383ea"
+    }).then(function() {
+      return Phone.handleIncomingMessage({
+        "From": toNum,
+        "TotalRate": "0.00000",
+        "Text": 'word2',
+        "To": "18005551313",
+        "Units": "1",
+        "TotalAmount": "0.00000",
+        "Type": "sms",
+        "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae383ea"
+    });
+  }).then(function() {
+    return Phone.find({number: toNum}).execAsync()
+    }).then(function(phones) {
+      assert.equal(phones.length, 1);
+    })
+  });
+
+  it('should deactivate on end keyword', function() {
     var phoneId;
+    var word;
     return new Phone({number: toNum}).saveAsync()
       .then(function(newNum) {
+        word = 'end';
         phoneId = newNum[0]._id;
         return assert.ok(newNum[0].active, 'should be true');
       }).then(function() {
         var stopMessage = {
           "From": toNum,
           "TotalRate": "0.00000",
-          "Text": "StOp",
+          "Text": word,
           "To": "18005551313",
           "Units": "1",
           "TotalAmount": "0.00000",
@@ -28,7 +58,34 @@ describe('phone model tests', function(done) {
       }).then(function() {
         return Phone.findById(phoneId).execAsync()
       }).then(function(updatedNum) {
-        return assert.isFalse(updatedNum.active);
+        return assert.isFalse(updatedNum.active, word);
+      });
+  });
+
+  it('should deactivate on stop keyword', function() {
+    var phoneId;
+    var word;
+    return new Phone({number: toNum}).saveAsync()
+      .then(function(newNum) {
+        word = 'StoP';
+        phoneId = newNum[0]._id;
+        return assert.ok(newNum[0].active, 'should be true');
+      }).then(function() {
+        var stopMessage = {
+          "From": toNum,
+          "TotalRate": "0.00000",
+          "Text": word,
+          "To": "18005551313",
+          "Units": "1",
+          "TotalAmount": "0.00000",
+          "Type": "sms",
+          "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae383ea"
+        };
+        return Phone.handleIncomingMessage(stopMessage);
+      }).then(function() {
+        return Phone.findById(phoneId).execAsync()
+      }).then(function(updatedNum) {
+        return assert.isFalse(updatedNum.active, word);
       });
   });
 
