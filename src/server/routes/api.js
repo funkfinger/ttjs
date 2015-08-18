@@ -7,6 +7,15 @@ var Phone = db.Phone;
 var Prize = db.Prize;
 var PhoneGroup = db.PhoneGroup;
 var AccessLog = db.AccessLog;
+var OutgoingMessage = db.OutgoingMessage;
+
+// list outgoing messages (om)
+router.get('/om', function (req, res) {
+  OutgoingMessage.find().execAsync()
+    .then(function (oms) {
+      res.send(oms);
+    })
+});
 
 // update om status
 router.post('/om', function (req, res) {

@@ -210,7 +210,7 @@ describe('phone model tests', function(done) {
       }).then(function() {
         return Phone.findById(p._id).populate('outgoingMessages').execAsync();
       }).then(function(phone) {
-        return assert.equal(phone.outgoingMessages[0].uuid, 'dc355646-336e-11e5-a541-22000aXXXXXX');
+        return assert.equal(phone.outgoingMessages[0].uuid, "451eb6f2-58c5-49bc-b58f-3f2ed7XXXXXX");
       });
   });
 

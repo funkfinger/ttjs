@@ -8,6 +8,8 @@ function dropCollections() {
       db.PhoneGroup.remove({}).execAsync();
     }).then(function() {
       db.AccessLog.remove({}).execAsync();
+    }).then(function() {
+      db.OutgoingMessage.remove({}).execAsync();
     })
 }
 

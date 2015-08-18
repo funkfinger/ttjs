@@ -33,7 +33,7 @@ phoneSchema.methods.sendMessage = function(message) {
     // TODO: move to callback?...
     if(/queued/.test(res[0].body.message)) {
       om.messageStatus = 'queued';
-      om.uuid = res[0].body.api_id;
+      om.uuid = res[0].body.message_uuid;
       return om.saveAsync();
     }
     else {

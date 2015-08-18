@@ -12,6 +12,26 @@ var toNum = 18005551212
 
 describe('api tests', function() {
 
+  it('should list outgoing messages', function() {
+    var uuid = "5954b6ca-f5e6-4e59-87a4-7ae2a0XXXXXX";
+    helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"sample","url":process.env.PLIVO_CALLBACK_URL})
+      .reply(202, {"api_id":"44adaf8e-342d-11e5-a188-22000aXXXXXX","message":"message(s) queued","message_uuid":[uuid]}, { 'content-type': 'application/json',
+      date: 'Tue, 18 Aug 2015 08:02:56 GMT',
+      server: 'nginx/1.8.0',
+      'content-length': '103',
+      connection: 'Close' });
+    
+    var p = new db.Phone({number: toNum});
+    return p.sendMessage('sample')
+      .then(function() {
+        return request(app).get('/api/v1/om')
+          .expect(200)
+      }).then(function(res){
+        assert.equal(res.body[0].uuid, uuid);
+      })
+  });
+
   it('should dec num claimed prize count on get', function() {
     p = new db.Prize({"name": "prize name", "numAvailable": 2, "numClaimed": 1, "imageUrl": "http://example.org/image.jpg"});
     return p.saveAsync()
