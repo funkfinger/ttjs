@@ -46,10 +46,11 @@ phoneSchema.methods.processStopKeywords = function(kw) {
   var deactivate = false;
   var stopKeywords = ['stop', 'end', 'unsubscribe', 'remove', 'quit', 'block']
   stopKeywords.forEach(function(skw) {
-    if(kw.toLowerCase() == skw.toLowerCase()) {
+    if (kw.toLowerCase() == skw.toLowerCase()) {
+      this.sendMessage('unsubscribed');
       deactivate = true;
     }
-  })
+  }.bind(this));
   this.active = deactivate ? false : true;
 };
 
