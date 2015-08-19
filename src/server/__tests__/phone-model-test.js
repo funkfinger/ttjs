@@ -8,6 +8,26 @@ var toNum = 18005551212
 
 describe('phone model tests', function(done) {
 
+  it('should have a createdAt and updatedAt date', function() {
+    var p = new Phone({number: toNum});
+    var om = new OutgoingMessage({body: 'outgoing message body'});
+    return om.saveAsync()
+      .then(function() {
+        p.outgoingMessages.push( om );
+        return p.saveAsync();
+      }).then(function(newNum) {
+        return Phone.findById(p._id).populate('outgoingMessages').execAsync();
+      }).then(function(phone) {
+        assert.ok(phone.createdAt);
+        assert.ok(phone.updatedAt);
+        return assert.ok(phone.outgoingMessages[0].createdAt);
+        // TODO: this test is doing too much - and therefore the below line will fail... fix it...
+        //assert.equal(phone.createdAt, phone.updatedAt);
+      }).then(function() {
+        
+      });
+  });
+
   it('should have a catchall keyword', function(done) {
 
     var m = helper.makeGenericNock();

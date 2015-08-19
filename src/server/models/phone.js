@@ -5,7 +5,18 @@ var textMessage = require('../text_message.js');
 var outgoingMessageSchema = new mongoose.Schema({
   body: { type: String, required: true },
   uuid: { type: String },
-  messageStatus: { type: String }
+  messageStatus: { type: String },
+  createdAt: { type: Date },
+  updatedAt: { type: Date }
+});
+
+outgoingMessageSchema.pre('save', function(next){
+  now = new Date();
+  this.updatedAt = now;
+  if ( !this.createdAt ) {
+    this.createdAt = now;
+  }
+  next();
 });
 
 var phoneSchema = new mongoose.Schema({
@@ -15,7 +26,18 @@ var phoneSchema = new mongoose.Schema({
     raw: { type: String },
     body: { type: String }
   }],
-  outgoingMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OutgoingMessage' }]
+  outgoingMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OutgoingMessage' }],
+  createdAt: { type: Date },
+  updatedAt: { type: Date }
+});
+
+phoneSchema.pre('save', function(next){
+  now = new Date();
+  this.updatedAt = now;
+  if ( !this.createdAt ) {
+    this.createdAt = now;
+  }
+  next();
 });
 
 phoneSchema.methods.sendMessage = function(message) {

@@ -37,7 +37,6 @@ describe('api tests', function() {
         }).then(function() {
           return db.OutgoingMessage.findOne({uuid: uuid}).execAsync();
         }).then(function(om) {
-          console.log(om);
           return assert.equal(om.messageStatus, 'sent');
         });
     
@@ -49,7 +48,6 @@ describe('api tests', function() {
         return request(app).get('/api/v1/al')
         .expect(200);        
       }).then(function(res) {
-        console.log(res.body);
         assert.equal(res.body[0].data, 'data');
       });
   });
