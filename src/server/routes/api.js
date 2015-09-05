@@ -138,6 +138,7 @@ router.put('/prize/:id', function(req, res) {
           prize.numAvailable = req.body.numAvailable ? req.body.numAvailable : prize.numAvailable;
           prize.numClaimed = req.body.numClaimed ? req.body.numClaimed : prize.numClaimed;
           prize.imageUrl = req.body.imageUrl ? req.body.imageUrl : prize.imageUrl;
+          prize.active = req.body.active ? req.body.active : prize.active;
           return prize.save();
         }
         else {
