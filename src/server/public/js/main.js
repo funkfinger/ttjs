@@ -83,6 +83,7 @@ var Prize = React.createClass({
     var claimText = avail ? "CLAIM ME!" : "sorry, all claimed.";
     var decButton = window.location.search.match(/blah/) ? React.createElement("button", {className: 'btn btn-danger', onClick: this.clickDecButt}, "subtract 1") : "";
     var incButton = window.location.search.match(/blah/) ? React.createElement("button", {className: 'btn btn-success', onClick: this.clickIncButt}, "add 1") : "";
+    var prizeIdDiv = window.location.search.match(/blah/) ?  React.createElement("div", {}, prize._id) : "";
     
     return (
       React.createElement("div", {className: "panel panel-default prize"}, 
@@ -90,7 +91,7 @@ var Prize = React.createClass({
           soldOutImage, 
           React.createElement("img", {src: this.props.prize.imageUrl, className: "center-block img-responsive", alt: "Responsive image"}), 
           React.createElement("p", {className: "lead"}, this.props.prize.name, " ", React.createElement("span", {className: labelClasses}, "Available ", this.props.prize.numRemaining, " ")),
-          decButton, incButton
+          decButton, incButton, prizeIdDiv
         )
       )
     )

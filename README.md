@@ -4,6 +4,14 @@ Tongue Tied as JS
 
 ### notes:
 
+starting server:
+- start mongo in terminal
+    mongod
+- in another terminal
+    nvm use
+    foreman run npm run start
+
+
 mocha watch command:
 
     foreman run npm run mocha-watch

@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var url = require('url');
+
 
 // putting 'controller' code here for now. will probably seperate at some point...
 var db = require('../db');
@@ -41,6 +43,17 @@ router.post('/om', function (req, res) {
       res.send({ok: true});
     })
 });
+
+// send message to keyword group
+router.post('/keyword/:id/send', function (req, res) {
+  PhoneGroup.findById(req.params.id).execAsync()
+    .then(function(pg) {
+      return pg.sendMessage(req.body.message);
+    }).then(function() {
+      res.send({ok: true});
+    })
+});
+
 
 // create phonegroup (keyword)
 router.post('/keyword', function (req, res) {
@@ -108,7 +121,9 @@ router.post('/prizes', function (req, res) {
 
 // read prizes
 router.get('/prizes', function (req, res) {
-  Prize.find({}).execAsync().then(function(prizes) {
+  var query = url.parse(req.url, true).query;
+  var limit = query.inactive == "1" ? {} : {active: true};
+  Prize.find(limit).execAsync().then(function(prizes) {
     res.send(prizes);
   })
 });

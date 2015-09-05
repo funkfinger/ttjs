@@ -4,10 +4,11 @@ var prizeSchema = new mongoose.Schema({
   name: { type: String, required: true },
   numAvailable: { type: Number },
   numClaimed: { type: Number },
+  active: { type: Boolean, required: true, default: true },
   imageUrl: { type: String }
 }, {
   toObject: { virtuals: true },
-  toJSON: { virtuals: true }
+  toJSON: { virtuals: true },
 });
 
 prizeSchema.virtual('numRemaining').get(function() {

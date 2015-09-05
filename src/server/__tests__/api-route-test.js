@@ -12,6 +12,102 @@ var toNum = 18005551212
 
 describe('api tests', function() {
 
+  it('should list all prizes active prizes with inactive flag', function() {
+    var p = new db.Prize({
+      name: 'prize name',
+      numAvailable: 1,
+      numClaimed: 0,
+      imageUrl: 'http://blah.com/image.jpg'
+    });
+    return p.saveAsync()
+      .then(function() {
+        return request(app)
+          .get('/api/v1/prizes?inactive=1')
+          .expect(200)
+      }).then(function(r) {
+        return assert.equal(r.body.length, 1);
+      }).then(function (){
+        return db.Prize.findById(p._id).execAsync()
+      }).then(function(prize) {
+        prize.active = false;
+        return prize.saveAsync();
+      }).then(function() {
+        return request(app)
+          .get('/api/v1/prizes?inactive=1')
+          .expect(200)
+      }).then(function(r) {
+        return assert.equal(r.body.length, 1);
+      });
+    });
+
+
+  it('should list only active prizes without inactive flag', function() {
+    var p = new db.Prize({
+      name: 'prize name',
+      numAvailable: 1,
+      numClaimed: 0,
+      imageUrl: 'http://blah.com/image.jpg'
+    });
+    return p.saveAsync()
+      .then(function() {
+        return request(app)
+          .get('/api/v1/prizes')
+          .expect(200)
+      }).then(function(r) {
+        return assert.equal(r.body.length, 1);
+      }).then(function (){
+        return db.Prize.findById(p._id).execAsync()
+      }).then(function(prize) {
+        prize.active = false;
+        return prize.saveAsync();
+      }).then(function() {
+        return request(app)
+          .get('/api/v1/prizes')
+          .expect(200)
+      }).then(function(r) {
+        return assert.equal(r.body.length, 0);
+      });
+    });
+
+  it('should send messages to group via api', function() {
+    var pg = new db.PhoneGroup({keyword: 'group'});
+    var phones = [];
+    var toNums = [18005551212, 18005551213, 18005551214];
+    var nocks = [];
+    toNums.forEach(function(num) {
+      p = new db.Phone({number: num});
+      p.save()
+      phones.push(p);
+      nocks.push(helper.nock('https://api.plivo.com:443')
+        .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":num,"text":"test message to group via api","url":process.env.PLIVO_CALLBACK_URL})
+        .reply(202, {"api_id":"34489f3c-34f0-11e5-bfa2-22000afaXXXX","message":"message(s) queued","message_uuid":["a1d67e58-f35a-47da-ab0b-5d1cd06aXXXX"]}, { 'content-type': 'application/json',
+        date: 'Tue, 28 Jul 2015 06:16:37 GMT',
+        server: 'nginx/1.8.0',
+        connection: 'Close' }));
+    });
+    pg.phones = phones;
+    var pgId;
+    return pg.saveAsync()
+      .then(function(){
+        return db.PhoneGroup.findById(pg._id).execAsync();
+      }).then(function(pg1) {
+        pgId = pg1._id;
+        return assert.equal(pg1.phones.length, 3);
+      }).then(function() {
+        return request(app)
+          .post('/api/v1/keyword/' + pgId + '/send')
+          .send({message: "test message to group via api"})
+          .expect(200);
+      }).then(function() {
+        return assert.ok(nocks[2].isDone());
+      });
+    
+    
+    
+    
+    
+  })
+
   it('should update status on plivo response', function() {
     var uuid = "5954b6ca-f5e6-4e59-87a4-7ae2a0XXXXXX";
     helper.nock('https://api.plivo.com:443')
@@ -43,12 +139,12 @@ describe('api tests', function() {
   });
 
   it('should list access logs', function() {
-    var al = new db.AccessLog({data: 'data'}).saveAsync()
+    return new db.AccessLog({data: 'data'}).saveAsync()
       .then(function() {
         return request(app).get('/api/v1/al')
         .expect(200);        
       }).then(function(res) {
-        assert.equal(res.body[0].data, 'data');
+        return assert.equal(res.body[0].data, 'data');
       });
   });
 

@@ -3,6 +3,23 @@ var Prize = db.Prize;
 
 describe('prize model tests', function(done) {
 
+  it('should have an active flag on prizes', function() {
+    var p = new Prize({
+      name: 'prize name',
+      numAvailable: 1,
+      numClaimed: 0,
+      imageUrl: 'http://blah.com/image.jpg'
+    });
+    return p.saveAsync()
+      .then(function() {
+        return Prize.findById(p._id);
+      }).then(function(prize) {
+        console.log(prize);
+        return assert.ok(prize.active);
+    });
+  });
+
+
   it('should have num remaining as math on num avail - num claimed', function(){
     var p = new Prize({
       name: 'num remaining',
