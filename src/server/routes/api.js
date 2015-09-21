@@ -12,6 +12,17 @@ var PhoneGroup = db.PhoneGroup;
 var AccessLog = db.AccessLog;
 var OutgoingMessage = db.OutgoingMessage;
 
+/////////// PUBLIC API - no auth required
+// read prizes
+router.get('/prizes', function (req, res) {
+  var query = url.parse(req.url, true).query;
+  var limit = query.inactive == "1" ? {} : {active: true};
+  Prize.find(limit).execAsync().then(function(prizes) {
+    res.send(prizes);
+  })
+});
+
+//////////// private api - auth required
 
 router.all('*', function(req, res, next) {
   var credentials = auth(req);
@@ -130,15 +141,6 @@ router.post('/prizes', function (req, res) {
     .then(function() {
       res.status(201).send({ok: true});
     });
-});
-
-// read prizes
-router.get('/prizes', function (req, res) {
-  var query = url.parse(req.url, true).query;
-  var limit = query.inactive == "1" ? {} : {active: true};
-  Prize.find(limit).execAsync().then(function(prizes) {
-    res.send(prizes);
-  })
 });
 
 // update prizes

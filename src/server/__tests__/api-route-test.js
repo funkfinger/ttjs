@@ -530,7 +530,7 @@ describe('api tests', function() {
       .then(function() {
         return request(app)
           .get('/api/v1/prizes')
-          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+          // .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS) <<<<  should be public!
       }).then(function(res) {
         assert.equal(res.status, 200);
         assert.equal(res.body[0].name, 'prize name');
