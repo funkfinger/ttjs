@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/funkfinger/ttjs",
   "dependencies": {
+    "basic-auth": "^1.0.3",
     "bluebird": "^2.9.30",
     "body-parser": "^1.13.1",
     "css-loader": "^0.15.2",

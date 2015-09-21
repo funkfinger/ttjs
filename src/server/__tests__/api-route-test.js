@@ -23,6 +23,7 @@ describe('api tests', function() {
       .then(function() {
         return request(app)
           .get('/api/v1/prizes?inactive=1')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200)
       }).then(function(r) {
         return assert.equal(r.body.length, 1);
@@ -34,6 +35,7 @@ describe('api tests', function() {
       }).then(function() {
         return request(app)
           .get('/api/v1/prizes?inactive=1')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200)
       }).then(function(r) {
         return assert.equal(r.body.length, 1);
@@ -52,6 +54,7 @@ describe('api tests', function() {
       .then(function() {
         return request(app)
           .get('/api/v1/prizes')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200)
       }).then(function(r) {
         return assert.equal(r.body.length, 1);
@@ -63,6 +66,7 @@ describe('api tests', function() {
       }).then(function() {
         return request(app)
           .get('/api/v1/prizes')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200)
       }).then(function(r) {
         return assert.equal(r.body.length, 0);
@@ -96,6 +100,7 @@ describe('api tests', function() {
       }).then(function() {
         return request(app)
           .post('/api/v1/keyword/' + pgId + '/send')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .send({message: "test message to group via api"})
           .expect(200);
       }).then(function() {
@@ -122,6 +127,7 @@ describe('api tests', function() {
         .then(function() {
           return request(app)
             .post('/api/v1/om')
+            .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
             .send({
               "To": process.env.PLIVO_NUMBER,
               "From": process.env.PLIVO_NUMBER,
@@ -142,6 +148,7 @@ describe('api tests', function() {
     return new db.AccessLog({data: 'data'}).saveAsync()
       .then(function() {
         return request(app).get('/api/v1/al')
+        .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
         .expect(200);        
       }).then(function(res) {
         return assert.equal(res.body[0].data, 'data');
@@ -162,6 +169,7 @@ describe('api tests', function() {
     return p.sendMessage('sample')
       .then(function() {
         return request(app).get('/api/v1/om')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200)
       }).then(function(res){
         assert.equal(res.body[0].uuid, uuid);
@@ -174,7 +182,8 @@ describe('api tests', function() {
       .then(function() {
         return assert.equal(p.numClaimed, 1);
       }).then(function() {
-        return request(app).get('/api/v1/prize/inc/' + p._id)        
+        return request(app).get('/api/v1/prize/inc/' + p._id)       
+           .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200)
       }).then(function() {
         return db.Prize.findById(p._id).execAsync()
@@ -189,6 +198,7 @@ describe('api tests', function() {
     return p.saveAsync()
       .then(function() {
         return request(app).get('/api/v1/prize/dec/' + p._id)
+        .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
         .expect(200);
       }).then(function(res) {
         assert.equal(res.body.numClaimed, 1);
@@ -202,7 +212,8 @@ describe('api tests', function() {
       .then(function() {
         return assert.equal(p.numClaimed, 0);
       }).then(function() {
-        return request(app).get('/api/v1/prize/dec/' + p._id)        
+        return request(app).get('/api/v1/prize/dec/' + p._id)
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200)
       }).then(function() {
         return db.Prize.findById(p._id).execAsync()
@@ -215,6 +226,7 @@ describe('api tests', function() {
   it('should be able to populate phone group keyword signupResponse on create', function() {
     return request(app).post('/api/v1/keyword')
       .send({keyword: 'kw', signupResponse: 'created'})
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       .expect(201)
       .then(function() {
         return db.PhoneGroup.findOne({keyword: 'kw'}).execAsync();
@@ -229,6 +241,7 @@ describe('api tests', function() {
       .then(function() {
         return request(app).put('/api/v1/keyword/' + pg._id)
           .send({signupResponse: 'second'})
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200)
       }).then(function(){
         return db.PhoneGroup.findById(pg._id).execAsync();
@@ -250,15 +263,18 @@ describe('api tests', function() {
     
     return new db.PhoneGroup({keyword: 'welcome', signupResponse: 'howdy'}).saveAsync()
       .then(function() {
-        return request(app).post('/api/v1/im').send({
-          "From": toNum,
-          "TotalRate": "0.00000",
-          "Text": "WeLcOmE",
-          "To": process.env.PLIVO_NUMBER,
-          "Units": "1",
-          "TotalAmount": "0.00000",
-          "Type": "sms",
-          "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae3XXXX"
+        return request(app)
+          .post('/api/v1/im')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+          .send({
+            "From": toNum,
+            "TotalRate": "0.00000",
+            "Text": "WeLcOmE",
+            "To": process.env.PLIVO_NUMBER,
+            "Units": "1",
+            "TotalAmount": "0.00000",
+            "Type": "sms",
+            "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae3XXXX"
         });
       }).then(function() {
         return db.PhoneGroup.findOne({keyword: 'welcome'}).populate('phones').execAsync();
@@ -274,6 +290,7 @@ describe('api tests', function() {
       }).then(function() {
         return request(app)
           .post('/api/v1/om')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .send({
             "To": process.env.PLIVO_NUMBER,
             "From": 555,
@@ -301,6 +318,7 @@ describe('api tests', function() {
     
     request(app)
       .post('/api/v1/om')
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       .send({
         "To": process.env.PLIVO_NUMBER,
         "From": 555,
@@ -324,6 +342,7 @@ describe('api tests', function() {
       }).then(function() { pg2.saveAsync(); })
       .then(function() {
         return request(app).get('/api/v1/keywords')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200)
       }).then(function(resp) {
         assert.equal(resp.body.length, 2, resp.body);
@@ -339,6 +358,7 @@ describe('api tests', function() {
       .then(function() {
         return request(app).put('/api/v1/keyword/' + pg._id)
           .send({keyword: 'new_keyword'})
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200)
       }).then(function() {
         return db.PhoneGroup.findById(pg._id).execAsync();
@@ -356,6 +376,7 @@ describe('api tests', function() {
         return assert.equal(pg2.keyword, 'get_keyword');
       }).then(function() {
         return request(app).get('/api/v1/keyword/' + pg._id)
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200);
       }).then(function(r) {
         assert.equal(r.body.keyword, 'get_keyword');
@@ -370,6 +391,7 @@ describe('api tests', function() {
       .then(function() {
         return request(app).post('/api/v1/keyword')
         .send({keyword: 'new_keyword'})
+        .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
         .expect(201)
       })
       .then(function(res) {
@@ -386,7 +408,10 @@ describe('api tests', function() {
       .then(function() {
         newSam = JSON.parse(JSON.stringify(sample));
         newSam['Text'] = 'im_a_keyword yes';
-        return request(app).post('/api/v1/im').send(newSam)
+        return request(app)
+          .post('/api/v1/im')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+          .send(newSam);
       }).then(function() {
         return db.PhoneGroup.findOne({keyword: 'im_a_keyword'}).populate('phones').execAsync();
       }).then(function(pg) {
@@ -399,6 +424,7 @@ describe('api tests', function() {
 
   it('should return 404 if prize id does not exist update', function() {
     return request(app).put('/api/v1/prize/0')
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       .send({"name": "new name", "numAvailable": 1, "numClaimed": 1, "imageUrl": "http://example.org/image.jpg"})
       .expect(404)
       .then(function(res) {
@@ -407,7 +433,9 @@ describe('api tests', function() {
   });
 
   it('should return 404 if prize id does not exist delete', function() {
-    return request(app).delete('/api/v1/prize/0')
+    return request(app)
+      .delete('/api/v1/prize/0')
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       .expect(404)
       .then(function(res) {
         assert.equal(res.status, 404);
@@ -418,7 +446,9 @@ describe('api tests', function() {
     p = new db.Prize({"name": "prize name", "numAvailable": 1, "numClaimed": 0, "imageUrl": "http://example.org/image.jpg"})
     return p.save()
       .then(function() {
-        return request(app).put('/api/v1/prize/' + p.id)
+        return request(app)
+          .put('/api/v1/prize/' + p.id)
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .send({"name": "new name", "numAvailable": 1, "numClaimed": 1, "imageUrl": "http://example.org/image.jpg"});
       }).then(function() {
         return db.Prize.findById(p.id).execAsync();
@@ -437,7 +467,9 @@ describe('api tests', function() {
         assert.equal(prize.length, 1);
         pid = prize[0].id;
       }).then(function() {
-        return request(app).delete('/api/v1/prize/' + pid)
+        return request(app)
+          .delete('/api/v1/prize/' + pid)
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       }).then(function() {
         return db.Prize.count()
       }).then(function(c) {
@@ -446,7 +478,9 @@ describe('api tests', function() {
   });
   
   it('should return 404 if phone id does not exist delete', function() {
-    return request(app).delete('/api/v1/phones/blah')
+    return request(app)
+      .delete('/api/v1/phones/blah')
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       .expect(404)
       .then(function(res) {
         assert.equal(res.status, 404);
@@ -456,14 +490,18 @@ describe('api tests', function() {
   it('should delete phone with delete request', function() {
     helper.makeGenericNock();
     var pid;
-    return request(app).post('/api/v1/im').send(sample)
+    return request(app)
+      .post('/api/v1/im').send(sample)
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       .then(function() {
         return db.Phone.find({});
       }).then(function(phones) {
         assert.equal(phones.length, 1);
         pid = phones[0].id;
       }).then(function() {
-        return request(app).delete('/api/v1/phones/' + pid)
+        return request(app)
+        .delete('/api/v1/phones/' + pid)
+        .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       }).then(function() {
         return db.Phone.count()
       }).then(function(c) {
@@ -473,9 +511,14 @@ describe('api tests', function() {
   
   it('should list phones with get request', function() {
     helper.makeGenericNock();
-    return request(app).post('/api/v1/im').send(sample)
+    return request(app)
+      .post('/api/v1/im')
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+      .send(sample)
       .then(function() {
-        return request(app).get('/api/v1/phones')
+        return request(app)
+          .get('/api/v1/phones')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       }).then(function(res) {
         assert.equal(res.body[0].number, sample["From"], res.body)
       });    
@@ -485,7 +528,9 @@ describe('api tests', function() {
     p = new db.Prize({"name": "prize name", "numAvailable": 1, "numClaimed": 0, "imageUrl": "http://example.org/image.jpg"})
     return p.saveAsync()
       .then(function() {
-        return request(app).get('/api/v1/prizes')
+        return request(app)
+          .get('/api/v1/prizes')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       }).then(function(res) {
         assert.equal(res.status, 200);
         assert.equal(res.body[0].name, 'prize name');
@@ -494,7 +539,10 @@ describe('api tests', function() {
   
   it('should create a prize when posted to', function() {
     var post = {"name": "A drink on Linger Longer Lounge - specific beers, wines, and wells. Gratuity not included", "numAvailable": 5, "numClaimed": 3, "imageUrl": "http://tonguetied.rocks.s3.amazonaws.com/images/prizes/lll.jpg"}
-    return request(app).post('/api/v1/prizes').send(post)
+    return request(app)
+      .post('/api/v1/prizes')
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+      .send(post)
       .expect(201)
       .then(function() {
         return db.Prize.count();
@@ -505,6 +553,7 @@ describe('api tests', function() {
   
   it('should have a prizes endpoint', function() {
     return request(app).get('/api/v1/prizes')
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       .expect(200)
       .then(function(res) {
         assert.equal(res.status, 200, 'should be 200 error');
@@ -515,11 +564,19 @@ describe('api tests', function() {
     helper.makeGenericNock();
     helper.makeGenericNock();
     helper.makeGenericNock();
-    return request(app).post('/api/v1/im').send(sample)
+    return request(app).post('/api/v1/im')
+      .send(sample)
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       .then(function() {
-        return request(app).post('/api/v1/im').send(sample)
+        return request(app)
+          .post('/api/v1/im')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+          .send(sample)
       }).then(function() {
-        return request(app).post('/api/v1/im').send(sample)
+        return request(app)
+          .post('/api/v1/im')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+          .send(sample)
       }).then(function() {
         return db.Phone.count();
       }).then(function(c) {
@@ -533,7 +590,10 @@ describe('api tests', function() {
 
   it('should create a phone entry when a post is made to im', function() {
     helper.makeGenericNock();
-    return request(app).post('/api/v1/im').send(sample)
+    return request(app)
+      .post('/api/v1/im')
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+      .send(sample)
       .expect(201)
       .then(function(){
         return db.Phone.count();
@@ -558,6 +618,7 @@ describe('api tests', function() {
   it('should have a incoming message endpoint', function(done) {
     request(app)
       .post('/api/v1/im')
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       .expect(200)
       .end(function(err, result) {
         done();
@@ -567,6 +628,7 @@ describe('api tests', function() {
   it('should have an api endpoint', function(done) {
     request(app)
       .get('/api/v1/')
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
       .expect('Content-Type', /json/)
       .expect(200)
       .end(function(err, result){

@@ -4,6 +4,13 @@ var request = require('supertest');
 
 describe('express acceptance tests', function() {
   
+  it('should have basic auth for api', function(done) {
+    request(app)
+      .get('/api/v1/')
+      //.auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+      .expect(401, done)
+  });
+  
   it('should not have x-header', function(done) {
     request(app)
       .get('/')
