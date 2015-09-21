@@ -32,3 +32,5 @@ npm-debug.log
 .env
 bundle.js
 build
+
+.flickrExclusion
