@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var url = require('url');
 var auth = require('basic-auth')
+var path = require('path');
 
 router.all('*', function(req, res, next) {
   var credentials = auth(req);
@@ -15,7 +16,7 @@ router.all('*', function(req, res, next) {
 });
 
 router.get('/', function (req, res) {
-  res.send('admin');
+  res.sendFile('admin.html', {"root": path.join(__dirname, '../html')});
 });
 
 module.exports = router;

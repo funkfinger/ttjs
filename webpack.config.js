@@ -7,11 +7,14 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.css$/, loader: "style-loader!css-loader" },
-      { test: /\.woff$/,   loader: "url-loader?limit=10000&mimetype=application/font-woff" },
-      { test: /\.woff2$/,   loader: "url-loader?limit=10000&mimetype=application/font-woff2" },
-      { test: /\.ttf$/,    loader: "file-loader" },
-      { test: /\.eot$/,    loader: "file-loader" },
-      { test: /\.svg$/,    loader: "file-loader" }
+      { test: /\.woff$/, loader: "url-loader?limit=10000&mimetype=application/font-woff" },
+      { test: /\.woff2$/, loader: "url-loader?limit=10000&mimetype=application/font-woff2" },
+      { test: /\.ttf$/, loader: "file-loader" },
+      { test: /\.eot$/, loader: "file-loader" },
+      { test: /\.svg$/, loader: "file-loader" },
+      { test: /\.jsx$/, loader: 'jsx-loader?insertPragma=React.DOM&harmony' }
     ]
-  }
+  },
+  externals: { 'react': 'React' },
+  resolve: { extensions: ['', '.js', '.jsx'] }
 };
