@@ -22,7 +22,7 @@ router.get('/prizes', function (req, res) {
   })
 });
 
-// create phone
+// create phone - incoming message
 router.post('/im', function (req, res) {
   Phone.handleIncomingMessage(req.body).then(function(p) {
     if(p) {
@@ -30,6 +30,24 @@ router.post('/im', function (req, res) {
     }
   });
 })
+
+// update om status - outgoing message
+router.post('/om', function (req, res) {
+  var jsonReq =  JSON.stringify(req.body);
+  var al = new AccessLog({data: jsonReq});
+  al.saveAsync()
+    .then(function() {
+      return OutgoingMessage.findOne({uuid: req.body.ParentMessageUUID}).execAsync();      
+    }).then(function(om) {
+      if (om) {
+        om.messageStatus = req.body.Status;
+        return om.saveAsync();
+      }
+    }).then(function(){
+      res.send({ok: true});
+    })
+});
+
 
 //////////// private api - auth required
 
@@ -60,22 +78,6 @@ router.get('/om', function (req, res) {
     })
 });
 
-// update om status
-router.post('/om', function (req, res) {
-  var jsonReq =  JSON.stringify(req.body);
-  var al = new AccessLog({data: jsonReq});
-  al.saveAsync()
-    .then(function() {
-      return OutgoingMessage.findOne({uuid: req.body.ParentMessageUUID}).execAsync();      
-    }).then(function(om) {
-      if (om) {
-        om.messageStatus = req.body.Status;
-        return om.saveAsync();
-      }
-    }).then(function(){
-      res.send({ok: true});
-    })
-});
 
 // send message to keyword group
 router.post('/keyword/:id/send', function (req, res) {
