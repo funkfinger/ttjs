@@ -22,15 +22,6 @@ router.get('/prizes', function (req, res) {
   })
 });
 
-// create phone - incoming message
-router.post('/im', function (req, res) {
-  Phone.handleIncomingMessage(req.body).then(function(p) {
-    if(p) {
-      res.status(201).send({ok: true});      
-    }
-  });
-})
-
 // update om status - outgoing message
 router.post('/om', function (req, res) {
   var jsonReq =  JSON.stringify(req.body);
@@ -61,6 +52,16 @@ router.all('*', function(req, res, next) {
     next();
   }
 });
+
+// create phone - incoming message
+router.post('/im', function (req, res) {
+  Phone.handleIncomingMessage(req.body).then(function(p) {
+    if(p) {
+      res.status(201).send({ok: true});      
+    }
+  });
+})
+
 
 // list access log (al)
 router.get('/al', function (req, res) {
