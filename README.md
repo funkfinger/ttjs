@@ -44,3 +44,6 @@ and these were the codeship test commands....
     # bundle exec rake test
     # bundle exec rspec
     
+To update the environment configs (specifically the text message responses) - do it interactively...
+
+     heroku config:push -i
