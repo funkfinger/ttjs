@@ -69,7 +69,7 @@ phoneSchema.methods.processStopKeywords = function(kw) {
   var stopKeywords = ['stop', 'end', 'unsubscribe', 'remove', 'quit', 'block']
   stopKeywords.forEach(function(skw) {
     if (kw.toLowerCase() == skw.toLowerCase()) {
-      this.sendMessage('unsubscribed');
+      this.sendMessage(process.env.UNSUB_MESSAGE);
       deactivate = true;
     }
   }.bind(this));

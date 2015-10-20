@@ -56,7 +56,7 @@ describe('phone model tests', function(done) {
   it('should send unsubscribe message upon end keyword', function(done) {
     
     var m = helper.nock('https://api.plivo.com:443')
-      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"unsubscribed","url":process.env.PLIVO_CALLBACK_URL})
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":process.env.UNSUB_MESSAGE,"url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"caf37bd6-4572-11e5-bfa2-22000aXXXXXX","message":"message(s) queued","message_uuid":["fbf30c47-e717-4eba-8041-cefc93XXXXXX"]}, { 'content-type': 'application/json',
       date: 'Tue, 18 Aug 2015 06:31:43 GMT',
       server: 'nginx/1.8.0',

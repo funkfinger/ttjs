@@ -4,6 +4,10 @@ var helper = require('./test-helper');
 
 describe('sanity tests', function() {
   
+  it('should have unsubscribe message set in env', function() {
+    assert.ok(process.env.UNSUB_MESSAGE);
+  })
+  
   it('should use spies', function() {
     var sendMessage = sinon.spy();
     sendMessage();
