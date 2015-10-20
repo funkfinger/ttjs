@@ -4,6 +4,45 @@ var Phone = db.Phone;
 
 describe('phone group model tests', function(done) {
   
+  it('should not add multiple same phones to a group', function() {
+
+    var toNum = 18005551212;
+    var message = process.env.GENERIC_TEXT_RESPONSE;
+    var kw = 'grp';
+
+    ph = new Phone({number: toNum});
+    pg = new PhoneGroup({keyword: kw});
+
+    return ph.saveAsync()
+      .then(function() {
+        return pg.saveAsync();
+      }).then(function() {
+        var nock = helper.nock('https://api.plivo.com:443')
+          .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":message,"url":process.env.PLIVO_CALLBACK_URL})
+          .reply(202, {"api_id":"34489f3c-34f0-11e5-bfa2-22000afaa73b","message":"message(s) queued","message_uuid":["a1d67e58-f35a-47da-ab0b-5d1cd06a8d32"]}, { 'content-type': 'application/json',
+          date: 'Tue, 28 Jul 2015 06:16:37 GMT',
+          server: 'nginx/1.8.0',
+          connection: 'Close' });
+
+        PhoneGroup.findKeywordAndAddToGroup(kw, ph);
+
+        var nock = helper.nock('https://api.plivo.com:443')
+          .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":message,"url":process.env.PLIVO_CALLBACK_URL})
+          .reply(202, {"api_id":"34489f3c-34f0-11e5-bfa2-22000afaa73b","message":"message(s) queued","message_uuid":["a1d67e58-f35a-47da-ab0b-5d1cd06a8d32"]}, { 'content-type': 'application/json',
+          date: 'Tue, 28 Jul 2015 06:16:37 GMT',
+          server: 'nginx/1.8.0',
+          connection: 'Close' });
+
+        return PhoneGroup.findKeywordAndAddToGroup(kw, ph);
+    
+      }).then(function() {
+        return PhoneGroup.findById(pg._id).execAsync()
+      }).then(function(pgNew) {
+        console.log('pgNew', pgNew);
+        return assert.equal(pgNew.phones.length, 1);
+      })
+  })
+  
   it('should be able to send messages to group', function() {
     
     var toNum1 = 18005551212;

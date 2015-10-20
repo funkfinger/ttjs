@@ -4,7 +4,7 @@ var Phone = require('./phone').Phone;
 var phoneGroupSchema = new mongoose.Schema( {
   keyword: { type: String, required: true, unique: true },
   signupResponse: { type: String },
-  phones: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Phone' }]
+  phones: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Phone' }] // ugh, can not be unique - see https://github.com/Automattic/mongoose/issues/3347
 });
 
 // lowercase keyword on save...
@@ -18,7 +18,7 @@ phoneGroupSchema.methods.sendMessage = function(message) {
   var phonesList = [];
   // this seems horrible - but can't figure out a way to populate self...
   return PhoneGroup.findById(this._id).populate('phones').execAsync()
-    .then(function(res){
+    .then(function(res) {
       return res.phones;
     }).each(function(phone) {
       return phone.sendMessage(message);
@@ -26,27 +26,18 @@ phoneGroupSchema.methods.sendMessage = function(message) {
 };
 
 phoneGroupSchema.statics.findKeywordAndAddToGroup = function(keyword, phone) {
-  var genericResponse = process.env.GENERIC_TEXT_RESPONSE;
-  var pid = phone._id;
-  var pg;
-  return Promise.resolve(PhoneGroup.findOne({keyword: keyword.toLowerCase()}).execAsync()
+  var response = process.env.GENERIC_TEXT_RESPONSE;
+  return PhoneGroup.findOne({keyword: keyword.toLowerCase()}).execAsync()
     .then(function(g) {
-      pg = g;
-      if (pg) {
-        // if (pid) {
-          pg.phones.push(pid);
-          return pg.saveAsync()
-            .then(function() {
-              return pg.signupResponse ? phone.sendMessage(pg.signupResponse) : phone.sendMessage(genericResponse);
-            });
-        // }
+      if (g) {
+        response = g.signupResponse ? g.signupResponse : response;
+        g.phones.addToSet(phone._id);
+        return Promise.resolve(g.saveAsync());
       }
-      else {
-        return phone.sendMessage(genericResponse);
-      }
-    }));
-
-
+      return;
+    }).then(function() {
+      return phone.sendMessage(response);
+    });    
 };
 
 var PhoneGroup = mongoose.model('PhoneGroup', phoneGroupSchema);
