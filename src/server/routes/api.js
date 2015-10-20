@@ -22,6 +22,15 @@ router.get('/prizes', function (req, res) {
   })
 });
 
+// create phone
+router.post('/im', function (req, res) {
+  Phone.handleIncomingMessage(req.body).then(function(p) {
+    if(p) {
+      res.status(201).send({ok: true});      
+    }
+  });
+})
+
 //////////// private api - auth required
 
 router.all('*', function(req, res, next) {
@@ -174,15 +183,6 @@ router.delete('/prize/:id', function (req, res) {
     p ? res.send({ok: true}) : res.status(404).send('not found');
   })
 });
-
-// create phone
-router.post('/im', function (req, res) {
-  Phone.handleIncomingMessage(req.body).then(function(p) {
-    if(p) {
-      res.status(201).send({ok: true});      
-    }
-  });
-})
 
 // read phone list
 router.get('/phones', function (req, res) {
