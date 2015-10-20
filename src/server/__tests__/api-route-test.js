@@ -104,6 +104,8 @@ describe('api tests', function() {
           .send({message: "test message to group via api"})
           .expect(200);
       }).then(function() {
+        assert.ok(nocks[0].isDone());
+        assert.ok(nocks[1].isDone());
         return assert.ok(nocks[2].isDone());
       });
     

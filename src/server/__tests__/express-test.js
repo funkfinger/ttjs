@@ -4,6 +4,10 @@ var request = require('supertest');
 
 describe('express acceptance tests', function() {
   
+  it('should have env set', function() {
+    assert.equal(process.env.NODE_ENV, 'test');
+  });
+  
   it('should have basic auth for api', function(done) {
     request(app)
       .get('/api/v1/')
