@@ -1,6 +1,8 @@
 var helper = require('./test-helper');
 var temporize = require('../temporize');
 var request = require('supertest-as-promised');
+var rp = require('request-promise');
+
 request = request(process.env.TEMPORIZE_URL);
 
 describe('temporize tests', function() {
@@ -30,7 +32,6 @@ describe('temporize tests', function() {
       .reply(200, {"id":"xxx","account":"xxx","user":"xxx","status":"Active","url":"http://google.com","data":"","when":"2015-11-07T15:30:00.000Z"}, { server: 'nginx/1.4.6 (Ubuntu)',
       date: 'Sun, 01 Nov 2015 17:56:40 GMT',
       'content-type': 'application/json; charset=utf-8',
-      'content-length': '186',
       connection: 'close' });
   
     var d = new Date();
@@ -52,7 +53,6 @@ describe('temporize tests', function() {
       .reply(200, {"id":"xxx","account":"xxx","user":"xxx","status":"Active","url":"http://google.com","data":"","when":"2015-11-07T08:00:00.000Z"}, { server: 'nginx/1.4.6 (Ubuntu)',
       date: 'Sun, 01 Nov 2015 12:18:28 GMT',
       'content-type': 'application/json; charset=utf-8',
-      'content-length': '186',
       connection: 'close' });
         
     var time = new Date(2015,10,7);
@@ -60,11 +60,11 @@ describe('temporize tests', function() {
     var timeString = time.toISOString().replace(/\.\d+/,'').replace(/\:/g,'').replace(/\-/g,'');
     var date =  timeString;
     var callbackUrl = encodeURIComponent('http://google.com');
-    var url = '/v1/events/' + date + '/' + callbackUrl;
+    var url = process.env.TEMPORIZE_URL + '/v1/events/' + date + '/' + callbackUrl;
     
-    return request.post(url)
+    return rp.post({uri: url, resolveWithFullResponse: true})
       .then(function(r) {
-        return assert.equal(r.status, 200);
+        return assert.equal(r.statusCode, 200);
       });
   });
   
