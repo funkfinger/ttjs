@@ -10,7 +10,7 @@ describe('temporize tests', function() {
   it('should schedule someting through temporize module', function() {
     
     // there is a mock api to test against - below is that request....
-    // var n = helper.nock('https://private-anon-3010ca8df-temporize.apiary-mock.com:443')
+    // var n = helper.nock(process.env.TEMPORIZE_URL)
     //   .post('/v1/events/20151107T153000Z/http%3A%2F%2Fgoogle.com')
     //   .reply(200, {"id":"xxx","account":"xxx","user":"xxx","status":"Active","retries":5,"url":"http://temporize.net/v1/test","when":"2014-02-13T20:12:43Z"}, { server: 'Cowboy',
     //   connection: 'close',
@@ -25,7 +25,7 @@ describe('temporize tests', function() {
     //   date: 'Sun, 01 Nov 2015 17:46:00 GMT',
     //   via: '1.1 vegur' });
     
-    var n = helper.nock('https://api.temporize.net:443')
+    var n = helper.nock(process.env.TEMPORIZE_URL)
       .post('/v1/events/20151107T153000Z/http%3A%2F%2Fgoogle.com')
       .reply(200, {"id":"xxx","account":"xxx","user":"xxx","status":"Active","url":"http://google.com","data":"","when":"2015-11-07T15:30:00.000Z"}, { server: 'nginx/1.4.6 (Ubuntu)',
       date: 'Sun, 01 Nov 2015 17:56:40 GMT',
