@@ -45,7 +45,7 @@ describe('temporize tests', function() {
   })
   
 
-  it('should be able to schedule something with temporize', function() {
+  it.only('should be able to schedule something with temporize', function() {
     
     helper.nock(process.env.TEMPORIZE_URL)
       .post('/v1/events/20151107T080000Z/http%3A%2F%2Fgoogle.com')
