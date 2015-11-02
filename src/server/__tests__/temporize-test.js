@@ -56,7 +56,7 @@ describe('temporize tests', function() {
       connection: 'close' });
         
     var time = new Date(2015,10,7);
-    time.setHours(time.getHours() + 1)
+    time.setUTCHours(time.getUTCHours() + 1);
     var timeString = time.toISOString().replace(/\.\d+/,'').replace(/\:/g,'').replace(/\-/g,'');
     var date =  timeString;
     var callbackUrl = encodeURIComponent('http://google.com');
