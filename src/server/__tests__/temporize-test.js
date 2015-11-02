@@ -49,7 +49,7 @@ describe('temporize tests', function() {
   it.only('should be able to schedule something with temporize', function() {
     
     helper.nock(process.env.TEMPORIZE_URL)
-      .post('/v1/events/20151107T080000Z/http%3A%2F%2Fgoogle.com')
+      .post('/v1/events/20151107T010000Z/http%3A%2F%2Fgoogle.com')
       .reply(200, {"id":"xxx","account":"xxx","user":"xxx","status":"Active","url":"http://google.com","data":"","when":"2015-11-07T08:00:00.000Z"}, { server: 'nginx/1.4.6 (Ubuntu)',
       date: 'Sun, 01 Nov 2015 12:18:28 GMT',
       'content-type': 'application/json; charset=utf-8',
