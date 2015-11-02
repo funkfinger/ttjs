@@ -44,13 +44,18 @@ router.post('/om', function (req, res) {
 //////////// private api - auth required
 
 router.all('*', function(req, res, next) {
-  var credentials = auth(req);
-  if (!credentials || credentials.name !== process.env.BASIC_AUTH_USER || credentials.pass !== process.env.BASIC_AUTH_PASS) {
-    res.statusCode = 401;
-    res.setHeader('WWW-Authenticate', 'Basic realm="example"');
-    res.send('Access denied');
-  } else {
+  if (req.get('Host').match(/localhost\:\d+/)) {
     next();
+  }
+  else {
+    var credentials = auth(req);
+    if (!credentials || credentials.name !== process.env.BASIC_AUTH_USER || credentials.pass !== process.env.BASIC_AUTH_PASS) {
+      res.statusCode = 401;
+      res.setHeader('WWW-Authenticate', 'Basic realm="example"');
+      res.send('Access denied');
+    } else {
+      next();
+    }
   }
 });
 
