@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var url = require('url');
-var auth = require('basic-auth')
+var auth = require('basic-auth');
+var textMessage = require('../text_message');
 
 
 // putting 'controller' code here for now. will probably seperate at some point...
@@ -51,6 +52,12 @@ router.all('*', function(req, res, next) {
   } else {
     next();
   }
+});
+
+// test sms
+router.get('/testsms', function(req, res) {
+  textMessage.send(process.env.TEST_NUMBER, 'this is a test - ');
+  res.status(201).send({ok: true});
 });
 
 // create phone - incoming message

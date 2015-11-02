@@ -11,6 +11,18 @@ var sample = helper.samplePlivoParams;
 var toNum = 18005551212
 
 describe('api tests', function() {
+  
+  it('should send a text to the test number', function() {
+    
+    var m = helper.nock('https://api.plivo.com/')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/')    
+      .reply(202);
+    
+    return request(app)
+      .get('/api/v1/testsms')
+      .expect(201)
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS);
+  });
 
   it('should list all prizes active prizes with inactive flag', function() {
     var p = new db.Prize({

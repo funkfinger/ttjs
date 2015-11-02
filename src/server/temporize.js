@@ -1,3 +1,4 @@
+// api docs- http://docs.temporize.apiary.io/
 var rp = require('request-promise');
 
 var schedule = function(when, callbackUrl) {
