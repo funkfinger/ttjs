@@ -14,7 +14,6 @@ describe('prize model tests', function(done) {
       .then(function() {
         return Prize.findById(p._id);
       }).then(function(prize) {
-        console.log(prize);
         return assert.ok(prize.active);
     });
   });

@@ -38,7 +38,6 @@ describe('phone group model tests', function(done) {
       }).then(function() {
         return PhoneGroup.findById(pg._id).execAsync()
       }).then(function(pgNew) {
-        console.log('pgNew', pgNew);
         return assert.equal(pgNew.phones.length, 1);
       })
   })

@@ -11,36 +11,18 @@ describe('temporize tests', function() {
 
   it('should schedule someting through temporize module', function() {
     
-    // there is a mock api to test against - below is that request....
-    // var n = helper.nock(process.env.TEMPORIZE_URL)
-    //   .post('/v1/events/20151107T153000Z/http%3A%2F%2Fgoogle.com')
-    //   .reply(200, {"id":"xxx","account":"xxx","user":"xxx","status":"Active","retries":5,"url":"http://temporize.net/v1/test","when":"2014-02-13T20:12:43Z"}, { server: 'Cowboy',
-    //   connection: 'close',
-    //   'x-apiary-ratelimit-limit': '120',
-    //   'x-apiary-ratelimit-remaining': '119',
-    //   'content-type': 'application/json',
-    //   'access-control-allow-origin': '*',
-    //   'access-control-allow-methods': 'OPTIONS,GET,HEAD,POST,PUT,DELETE,TRACE,CONNECT',
-    //   'access-control-max-age': '10',
-    //   'x-apiary-transaction-id': '56364fd8ef5139070005c56d',
-    //   'content-length': '224',
-    //   date: 'Sun, 01 Nov 2015 17:46:00 GMT',
-    //   via: '1.1 vegur' });
-    
     var n = helper.nock(process.env.TEMPORIZE_URL)
-      .post('/v1/events/20151107T153000Z/http%3A%2F%2Fgoogle.com')
-      .reply(200, {"id":"xxx","account":"xxx","user":"xxx","status":"Active","url":"http://google.com","data":"","when":"2015-11-07T15:30:00.000Z"}, { server: 'nginx/1.4.6 (Ubuntu)',
-      date: 'Sun, 01 Nov 2015 17:56:40 GMT',
-      'content-type': 'application/json; charset=utf-8',
-      connection: 'close' });
+      .post('/v1/events/20151108T153000Z/http%3A%2F%2Fgoogle.com')
+      .reply(200);
   
     var d = new Date();
     d.setYear(2015);
     d.setMonth(10); // zero-based, so this is November...
     d.setDate(7);
     d.setUTCHours(15,30,0);
-    return temporize.schedule(d, 'http://google.com')
-      .then(function() {
+    temporize.schedule(d, 'http://google.com')
+      .then(function(t) {
+        console.log(t);
         return assert.ok(n.isDone());
       });
   })

@@ -46,6 +46,7 @@ module.exports = {
   Prize: require('./models/prize').Prize,
   PhoneGroup: require('./models/phone-group').PhoneGroup,
   OutgoingMessage: require('./models/phone').OutgoingMessage,
-  AccessLog: require('./models/access-log').AccessLog
+  AccessLog: require('./models/access-log').AccessLog,
+  ScheduledMessage: require('./models/scheduled-message').ScheduledMessage
 }
 
