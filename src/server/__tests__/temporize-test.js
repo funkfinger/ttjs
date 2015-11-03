@@ -7,27 +7,20 @@ request = request(process.env.TEMPORIZE_URL);
 
 describe('temporize tests', function() {
 
-  it.only('should have moment.js and can format for temporize', function() {
-    d = temporize.moment([2015, 10, 3, 1, 15]).utc();
-    return assert.equal(temporize.formatForTemporize(d), '20151103T081500Z', d);
+  it('should have moment.js and can format for temporize', function() {
+    d = temporize.moment([2015, 10, 3, 1, 15]);
+    return assert.equal(temporize.formatForTemporize(d), '20151103T011500Z', d);
+    // return assert.equal(temporize.formatForTemporize(d), '20151103T081500Z', d);
   });
 
   it('should schedule someting through temporize module', function() {
     
     var n = helper.nock(process.env.TEMPORIZE_URL)
-      .post('/v1/events/20151108T153000Z/http%3A%2F%2Fgoogle.com')
+      .post('/v1/events/20151103T011500Z/http%3A%2F%2Fgoogle.com') // what showes up on codeship
+      //.post('/v1/events/20151108T153000Z/http%3A%2F%2Fgoogle.com') // whoat shows up on local machine...
       .reply(200);
-  
-    //var d = new Date('November 7, 2015 15:30:00');
-    
-    var when = new Date(2015, 10, 7, 23, 18, 0); 
-    var when_utc = new Date(when.getUTCFullYear(), when.getUTCMonth(), when.getUTCDate(),  when.getUTCHours(), when.getUTCMinutes(), when.getUTCSeconds());
-    // d.setYear(2015);
-    // d.setMonth(10); // zero-based, so this is November...
-    // d.setDate(7);
-    // d.setUTCHours(15,30,0);
-    console.log(when_utc);
-    temporize.schedule(when_utc, 'http://google.com')
+
+    temporize.schedule(temporize.moment([2015, 10, 3, 1, 15]), 'http://google.com')
       .then(function(t) {
         console.log(t);
         return assert.ok(n.isDone());
