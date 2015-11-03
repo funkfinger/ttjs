@@ -1,4 +1,5 @@
 // api docs- http://docs.temporize.apiary.io/
+var moment = require('moment');
 var rp = require('request-promise');
 
 var schedule = function(when, callbackUrl) {
@@ -8,6 +9,16 @@ var schedule = function(when, callbackUrl) {
   return rp.post(url);
 };
 
-module.exports = {
-  schedule: schedule
+var formatForTemporize = function(d) {
+  console.log(moment.utc(d));
+  return d.format('YYYYMMDD[T]HHmmss[Z]');
+  // return d.toISOString().replace(/\.\d+/,'').replace(/\:/g,'').replace(/\-/g,'');
 }
+
+module.exports = {
+  schedule: schedule,
+  moment: moment,
+  formatForTemporize: formatForTemporize
+}
+
+

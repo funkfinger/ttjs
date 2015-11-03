@@ -59,8 +59,8 @@ router.all('*', function(req, res, next) {
   }
 });
 
-// test sms
-router.get('/testsms', function(req, res) {
+// test sms (all verbs...)
+router.all('/testsms', function(req, res) {
   textMessage.send(process.env.TEST_NUMBER, 'this is a test - ');
   res.status(201).send({ok: true});
 });

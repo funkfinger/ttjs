@@ -12,6 +12,18 @@ var toNum = 18005551212
 
 describe('api tests', function() {
   
+  it('should sent text to the test number on post', function() {
+    var m = helper.nock('https://api.plivo.com/')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/')    
+      .reply(202);
+    
+    return request(app)
+      .post('/api/v1/testsms')
+      .expect(201)
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS);
+    
+  });
+  
   it('should send a text to the test number', function() {
     
     var m = helper.nock('https://api.plivo.com/')
