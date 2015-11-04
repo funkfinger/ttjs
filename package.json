@@ -33,6 +33,7 @@
     "file-loader": "^0.8.4",
     "modernizr": "^3.0.0-alpha.4",
     "moment": "^2.10.6",
+    "moment-timezone": "^0.4.1",
     "mongodb": "^2.0.34",
     "mongoose": "^4.0.5",
     "node-libs-browser": "^0.5.2",

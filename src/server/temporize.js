@@ -1,5 +1,6 @@
 // api docs- http://docs.temporize.apiary.io/
-var moment = require('moment');
+// var moment = require('moment');
+var moment = require('moment-timezone');
 var rp = require('request-promise');
 
 var schedule = function(when, callbackUrl) {

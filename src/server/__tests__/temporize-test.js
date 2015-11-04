@@ -7,6 +7,10 @@ request = request(process.env.TEMPORIZE_URL);
 
 describe('temporize tests', function() {
 
+  it('should have moment-timezone', function() {    
+    return assert.ok(temporize.moment.tz.names());
+  });
+
   it('should have moment.js and can format for temporize', function() {
     d = temporize.moment([2015, 10, 3, 1, 15]);
     return assert.equal(temporize.formatForTemporize(d), '20151103T011500Z', d);
