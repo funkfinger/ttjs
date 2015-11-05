@@ -371,10 +371,10 @@ describe('api tests', function() {
           .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
           .expect(200)
       }).then(function(resp) {
-        assert.equal(resp.body.length, 2, resp.body);
-        assert.equal(resp.body[0].keyword, 'k1');
-        assert.equal(resp.body[1].keyword, 'k2');
-        assert.equal(resp.body[0].phones[0].number, 8005551212);
+        assert.equal(resp.body.length, 3, resp.body); // add one for 'help' response
+        assert.equal(resp.body[1].keyword, 'k1');
+        assert.equal(resp.body[2].keyword, 'k2');
+        assert.equal(resp.body[1].phones[0].number, 8005551212);
       })
   });
   
@@ -412,7 +412,7 @@ describe('api tests', function() {
   it('should create keyword on post', function() {
     return db.PhoneGroup.count().execAsync()
       .then(function(c) {
-        return assert.equal(c, 0);
+        return assert.equal(c, 1); // add one for help keyword
       })
       .then(function() {
         return request(app).post('/api/v1/keyword')
@@ -423,7 +423,7 @@ describe('api tests', function() {
       .then(function(res) {
         return db.PhoneGroup.count().execAsync();
       }).then(function(c) {
-        return assert.equal(c, 1);
+        return assert.equal(c, 2); // add one for help keyword
       })
   });
 

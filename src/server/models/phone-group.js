@@ -64,6 +64,14 @@ var PhoneGroup = mongoose.model('PhoneGroup', phoneGroupSchema);
 //     }));
 // };
 
+PhoneGroup.findOneAndUpdate({keyword: 'help'}, {signupResponse: process.env.HELP_RESPONSE}, {upsert: true}, function() {
+  console.log('help phone group created...');
+});
+//.execAsync()
+//  .then(function() {
+//    console.log('help phone group created...');
+//  });
+
 module.exports = {
   PhoneGroup: PhoneGroup
 }

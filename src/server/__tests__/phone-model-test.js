@@ -8,6 +8,42 @@ var toNum = 18005551212
 
 describe('phone model tests', function(done) {
 
+  it('should send help message upon help keyword', function(done) {
+    
+    var m = helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":process.env.HELP_MESSAGE,"url":process.env.PLIVO_CALLBACK_URL})
+      .reply(202, {"api_id":"caf37bd6-4572-11e5-bfa2-22000aXXXXXX","message":"message(s) queued","message_uuid":["fbf30c47-e717-4eba-8041-cefc93XXXXXX"]}, { 'content-type': 'application/json',
+      date: 'Tue, 18 Aug 2015 06:31:43 GMT',
+      server: 'nginx/1.8.0',
+      'content-length': '156',
+      connection: 'Close' });
+    
+    var phoneId;
+    var word;
+    return new Phone({number: toNum}).saveAsync()
+      .then(function(newNum) {
+        word = 'help';
+        phoneId = newNum[0]._id;
+        return assert.ok(newNum[0].active, 'should be true');
+      }).then(function() {
+        var helpMessage = {
+          "From": toNum,
+          "TotalRate": "0.00000",
+          "Text": word,
+          "To": "18005551313",
+          "Units": "1",
+          "TotalAmount": "0.00000",
+          "Type": "sms",
+          "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae383ea"
+        };
+        return Phone.handleIncomingMessage(helpMessage);
+      }).then(function() {
+        return assert.ok(m.isDone(), "m is not done");
+      }).then(function() {
+        done();
+      });
+  });
+
   it('should have a createdAt and updatedAt date', function() {
     var p = new Phone({number: toNum});
     var om = new OutgoingMessage({body: 'outgoing message body'});
@@ -67,7 +103,7 @@ describe('phone model tests', function(done) {
     var word;
     return new Phone({number: toNum}).saveAsync()
       .then(function(newNum) {
-        word = 'end';
+        word = 'stop';
         phoneId = newNum[0]._id;
         return assert.ok(newNum[0].active, 'should be true');
       }).then(function() {

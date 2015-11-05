@@ -49,3 +49,29 @@ To update the environment configs (specifically the text message responses that 
      heroku config:push -i
      
 Now investigating Heroku addon [temporize](https://devcenter.heroku.com/articles/temporize#basic-concepts): `heroku addons:create temporize` - 
+
+To import the data from my old system I didn't have luck using a CSV file. Instead, I created a JSON file from the CSV [using this site](http://www.csvjson.com/csv2json) and ran this command...
+
+    mongoimport -h <MONGOLABDB>.mongolab.com:47752 -d <DATABASE NAME> -c phones -u <USER> -p <PASSS> --file subscribers.json --jsonArray
+    
+the JSON file was formated like this:
+
+    [
+      {
+        "number": 1111111111,
+        "active": "TRUE"
+      },
+      {
+        "number": 2222222222,
+        "active": "TRUE"
+      },
+      .
+      .
+      .
+      {
+        "number": 3333333333,
+        "active": "TRUE"
+      }
+  
+    ]
+

@@ -4,6 +4,13 @@ var Phone = db.Phone;
 
 describe('phone group model tests', function(done) {
   
+  it('should have help group initialized with response', function() {
+    return PhoneGroup.findOne({keyword: 'help'}).execAsync()
+      .then(function(pg) {
+        return assert.equal(pg.signupResponse, process.env.HELP_RESPONSE);
+      });
+  });
+  
   it('should not add multiple same phones to a group', function() {
 
     var toNum = 18005551212;

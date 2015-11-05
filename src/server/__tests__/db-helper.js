@@ -9,6 +9,8 @@ function dropCollections() {
     }).then(function() {
       db.AccessLog.remove({}).execAsync();
     }).then(function() {
+      db.ScheduledMessage.remove({}).execAsync();
+    }).then(function() {
       db.OutgoingMessage.remove({}).execAsync();
     })
 }
@@ -18,7 +20,10 @@ before(function(done) {
 });
 
 beforeEach(function(done) {
-  done();
+  // don't really love this... need to look into how to make it nicer...
+  db.PhoneGroup.findOneAndUpdate({keyword: 'help'}, {signupResponse: process.env.HELP_RESPONSE}, {upsert: true}, function() {
+    done();
+  });  
 });
 
 afterEach(function(done) {

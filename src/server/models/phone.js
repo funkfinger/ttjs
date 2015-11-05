@@ -76,6 +76,12 @@ phoneSchema.methods.processStopKeywords = function(kw) {
   this.active = deactivate ? false : true;
 };
 
+phoneSchema.methods.processHelpKeyword = function() {
+  //var activeState = this.active;
+  this.sendMessage(process.env.HELP_MESSAGE);
+}
+
+
 var Phone = mongoose.model('Phone', phoneSchema);
 var OutgoingMessage = mongoose.model('OutgoingMessage', outgoingMessageSchema);
 
@@ -89,10 +95,15 @@ Phone.handleIncomingMessage = function(values) {
       p = p ? p : new Phone({number: values.From})
       p.incomingMessages.push(im);
       p.processStopKeywords(firstWord);
+      if(firstWord == 'help') {
+        p.processHelpKeyword();
+      }
       phoneId = p._id;
       return p.saveAsync();
     }).then(function(p1) {
-      return p1[0].active ? PhoneGroup.findKeywordAndAddToGroup(firstWord, p1[0]) : null;
+      if(firstWord != 'help') {
+        return p1[0].active ? PhoneGroup.findKeywordAndAddToGroup(firstWord, p1[0]) : null;
+      }
       // return PhoneGroup.findKeywordAndAddToGroup(firstWord, p1[0]);
     }).then(function(){
       return Phone.findById(phoneId).execAsync();
@@ -101,11 +112,6 @@ Phone.handleIncomingMessage = function(values) {
     })
   );
 };
-
-Phone.genericResponse = function() {
-  return "Thanks for your interest in Tongue Tied. We party the 1st Saturday of every month at Linger Longer Lounge. If you want to unsubscribe, txt STOP";
-}
-
 
 module.exports = {
   Phone: Phone,
