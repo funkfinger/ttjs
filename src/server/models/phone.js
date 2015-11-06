@@ -40,6 +40,11 @@ phoneSchema.pre('save', function(next){
   next();
 });
 
+phoneSchema.methods.addToGroup = function(group) {
+  group.phones.addToSet(this._id)
+  return group.saveAsync();
+}
+
 phoneSchema.methods.sendMessage = function(message) {
   var self = this;
   if (!self.active) {

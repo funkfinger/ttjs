@@ -3,13 +3,43 @@ var PhoneGroup = db.PhoneGroup;
 var Phone = db.Phone;
 
 describe('phone group model tests', function(done) {
-  
-  it('should have help group initialized with response', function() {
-    return PhoneGroup.findOne({keyword: 'help'}).execAsync()
-      .then(function(pg) {
-        return assert.equal(pg.signupResponse, process.env.HELP_RESPONSE);
-      });
+
+  it('should be able to add multiple phones (by id) to group', function(done) {
+    var pg = new PhoneGroup({keyword: 'kw'})
+    var ph1 = new Phone({number: 18005551211});
+    var ph2 = new Phone({number: 18005551212});
+    var ph3 = new Phone({number: 18005551213});
+    
+    return pg.saveAsync()
+      .then(function() {
+        return ph1.saveAsync();
+      }).then(function() {
+        return Phone.findById(ph1._id).execAsync();
+      }).then(function(ph) {
+      }).then(function() {
+        return ph2.saveAsync();
+      }).then(function() {
+        return ph3.saveAsync();
+      }).then(function() {
+        return PhoneGroup.findById(pg._id).execAsync();
+      }).then(function(pg1) {
+        return assert.equal(pg1.phones.length, 0);
+      }).then(function() {
+        return ph1.addToGroup(pg);
+      }).then(function() {
+        return PhoneGroup.findById(pg._id).execAsync();
+      }).then(function(pg1) {
+        return assert.equal(pg1.phones.length, 1);
+      }).then(done);
+    
   });
+  
+  // it('should have help group initialized with response', function() {
+  //   return PhoneGroup.findOne({keyword: 'help'}).execAsync()
+  //     .then(function(pg) {
+  //       return assert.equal(pg.signupResponse, process.env.HELP_RESPONSE);
+  //     });
+  // });
   
   it('should not add multiple same phones to a group', function() {
 

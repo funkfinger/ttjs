@@ -8,7 +8,36 @@ var toNum = 18005551212
 
 describe('phone model tests', function(done) {
 
-  it('should send help message upon help keyword', function(done) {
+  it('should be able to add self to group', function(done) {
+    pg = new db.PhoneGroup({keyword: 'kw'});
+    p = new Phone({number: 18005551212});
+    return pg.saveAsync()
+      .then(function (){
+        return p.saveAsync();
+    }).then(function() {
+      return db.PhoneGroup.findById(pg._id).execAsync()
+    }).then(function(pg1) {
+      pg = pg1;
+      return assert.equal(pg.phones.length, 0);
+    }).then(function() {
+      return p.addToGroup(pg);
+    }).then(function() {
+      return db.PhoneGroup.findById(pg._id).execAsync()
+    }).then(function(pg1) {
+      pg = pg1;
+      return assert.equal(pg.phones.length, 1);
+    }).then(function() {
+      return p.addToGroup(pg);
+    }).then(function() {
+      return db.PhoneGroup.findById(pg._id).execAsync()
+    }).then(function(pg1) {
+      pg = pg1;
+      console.log(pg);
+      return assert.equal(pg.phones.length, 1);
+    }).then(done);
+  })
+
+  it('should send help message upon help keyword', function(done) { // TODO: move this to somewhere else - not a phone issue now?...
     
     var m = helper.nock('https://api.plivo.com:443')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":process.env.HELP_MESSAGE,"url":process.env.PLIVO_CALLBACK_URL})

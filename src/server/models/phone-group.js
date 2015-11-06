@@ -25,6 +25,28 @@ phoneGroupSchema.methods.sendMessage = function(message) {
     });
 };
 
+phoneGroupSchema.methods.addPhoneIdsToGroup = function(phoneIdArray) {
+  var self = this;
+  var Phone = require('./phone').Phone;
+  
+  return new Promise(function(resolve, reject) {
+    phoneIdArray.forEach(function(pid) {
+      pid = String(pid);
+      if (mongoose.Types.ObjectId.isValid(pid)) {
+        return Phone.findById(pid).execAsync()
+          .then(function(p) {
+            if(p) {
+              return p.addToGroup(self);
+            }
+          }).then(function() {
+            return self.saveAsync();
+          }).then(resolve);
+      };
+    }.bind(this));    
+  });
+};
+
+
 phoneGroupSchema.statics.findKeywordAndAddToGroup = function(keyword, phone) {
   var response = process.env.GENERIC_TEXT_RESPONSE;
   return PhoneGroup.findOne({keyword: keyword.toLowerCase()}).execAsync()
@@ -64,9 +86,11 @@ var PhoneGroup = mongoose.model('PhoneGroup', phoneGroupSchema);
 //     }));
 // };
 
-PhoneGroup.findOneAndUpdate({keyword: 'help'}, {signupResponse: process.env.HELP_RESPONSE}, {upsert: true}, function() {
-  console.log('help phone group created...');
-});
+// PhoneGroup.findOneAndUpdate({keyword: 'help'}, {signupResponse: process.env.HELP_RESPONSE}, {upsert: true}, function() {
+//   console.log('help phone group created...');
+// });
+
+
 //.execAsync()
 //  .then(function() {
 //    console.log('help phone group created...');

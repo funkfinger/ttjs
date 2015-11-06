@@ -74,7 +74,6 @@ router.post('/im', function (req, res) {
   });
 })
 
-
 // list access log (al)
 router.get('/al', function (req, res) {
   AccessLog.find().execAsync()
@@ -102,6 +101,16 @@ router.post('/keyword/:id/send', function (req, res) {
     })
 });
 
+// add phone ids to phonegroup keyword
+router.post('/keyword/:id/add_ids', function(req, res) {
+  var phoneIdArray = req.body.phoneIds;
+  return PhoneGroup.findById(req.params.id).execAsync()
+    .then(function(pg) {
+      return pg.addPhoneIdsToGroup(phoneIdArray);
+    }).then(function() {
+      return res.status(201).send({ok: true});
+    });
+});
 
 // create phonegroup (keyword)
 router.post('/keyword', function (req, res) {

@@ -12,6 +12,30 @@ var toNum = 18005551212
 
 describe('api tests', function() {
   
+  it('should add list of phone ids to group keyword', function() {
+    var pg = new db.PhoneGroup({keyword: 'kw'});
+    var ph1 = new db.Phone({number: 18005551212});
+    var ph2 = new db.Phone({number: 18005551213});
+    
+    return pg.saveAsync()
+      .then(function() {
+        ph1.saveAsync();
+      }).then(function() {
+        ph2.saveAsync();
+      }).then(function() {
+        return request(app)
+          .post('/api/v1/keyword/' + pg._id + '/add_ids')
+          .send({phoneIds: [ph1._id, ph2._id]})
+          .expect(201)
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS);
+      }).then(function() {
+        return db.PhoneGroup.findById(pg._id).execAsync()
+      }).then(function(pg1) {
+        return assert.equal(pg1.phones.length, 2);
+      });
+    
+  })
+  
   it('should sent text to the test number on post', function() {
     var m = helper.nock('https://api.plivo.com/')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/')    
