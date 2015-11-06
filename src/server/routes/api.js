@@ -103,6 +103,7 @@ router.post('/keyword/:id/send', function (req, res) {
 
 // add phone ids to phonegroup keyword
 router.post('/keyword/:id/add_ids', function(req, res) {
+  console.log(req.body);
   var phoneIdArray = req.body.phoneIds;
   return PhoneGroup.findById(req.params.id).execAsync()
     .then(function(pg) {
