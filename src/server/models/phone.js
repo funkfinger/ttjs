@@ -48,25 +48,28 @@ phoneSchema.methods.addToGroup = function(group) {
 phoneSchema.methods.sendMessage = function(message) {
   var self = this;
   if (!self.active) {
-    throw new Error('can not send to inactive phone');
+    // do nothink now...
+    //throw new Error('can not send to inactive phone');
   }
-  var om = new OutgoingMessage({body: message})
-  return om.save().then(function() {
-    self.outgoingMessages.push(om);
-    return self.saveAsync();
-  }).then(function() {
-    return textMessage.send(self.number, message);
-  }).then(function(res) {
-    // TODO: move to callback?...
-    if(/queued/.test(res[0].body.message)) {
-      om.messageStatus = 'queued';
-      om.uuid = res[0].body.message_uuid;
-      return om.saveAsync();
-    }
-    else {
-      throw new Error('something went wrong with text message creation');
-    }
-  });
+  else {
+    var om = new OutgoingMessage({body: message})
+    return om.save().then(function() {
+      self.outgoingMessages.push(om);
+      return self.saveAsync();
+    }).then(function() {
+      return textMessage.send(self.number, message);
+    }).then(function(res) {
+      // TODO: move to callback?...
+      if(/queued/.test(res[0].body.message)) {
+        om.messageStatus = 'queued';
+        om.uuid = res[0].body.message_uuid;
+        return om.saveAsync();
+      }
+      else {
+        throw new Error('something went wrong with text message creation');
+      }
+    });
+  }
 };
 
 phoneSchema.methods.processStopKeywords = function(kw) {
