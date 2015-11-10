@@ -7,7 +7,7 @@ describe('sanity tests', function() {
   it('should be able to create event', function(done) {
     var EventEmitter = require("events").EventEmitter;
     var e = new EventEmitter();
-    e.on('myEvent', function() {done();}.bind(this));
+    e.on('myEvent', function() {done();});
     e.emit('myEvent');
   });
   
