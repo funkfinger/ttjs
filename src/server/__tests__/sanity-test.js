@@ -4,9 +4,16 @@ var helper = require('./test-helper');
 
 describe('sanity tests', function() {
   
+  it('should be able to create event', function(done) {
+    var EventEmitter = require("events").EventEmitter;
+    var e = new EventEmitter();
+    e.on('myEvent', function() {done();}.bind(this));
+    e.emit('myEvent');
+  });
+  
   it('should have unsubscribe message set in env', function() {
     assert.ok(process.env.UNSUB_MESSAGE);
-  })
+  });
   
   it('should use spies', function() {
     var sendMessage = sinon.spy();

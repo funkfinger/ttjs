@@ -93,11 +93,16 @@ router.get('/om', function (req, res) {
 
 // send message to keyword group
 router.post('/keyword/:id/send', function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'})
   PhoneGroup.findById(req.params.id).execAsync()
     .then(function(pg) {
+      pg.phones.forEach(function() {
+        
+      });
+      res.write('{');
       return pg.sendMessage(req.body.message);
     }).then(function() {
-      res.send({ok: true});
+      res.end('}');
     })
 });
 

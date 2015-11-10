@@ -48,7 +48,7 @@ phoneSchema.methods.addToGroup = function(group) {
 phoneSchema.methods.sendMessage = function(message) {
   var self = this;
   if (!self.active) {
-    // do nothink now...
+    // do nothing now...
     //throw new Error('can not send to inactive phone');
   }
   else {
@@ -66,7 +66,9 @@ phoneSchema.methods.sendMessage = function(message) {
         return om.saveAsync();
       }
       else {
-        throw new Error('something went wrong with text message creation');
+        console.log(res[0].body);
+        // do nothing now...
+        //throw new Error('something went wrong with text message creation');
       }
     });
   }
