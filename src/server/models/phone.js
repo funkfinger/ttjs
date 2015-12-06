@@ -122,7 +122,9 @@ Phone.handleIncomingMessage = function(values) {
   var phoneId;
   return Promise.resolve(Phone.findOne({number: values.From}).execAsync()
     .then(function(p) {
+      console.log("p:", p);
       p = p ? p : new Phone({number: values.From})
+      console.log("now p:", p);
       p.incomingMessages.push(im);
       p.processStopKeywords(firstWord);
       if(firstWord == 'help') {
