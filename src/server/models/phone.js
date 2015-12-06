@@ -118,8 +118,12 @@ Phone.handleIncomingMessage = function(values) {
   var im = new IncomingMessage({ raw: JSON.stringify(values), body: values.Text });
   var firstWord = im.body.trim().split(' ')[0];
   var phoneId;
-  return Promise.resolve(Phone.findOne({number: values.From}).execAsync()
-    .then(function(p) {
+  var p;
+  return Phone.findOne({number: values.From}).execAsync()
+    .then(function(ph) {
+      p = ph;
+      return im.save();
+    }).then(function() {
       p = p ? p : new Phone({number: values.From})
       p.incomingMessages.push(im);
       p.processStopKeywords(firstWord);
@@ -138,7 +142,6 @@ Phone.handleIncomingMessage = function(values) {
     }).then(function(rp) {
       return rp;
     })
-  );
 };
 
 module.exports = {
