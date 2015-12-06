@@ -115,6 +115,7 @@ var IncomingMessage = mongoose.model('IncomingMessage', incomingMessageSchema);
 
 Phone.handleIncomingMessage = function(values) {
   //if ( !values['From'] ) { throw 'from value is undef.' }
+  console.log (values);
   var im = new IncomingMessage({ raw: JSON.stringify(values), body: values.Text });
   var firstWord = im.body.trim().split(' ')[0];
   var phoneId;
