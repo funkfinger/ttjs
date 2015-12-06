@@ -427,19 +427,27 @@ describe('phone model tests', function(done) {
   
   it('should have a raw property on incoming message', function () {
     var p = new Phone({number: toNum})
-    p.incomingMessages.push({raw: 'raw'})
-    return p.save()
-      .then(function(res) {        
-        return assert.equal(res.incomingMessages[0].raw, 'raw');
+    var im = new IncomingMessage({raw: 'raw', body: 'body'});
+    return im.save()
+      .then(function() {
+        p.incomingMessages.push(im);
+        return p.save()
+      }).then(function() {
+        return Phone.findById(p._id).populate('incomingMessages').execAsync();
+      }).then(function(phone) {
+        return assert.equal(phone.incomingMessages[0].raw, 'raw');
       });
   });
 
   it('should have incoming messages', function() {
-    var p = new Phone({number: toNum, incomingMessages: [{body: 'body'}] });
-    // p.incomingMessages.push({raw: 'raw'});
-    return p.save()
-      .then(function(res){
-        return Phone.findOne({number: toNum});
+    var im = new IncomingMessage({body: 'body'});
+    var p = new Phone({number: toNum, incomingMessages: im });
+    return im.save()
+      .then(function() {
+        p.incomingMessages.push(im)
+        return p.save()
+      }).then(function(res){
+        return Phone.findOne({number: toNum}).populate('incomingMessages');
       }).then(function(num){
         return assert.equal(num.incomingMessages[0].body, 'body');
       });

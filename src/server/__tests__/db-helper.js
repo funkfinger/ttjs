@@ -12,6 +12,8 @@ function dropCollections() {
       db.ScheduledMessage.remove({}).execAsync();
     }).then(function() {
       db.OutgoingMessage.remove({}).execAsync();
+    }).then(function() {
+      db.IncomingMessage.remove({}).execAsync();
     })
 }
 

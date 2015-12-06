@@ -19,13 +19,30 @@ outgoingMessageSchema.pre('save', function(next){
   next();
 });
 
+var incomingMessageSchema = new mongoose.Schema({
+  body: { type: String, required: true },
+  raw: { type: String },
+  createdAt: { type: Date },
+  updatedAt: { type: Date }
+});
+
+incomingMessageSchema.pre('save', function(next){
+  now = new Date();
+  this.updatedAt = now;
+  if ( !this.createdAt ) {
+    this.createdAt = now;
+  }
+  next();
+});
+
 var phoneSchema = new mongoose.Schema({
   number: { type: Number, unique: true },
   active: { type: Boolean, required: true, default: true },
-  incomingMessages: [{
-    raw: { type: String },
-    body: { type: String }
-  }],
+  incomingMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'IncomingMessage' }],
+  // incomingMessages: [{
+  //   raw: { type: String },
+  //   body: { type: String }
+  // }],
   outgoingMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OutgoingMessage' }],
   createdAt: { type: Date },
   updatedAt: { type: Date }
@@ -94,10 +111,11 @@ phoneSchema.methods.processHelpKeyword = function() {
 
 var Phone = mongoose.model('Phone', phoneSchema);
 var OutgoingMessage = mongoose.model('OutgoingMessage', outgoingMessageSchema);
+var IncomingMessage = mongoose.model('IncomingMessage', incomingMessageSchema);
 
 Phone.handleIncomingMessage = function(values) {
   //if ( !values['From'] ) { throw 'from value is undef.' }
-  var im = { raw: JSON.stringify(values), body: values.Text };
+  var im = new IncomingMessage({ raw: JSON.stringify(values), body: values.Text });
   var firstWord = im.body.trim().split(' ')[0];
   var phoneId;
   return Promise.resolve(Phone.findOne({number: values.From}).execAsync()
@@ -125,5 +143,6 @@ Phone.handleIncomingMessage = function(values) {
 
 module.exports = {
   Phone: Phone,
-  OutgoingMessage: OutgoingMessage
+  OutgoingMessage: OutgoingMessage,
+  IncomingMessage: IncomingMessage
 };
