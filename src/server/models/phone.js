@@ -115,16 +115,12 @@ var IncomingMessage = mongoose.model('IncomingMessage', incomingMessageSchema);
 
 Phone.handleIncomingMessage = function(values) {
   //if ( !values['From'] ) { throw 'from value is undef.' }
-  console.log (values);
   var im = new IncomingMessage({ raw: JSON.stringify(values), body: values.Text });
-  console.log (im);
   var firstWord = im.body.trim().split(' ')[0];
   var phoneId;
   return Promise.resolve(Phone.findOne({number: values.From}).execAsync()
     .then(function(p) {
-      console.log("p:", p);
       p = p ? p : new Phone({number: values.From})
-      console.log("now p:", p);
       p.incomingMessages.push(im);
       p.processStopKeywords(firstWord);
       if(firstWord == 'help') {
