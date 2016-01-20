@@ -37,7 +37,8 @@ var RequestList = React.createClass({
 var RequestListItems = React.createClass({
   render: function() {
     var items = this.props.data.map(function(item, i) {
-      var phone = item.raw.match(/"From\"\:"(\d+)"/)[1]
+      // var phone = item.raw.match(/"From\"\:"(\d+)"/)[1];
+      var phone = item.fromNumber;
       return (
         <li className="list-group-item" key={i}><strong>{item.body}</strong> - <small>{moment(item.createdAt).calendar()} [{phone}]</small></li>
       );

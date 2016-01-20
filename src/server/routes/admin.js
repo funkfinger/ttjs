@@ -20,10 +20,10 @@ router.all('*', function(req, res, next) {
 
 router.get('/requests.json', function(req, res) {
   return db.IncomingMessage
-            .find({body: new RegExp('^\s*request', "i")})
+            .find({body: new RegExp('^\s*request', "i")}, "body createdAt fromNumber")
             // .populate('phone.number')
             .sort('-createdAt')
-            .limit(20)
+            .limit(100)
             .execAsync()
     .then(function(ims) {
       res.send(ims)
