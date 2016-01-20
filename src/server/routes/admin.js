@@ -23,6 +23,7 @@ router.get('/requests.json', function(req, res) {
             .find({body: new RegExp('^\s*request', "i")})
             // .populate('phone.number')
             .sort('-createdAt')
+            .limit(20)
             .execAsync()
     .then(function(ims) {
       res.send(ims)
