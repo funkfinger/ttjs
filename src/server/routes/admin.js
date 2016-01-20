@@ -19,7 +19,11 @@ router.all('*', function(req, res, next) {
 });
 
 router.get('/requests.json', function(req, res) {
-  return db.IncomingMessage.find({body: new RegExp('^\s*request', "i")}, "createdAt body").sort('-createdAt').execAsync()
+  return db.IncomingMessage
+            .find({body: new RegExp('^\s*request', "i")})
+            // .populate('phone.number')
+            .sort('-createdAt')
+            .execAsync()
     .then(function(ims) {
       res.send(ims)
     });

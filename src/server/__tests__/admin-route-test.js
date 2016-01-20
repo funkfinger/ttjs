@@ -30,7 +30,7 @@ describe('api tests', function() {
       .then(function() {
         return Phone.handleIncomingMessage({'Text': 'Request prince, erotic city', 'From': 18005551212})
       }).then(function() {
-        return Phone.handleIncomingMessage({'Text': 'RequesT got to give it up - gaye', 'From': 18005551212})
+        return Phone.handleIncomingMessage({'Text': 'RequesT got to give it up - gaye', 'From': 18005551213})
       }).then(function() {
         return request(app)
           .get('/admin/requests.json')
@@ -40,6 +40,7 @@ describe('api tests', function() {
           .then(function(res) {
             assert.match(res.text, /prince\, erotic city/);
             assert.match(res.text, /gaye.*prince/);
+            assert.match(res.text, /18005551213/);
             return assert.match(res.text, /got to give it up/);
           });
       });

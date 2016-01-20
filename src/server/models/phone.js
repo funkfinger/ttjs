@@ -21,6 +21,7 @@ outgoingMessageSchema.pre('save', function(next){
 
 var incomingMessageSchema = new mongoose.Schema({
   body: { type: String, required: true },
+  fromNumber: { type: Number, required: true },
   raw: { type: String },
   createdAt: { type: Date },
   updatedAt: { type: Date }
@@ -115,7 +116,7 @@ var IncomingMessage = mongoose.model('IncomingMessage', incomingMessageSchema);
 
 Phone.handleIncomingMessage = function(values) {
   //if ( !values['From'] ) { throw 'from value is undef.' }
-  var im = new IncomingMessage({ raw: JSON.stringify(values), body: values.Text });
+  var im = new IncomingMessage({ raw: JSON.stringify(values), body: values.Text, fromNumber: values.From });
   var firstWord = im.body.trim().split(' ')[0];
   var phoneId;
   var p;

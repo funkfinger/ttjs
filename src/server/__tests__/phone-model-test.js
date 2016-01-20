@@ -32,7 +32,6 @@ describe('phone model tests', function(done) {
       return db.PhoneGroup.findById(pg._id).execAsync()
     }).then(function(pg1) {
       pg = pg1;
-      console.log(pg);
       return assert.equal(pg.phones.length, 1);
     }).then(done);
   })
@@ -427,7 +426,7 @@ describe('phone model tests', function(done) {
   
   it('should have a raw property on incoming message', function () {
     var p = new Phone({number: toNum})
-    var im = new IncomingMessage({raw: 'raw', body: 'body'});
+    var im = new IncomingMessage({raw: 'raw', body: 'body', fromNumber: '18005551212'});
     return im.save()
       .then(function() {
         p.incomingMessages.push(im);
@@ -440,7 +439,7 @@ describe('phone model tests', function(done) {
   });
 
   it('should have incoming messages', function() {
-    var im = new IncomingMessage({body: 'body'});
+    var im = new IncomingMessage({body: 'body', fromNumber: 18005551212});
     var p = new Phone({number: toNum, incomingMessages: im });
     return im.save()
       .then(function() {
