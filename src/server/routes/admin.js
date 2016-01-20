@@ -18,36 +18,19 @@ router.all('*', function(req, res, next) {
   }
 });
 
-router.get('/requests', function(req, res) {
-  // Phone.find({"incomingMessages.body": {
-  //       "$regex": "request",
-  //       "$options": "i"
-  //   }}).execAsync().then(function(prizes) {
-  //     res.write("<li>" + )
-  //   });
-  //   res.send(prizes);
-  // })
-  return db.IncomingMessage.find({body: /request/}).execAsync()
+router.get('/requests.json', function(req, res) {
+  return db.IncomingMessage.find({body: new RegExp('^\s*request', "i")}, "createdAt body").sort('-createdAt').execAsync()
     .then(function(ims) {
-      // res.set('Content-Type', 'text/html');
-      res.send("<h1>requests</h1><ol>");
-      console.log(ims);
-      return ims.forEach(function(im) {
-        consoloe.log(im);
-        res.send("<li>");
-        res.send(im.text);
-        res.send("</li>");
-      })
-    }).then(function() {
-      console.log("GOT HEREEEEEEEEEE");
-      res.end("</ol>");
+      res.send(ims)
     });
-  
-  
 });
 
 router.get('/', function (req, res) {
   res.sendFile('admin.html', {"root": path.join(__dirname, '../html')});
+});
+
+router.get('/requests', function (req, res) {
+  res.sendFile('requests.html', {"root": path.join(__dirname, '../html')});
 });
 
 module.exports = router;

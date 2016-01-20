@@ -1,8 +1,11 @@
 module.exports = {
-  entry: "./src/server/public/js/main.js",
+  entry: {
+    bundle: "./src/server/public/js/main.js",
+    requests: "./src/server/public/js/requests.jsx",
+  },
   output: {
     path: __dirname + '/src//server/public/assets/build/',
-    filename: "bundle.js"
+    filename: "[name].js"
   },
   module: {
     loaders: [
