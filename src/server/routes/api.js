@@ -14,6 +14,15 @@ var AccessLog = db.AccessLog;
 var OutgoingMessage = db.OutgoingMessage;
 
 /////////// PUBLIC API - no auth required
+
+router.all('*', function (req, res, next) {
+  var data = JSON.stringify({url: req.url, body: req.body});
+  al = new AccessLog({data: data});
+  al.saveAsync().then(function() {
+    next();
+  });
+});
+
 // read prizes
 router.get('/prizes', function (req, res) {
   var query = url.parse(req.url, true).query;
@@ -25,19 +34,19 @@ router.get('/prizes', function (req, res) {
 
 // update om status - outgoing message
 router.post('/om', function (req, res) {
-  var jsonReq =  JSON.stringify(req.body);
-  var al = new AccessLog({data: jsonReq});
-  al.saveAsync()
-    .then(function() {
-      return OutgoingMessage.findOne({uuid: req.body.ParentMessageUUID}).execAsync();      
-    }).then(function(om) {
-      if (om) {
-        om.messageStatus = req.body.Status;
-        return om.saveAsync();
-      }
-    }).then(function(){
-      res.send({ok: true});
-    })
+  // var jsonReq =  JSON.stringify(req.body);
+  // var al = new AccessLog({data: jsonReq});
+  // al.saveAsync()
+  //   .then(function() {
+  //     return OutgoingMessage.findOne({uuid: req.body.ParentMessageUUID}).execAsync();
+  OutgoingMessage.findOne({uuid: req.body.ParentMessageUUID}).execAsync().then(function(om) {
+    if (om) {
+      om.messageStatus = req.body.Status;
+      return om.saveAsync();
+    }
+  }).then(function(){
+    res.send({ok: true});
+  })
 });
 
 
