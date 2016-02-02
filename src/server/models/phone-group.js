@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var Phone = require('./phone').Phone;
+var OutgoingMessage = require('./phone').OutgoingMessage;
+var textMessage = require('../text_message.js');
 
 var phoneGroupSchema = new mongoose.Schema( {
   keyword: { type: String, required: true, unique: true },
@@ -25,6 +27,29 @@ phoneGroupSchema.methods.sendMessage = function(message) {
     });
 };
 
+
+phoneGroupSchema.methods.sendBulkMessage = function(message) {
+  return this.getActivePhonesAsString()
+    .then(function(tos) {
+      return textMessage.send(tos, message);
+    }).then(function(res) {
+      // TODO: move to callback?...
+      if(/queued/.test(res[0].body.message)) {
+        // TODO: fix this...
+        // om = new OutgoingMessage({body: message})
+        // om.messageStatus = 'queued';
+        // om.uuid = res[0].body.message_uuid;
+        // return om.saveAsync();
+      }
+      else {
+        console.log(res[0].body);
+        // do nothing now...
+        //throw new Error('something went wrong with text message creation');
+      }
+    });
+};
+
+
 phoneGroupSchema.methods.addPhoneIdsToGroup = function(phoneIdArray) {
   var self = this;
   var Phone = require('./phone').Phone;
@@ -46,6 +71,19 @@ phoneGroupSchema.methods.addPhoneIdsToGroup = function(phoneIdArray) {
   });
 };
 
+phoneGroupSchema.methods.getActivePhonesAsString = function() {
+  var phoneNumberArray = [];
+  return PhoneGroup.findById(this._id).populate('phones').execAsync()
+    .then(function(res) {
+      return res.phones;
+    }).each(function(phone) {
+      if (phone.active) phoneNumberArray.push(phone.number);
+      return;
+    })
+    .then(function() {
+      return phoneNumberArray.join("<");
+    });
+}
 
 phoneGroupSchema.statics.findKeywordAndAddToGroup = function(keyword, phone) {
   var response = process.env.GENERIC_TEXT_RESPONSE;

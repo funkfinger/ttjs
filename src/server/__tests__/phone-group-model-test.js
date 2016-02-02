@@ -3,6 +3,75 @@ var PhoneGroup = db.PhoneGroup;
 var Phone = db.Phone;
 
 describe('phone group model tests', function(done) {
+  
+  it('should be able to send bulk sms', function(done) {
+    
+    helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":"18005551211<18005551212<18005551213","text":"this is a bulk send","url":process.env.PLIVO_CALLBACK_URL})
+      .reply(202, {"api_id":"710c4c78-c9a8-11e5-b9e9-22000acbxxxx","message":"message(s) queued","message_uuid":["8e467b93-3de9-4b69-aff5-0bf75f23xxxx","c99b44d2-127a-47a9-abd5-4df69f4exxxx","be9510cd-b8ff-46f0-b647-157c88d9xxxx"]}, { 'content-type': 'application/json',
+      date: 'Tue, 02 Feb 2016 12:28:19 GMT',
+      server: 'nginx/1.6.2',
+      'content-length': '244',
+      connection: 'Close' });
+    
+    var pg = new PhoneGroup({keyword: 'kw'})
+    var ph1 = new Phone({number: 18005551211});
+    var ph2 = new Phone({number: 18005551212});
+    var ph3 = new Phone({number: 18005551213});
+    var pa = []
+    pa.push(ph1._id);
+    pa.push(ph2._id);
+    pa.push(ph3._id);
+
+  return pg.saveAsync()
+    .then(function() {
+      return ph1.saveAsync();
+    }).then(function() {
+      return ph2.saveAsync();
+    }).then(function() {
+      return ph3.saveAsync();
+    }).then(function() {
+      return pg.addPhoneIdsToGroup(pa);
+    }).then(function() {
+      return pg.sendBulkMessage("this is a bulk send");
+    }).then(done);
+    
+  });
+  
+  it('should be able to create a string of active phones to send bulk message via plivo', function(done) {
+    var pg = new PhoneGroup({keyword: 'kw'})
+    var ph1 = new Phone({number: 18005551211});
+    var ph2 = new Phone({number: 18005551212});
+    var ph3 = new Phone({number: 18005551213});
+    var pa = []
+    pa.push(ph1._id);
+    pa.push(ph2._id);
+    pa.push(ph3._id);
+
+  return pg.saveAsync()
+    .then(function() {
+      return ph1.saveAsync();
+    }).then(function() {
+      return ph2.saveAsync();
+    }).then(function() {
+      return ph3.saveAsync();
+    }).then(function() {
+      return pg.addPhoneIdsToGroup(pa);
+    }).then(function() {
+      return PhoneGroup.findById(pg._id).execAsync();
+    }).then(function(pgs) {
+      return assert.equal(pgs.phones.length, 3);
+    }).then(function() {
+      ph1.active = false;
+      return ph1.saveAsync();
+    }).then(function(p) {
+      return pg.getActivePhonesAsString();
+    }).then(function(st) {
+      assert.equal(st, "18005551212<18005551213");
+    }).then(done);
+    
+  });
+  
 
   it('should be able to add multiple phones (by id) to group', function(done) {
     var pg = new PhoneGroup({keyword: 'kw'})
