@@ -52,7 +52,7 @@ router.post('/om', function (req, res) {
 
 //////////// private api - auth required
 
-router.all('*', function(req, res, next) {
+router.all('*', function(req, res, next) {  
   if (req.get('Host').match(/localhost\:\d+/)) {
     next();
   }
@@ -99,6 +99,15 @@ router.get('/om', function (req, res) {
     })
 });
 
+// bulk send sms
+router.post('/keyword/:id/bulk_send', function(req, res) {
+  PhoneGroup.findById(req.params.id).execAsync()
+    .then(function(pg) {
+      return pg.sendBulkMessage(req.body.message)
+    }).then(function() {
+      res.status(201).send({ok: true});
+    });
+});
 
 // send message to keyword group
 router.post('/keyword/:id/send', function (req, res) {

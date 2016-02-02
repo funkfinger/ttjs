@@ -12,6 +12,46 @@ var toNum = 18005551212
 
 describe('api tests', function() {
   
+  it('should send using bulk send on PhoneGroup', function(done) {
+    
+    helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":"18005551211<18005551212<18005551213","text":"this is a bulk send message","url":process.env.PLIVO_CALLBACK_URL})
+      .reply(202, {"api_id":"5d050d6f-c9df-11e5-a3c8-22000ae9XXXX","message":"message(s) queued","message_uuid":["b60a046a-cf12-4fe5-a38c-4f94f771XXXX","462cf744-0c66-41ed-94ec-c3fc4370XXXX","2cfe37de-2a2e-4baa-99d2-5b79e596XXXX"]}, { 'content-type': 'application/json',
+      date: 'Tue, 02 Feb 2016 19:01:28 GMT',
+      server: 'nginx/1.6.2',
+      'content-length': '244',
+      connection: 'Close' });
+      
+    var pg = new db.PhoneGroup({keyword: 'kw'})
+    var ph1 = new db.Phone({number: 18005551211});
+    var ph2 = new db.Phone({number: 18005551212});
+    var ph3 = new db.Phone({number: 18005551213});
+    var pa = []
+    pa.push(ph1._id);
+    pa.push(ph2._id);
+    pa.push(ph3._id);
+
+  return pg.saveAsync()
+    .then(function() {
+      return ph1.saveAsync();
+    }).then(function() {
+      return ph2.saveAsync();
+    }).then(function() {
+      return ph3.saveAsync();
+    }).then(function() {
+      return pg.addPhoneIdsToGroup(pa);
+    }).then(function() {
+      var url = '/api/v1/keyword/' + pg._id + '/bulk_send';
+      return request(app)
+        .post(url)
+        .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+        .send({ message: 'this is a bulk send message'})
+        .expect(201);
+    }).then(function(res) {
+    }).then(done);
+    
+  });
+  
   it('should add list of phone ids to group keyword', function() {
     var pg = new db.PhoneGroup({keyword: 'kw'});
     var ph1 = new db.Phone({number: 18005551212});
