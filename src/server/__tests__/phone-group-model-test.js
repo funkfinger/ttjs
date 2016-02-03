@@ -34,6 +34,7 @@ describe('phone group model tests', function(done) {
       return pg.addPhoneIdsToGroup(pa);
     }).then(function() {
       return pg.sendBulkMessage("this is a bulk send");
+    }).then(function() {
     }).then(done);
     
   });

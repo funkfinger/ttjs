@@ -28,10 +28,10 @@ phoneGroupSchema.methods.sendMessage = function(message) {
 };
 
 
-phoneGroupSchema.methods.sendBulkMessage = function(message) {
+phoneGroupSchema.methods.sendBulkMessage = function(text) {
   return this.getActivePhonesAsString()
     .then(function(tos) {
-      return textMessage.send(tos, message);
+      return textMessage.send(tos, text);
     }).then(function(res) {
       // TODO: move to callback?...
       if(/queued/.test(res[0].body.message)) {

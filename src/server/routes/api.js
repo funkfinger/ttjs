@@ -103,7 +103,7 @@ router.get('/om', function (req, res) {
 router.post('/keyword/:id/bulk_send', function(req, res) {
   PhoneGroup.findById(req.params.id).execAsync()
     .then(function(pg) {
-      return pg.sendBulkMessage(req.body.message)
+      return pg.sendBulkMessage(req.body.text);
     }).then(function() {
       res.status(201).send({ok: true});
     });
@@ -156,7 +156,7 @@ router.get('/keyword/:id', function (req, res) {
 
 // read list of phonegroup keywords
 router.get('/keywords', function (req, res) {
-  PhoneGroup.find().populate('phones').execAsync()
+  PhoneGroup.find().execAsync()
     .then(function(pgs) {
       res.send(pgs);
     })
