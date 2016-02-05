@@ -70,15 +70,17 @@ router.all('*', function(req, res, next) {
 
 
 router.get('/keyword/add_to_all', function(req, res) {
-  res.write('{"phonesArray": "');
+  res.writeHead(200, {'Content-Type': 'application/json'});
   var phoneIdArray = [];
+  var firstItem=true;
   return Phone.
     find({ active: true }).
     select('_id').
     execAsync()
     .then(function(result) {
       result.forEach(function(id) {
-        res.write('.');
+        res.write(firstItem ? (firstItem=false,'[') : ',');
+        res.write(JSON.stringify({ id: id._id }));
         phoneIdArray.push(id._id);
       })
     }).then(function() {
@@ -86,16 +88,9 @@ router.get('/keyword/add_to_all', function(req, res) {
     }).then(function(pg) {
       return pg.addPhoneIdsToGroup(phoneIdArray);
     }).then(function() {
-      return res.end('"}')
+      res.end(']');
       // return res.send(({ok: true}));
-    })
-  
-  // return PhoneGroup.findById(req.params.id).execAsync()
-  //   .then(function(pg) {
-  //     return pg.addPhoneIdsToGroup(phoneIdArray);
-  //   }).then(function() {
-  //     return res.status(201).send({ok: true});
-  //   });
+    })  
 });
 
 // test sms (all verbs...)
