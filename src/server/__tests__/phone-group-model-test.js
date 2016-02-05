@@ -3,9 +3,9 @@ var PhoneGroup = db.PhoneGroup;
 var Phone = db.Phone;
 
 describe('phone group model tests', function(done) {
-  
-  it('should be able to send bulk sms', function(done) {
     
+  it('should be able to send bulk sms', function(done) {
+        
     helper.nock('https://api.plivo.com:443')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":"18005551211<18005551212<18005551213","text":"this is a bulk send","url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"710c4c78-c9a8-11e5-b9e9-22000acbxxxx","message":"message(s) queued","message_uuid":["8e467b93-3de9-4b69-aff5-0bf75f23xxxx","c99b44d2-127a-47a9-abd5-4df69f4exxxx","be9510cd-b8ff-46f0-b647-157c88d9xxxx"]}, { 'content-type': 'application/json',

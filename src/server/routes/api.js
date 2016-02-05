@@ -70,6 +70,7 @@ router.all('*', function(req, res, next) {
 
 
 router.get('/keyword/add_to_all', function(req, res) {
+  res.write('{"phonesArray": "');
   var phoneIdArray = [];
   return Phone.
     find({ active: true }).
@@ -77,6 +78,7 @@ router.get('/keyword/add_to_all', function(req, res) {
     execAsync()
     .then(function(result) {
       result.forEach(function(id) {
+        res.write(id._id + '<');
         phoneIdArray.push(id._id);
       })
     }).then(function() {
@@ -84,7 +86,8 @@ router.get('/keyword/add_to_all', function(req, res) {
     }).then(function(pg) {
       return pg.addPhoneIdsToGroup(phoneIdArray);
     }).then(function() {
-      return res.send(({ok: true}));
+      return res.end('"}')
+      // return res.send(({ok: true}));
     })
   
   // return PhoneGroup.findById(req.params.id).execAsync()

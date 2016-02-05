@@ -11,8 +11,8 @@ var sample = helper.samplePlivoParams;
 var toNum = 18005551212
 
 describe('api tests', function() {
-  
-  it('should add all to all group', function(done) {
+    
+  it('should add all active to all group', function(done) {
     var pg = new db.PhoneGroup({keyword: 'all'})
     var ph1 = new db.Phone({number: 18005551211});
     var ph2 = new db.Phone({number: 18005551212});
