@@ -70,7 +70,7 @@ router.all('*', function(req, res, next) {
 
 
 router.get('/keyword/add_to_all', function(req, res) {
-  res.writeHead(200, {'Content-Type': 'application/json'});
+  res.writeHead(200, {'Content-Type': 'text/plain'});
   var phoneIdArray = [];
   var firstItem=true;
   return Phone.
@@ -80,7 +80,7 @@ router.get('/keyword/add_to_all', function(req, res) {
     .then(function(result) {
       result.forEach(function(id) {
         res.write(firstItem ? (firstItem=false,'[') : ',');
-        res.write(JSON.stringify({ id: id._id }));
+        res.write(id._id);
         phoneIdArray.push(id._id);
       })
     }).then(function() {
