@@ -79,9 +79,9 @@ router.get('/keyword/add_to_all', function(req, res) {
     execAsync()
     .then(function(result) {
       result.forEach(function(id) {
-        res.write(firstItem ? (firstItem=false,'[') : ',');
-        res.write(id._id);
         phoneIdArray.push(id._id);
+        res.write('.');
+        // res.write(id._id);
       })
     }).then(function() {
       return PhoneGroup.findOne({keyword: "all"}).execAsync()
@@ -126,11 +126,12 @@ router.get('/om', function (req, res) {
 
 // bulk send sms
 router.post('/keyword/:id/bulk_send', function(req, res) {
+  res.writeHead(201, {'Content-Type': 'text/plain'});
   PhoneGroup.findById(req.params.id).execAsync()
     .then(function(pg) {
       return pg.sendBulkMessage(req.body.text);
     }).then(function() {
-      res.status(201).send({ok: true});
+      res.end("ok");
     });
 });
 
