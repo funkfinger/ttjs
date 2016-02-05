@@ -78,7 +78,7 @@ router.get('/keyword/add_to_all', function(req, res) {
     execAsync()
     .then(function(result) {
       result.forEach(function(id) {
-        res.write(id._id + '<');
+        res.write('.');
         phoneIdArray.push(id._id);
       })
     }).then(function() {
