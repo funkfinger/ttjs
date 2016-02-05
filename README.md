@@ -75,3 +75,29 @@ the JSON file was formated like this:
   
     ]
 
+### Mongo Commands
+
+find one and modify - 
+    
+    {
+        "findAndModify": "phones",
+        "query": {"active": {"$exists": false}},
+        "new": false,
+        "update": { "$set": {"active": true}},
+        "multi": true
+    }
+    
+find many and modify, use mongo shell - mongo XXX.mongolab.com:XXX/XXX -u <dbuser> -p <dbpassword> (aliased as mongott on my machine)
+
+    db.runCommand({
+       "update": "phones",
+       "updates": [
+          {
+            "q": {"active": { "$exists": false } },
+            "u": { "$set": { "active": true } },
+            "multi": true
+          }
+       ],
+       "ordered": false
+    });
+    

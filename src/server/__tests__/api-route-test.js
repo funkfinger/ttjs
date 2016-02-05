@@ -12,6 +12,39 @@ var toNum = 18005551212
 
 describe('api tests', function() {
   
+  it('should add all to all group', function(done) {
+    var pg = new db.PhoneGroup({keyword: 'all'})
+    var ph1 = new db.Phone({number: 18005551211});
+    var ph2 = new db.Phone({number: 18005551212});
+    var ph3 = new db.Phone({number: 18005551213, active: false});
+    var pa = []
+    pa.push(ph1._id);
+    pa.push(ph2._id);
+    pa.push(ph3._id);
+    
+  return pg.saveAsync()
+    .then(function() {
+      return ph1.saveAsync();
+    }).then(function() {
+      return ph2.saveAsync();
+    }).then(function() {
+      return ph3.saveAsync();
+    }).then(function() {
+      return pg.addPhoneIdsToGroup(pa);
+    }).then(function() {
+      var url = '/api/v1/keyword/add_to_all';
+      return request(app)
+        .get(url)
+        .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+        .expect(200);
+    }).then(function() {
+      return db.PhoneGroup.findOne({keyword: 'all'}).execAsync();
+    }).then(function(r) {
+      return assert(r.phones.length, 2);
+    }).then(done);
+    
+  });
+  
   it('should send using bulk send on PhoneGroup', function(done) {
     
     helper.nock('https://api.plivo.com:443')

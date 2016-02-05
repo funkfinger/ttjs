@@ -42,7 +42,6 @@ phoneGroupSchema.methods.sendBulkMessage = function(text) {
         // return om.saveAsync();
       }
       else {
-        console.log(res[0].body);
         // do nothing now...
         //throw new Error('something went wrong with text message creation');
       }

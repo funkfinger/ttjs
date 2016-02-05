@@ -68,6 +68,33 @@ router.all('*', function(req, res, next) {
   }
 });
 
+
+router.get('/keyword/add_to_all', function(req, res) {
+  var phoneIdArray = [];
+  return Phone.
+    find({ active: true }).
+    select('_id').
+    execAsync()
+    .then(function(result) {
+      result.forEach(function(id) {
+        phoneIdArray.push(id._id);
+      })
+    }).then(function() {
+      return PhoneGroup.findOne({keyword: "all"}).execAsync()
+    }).then(function(pg) {
+      return pg.addPhoneIdsToGroup(phoneIdArray);
+    }).then(function() {
+      return res.send(({ok: true}));
+    })
+  
+  // return PhoneGroup.findById(req.params.id).execAsync()
+  //   .then(function(pg) {
+  //     return pg.addPhoneIdsToGroup(phoneIdArray);
+  //   }).then(function() {
+  //     return res.status(201).send({ok: true});
+  //   });
+});
+
 // test sms (all verbs...)
 router.all('/testsms', function(req, res) {
   textMessage.send(process.env.TEST_NUMBER, 'this is a test - ');
