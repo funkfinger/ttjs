@@ -2,6 +2,7 @@ module.exports = {
   entry: {
     bundle: "./src/server/public/js/main.js",
     requests: "./src/server/public/js/requests.jsx",
+    bulk_send: "./src/server/public/js/bulk_send.jsx",
   },
   output: {
     path: __dirname + '/src//server/public/assets/build/',

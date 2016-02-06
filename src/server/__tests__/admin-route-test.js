@@ -6,6 +6,43 @@ var request = require('supertest-as-promised');
 
 describe('api tests', function() {
 
+  it('should list keywords as json', function(done) {
+    var pg1 = new db.PhoneGroup({keyword: 'kw1'});
+    var pg2 = new db.PhoneGroup({keyword: 'kw2'});
+    var pg1Id = pg1._id
+
+    return pg1.saveAsync()
+      .then(function() {
+        return pg2.saveAsync()
+      }).then(function() {
+        return request(app)
+          .get('/admin/keywords.json')
+          .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+          // .expect('Content-Type', /application\/json/)
+          // .expect(200)
+      }).then(function(res) {
+        console.log("res.text", res.text);
+        assert.match(res.text, /kw1/);
+        assert.match(res.text, /kw2/);
+        console.log("pg1Id: ", pg1Id);
+        // assert.include(res.text, pg1Id);
+        done();
+      })
+    
+    
+  });
+
+  it('should send send_bulk.html file', function(done) {
+    return request(app)
+      .get('/admin/send_bulk')
+      .expect('Content-Type', /text\/html/)
+      .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
+      .expect(200)
+      .then(function() {
+        done();
+      });
+  });
+
   it('should send request index file', function() {
     return request(app)
       .get('/admin/requests')

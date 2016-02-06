@@ -18,6 +18,17 @@ router.all('*', function(req, res, next) {
   }
 });
 
+router.get('/send_bulk', function(req, res) {
+  res.sendFile('send_bulk.html', {"root": path.join(__dirname, '../html')});
+});
+
+router.get('/keywords.json', function(req, res) {
+  return db.PhoneGroup.find().select('keyword id').execAsync()
+  .then(function(kws) {
+    res.send(kws);
+  })
+})
+
 router.get('/requests.json', function(req, res) {
   return db.IncomingMessage
             .find({body: new RegExp('^\s*request', "i")}, "body createdAt fromNumber")

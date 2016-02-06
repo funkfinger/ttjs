@@ -27,9 +27,13 @@ router.all('*', function (req, res, next) {
 router.get('/prizes', function (req, res) {
   var query = url.parse(req.url, true).query;
   var limit = query.inactive == "1" ? {} : {active: true};
-  Prize.find(limit).execAsync().then(function(prizes) {
-    res.send(prizes);
-  })
+  Prize
+    .find(limit)
+    .sort([['_id', 'descending']])
+    .execAsync()
+    .then(function(prizes) {
+      res.send(prizes);
+    })
 });
 
 // update om status - outgoing message
