@@ -27,6 +27,8 @@ if (process.env.NODE_ENV === 'production') {
 
 require('./routes/index')(app);
 
-var port = process.env.PORT || 3000
+var port = process.env.PORT || 4001
 app.listen(port);
 console.log('running... port is:' + port);
+console.log('process.env.NODE_ENV is:' + process.env.NODE_ENV);
+
