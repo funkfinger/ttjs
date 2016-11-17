@@ -68,7 +68,9 @@ describe('phone group model tests', function(done) {
     }).then(function(p) {
       return pg.getActivePhonesAsString();
     }).then(function(st) {
-      assert.equal(st, "18005551212<18005551213");
+      assert.include(st, "18005551212");
+      assert.include(st, "18005551213");
+      assert.include(st, "<");
     }).then(done);
     
   });
