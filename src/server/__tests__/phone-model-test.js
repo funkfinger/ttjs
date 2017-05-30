@@ -37,7 +37,7 @@ describe('phone model tests', function(done) {
   })
 
   it('should send help message upon help keyword', function(done) { // TODO: move this to somewhere else - not a phone issue now?...
-    
+
     var m = helper.nock('https://api.plivo.com:443')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":process.env.HELP_MESSAGE,"url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"caf37bd6-4572-11e5-bfa2-22000aXXXXXX","message":"message(s) queued","message_uuid":["fbf30c47-e717-4eba-8041-cefc93XXXXXX"]}, { 'content-type': 'application/json',
@@ -45,7 +45,7 @@ describe('phone model tests', function(done) {
       server: 'nginx/1.8.0',
       'content-length': '156',
       connection: 'Close' });
-    
+
     var phoneId;
     var word;
     new Phone({number: toNum}).save()
@@ -116,7 +116,7 @@ describe('phone model tests', function(done) {
   it('should have a catchall keyword', function(done) {
 
     var m = helper.makeGenericNock();
-    
+
     new Phone({number: toNum}).save()
       .then(function(newNum) {
         var noKeywordMessage = {
@@ -135,11 +135,11 @@ describe('phone model tests', function(done) {
       }).then(function() {
         done();
       })
-    
+
   });
 
   it('should send unsubscribe message upon end keyword', function(done) {
-    
+
     var m = helper.nock('https://api.plivo.com:443')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":process.env.UNSUB_MESSAGE,"url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"caf37bd6-4572-11e5-bfa2-22000aXXXXXX","message":"message(s) queued","message_uuid":["fbf30c47-e717-4eba-8041-cefc93XXXXXX"]}, { 'content-type': 'application/json',
@@ -147,7 +147,7 @@ describe('phone model tests', function(done) {
       server: 'nginx/1.8.0',
       'content-length': '156',
       connection: 'Close' });
-    
+
     var phoneId;
     var word;
     new Phone({number: toNum}).save()
@@ -252,7 +252,7 @@ describe('phone model tests', function(done) {
       server: 'nginx/1.8.0',
       'content-length': '156',
       connection: 'Close' });
-    
+
     return new Phone({number: toNum}).save()
       .then(function(newNum) {
         word = 'StoP';
@@ -314,7 +314,7 @@ describe('phone model tests', function(done) {
       }).catch(function(e) {
         return assert.equal(e.message, 'message creation error 0');
       });
-    });    
+    });
   });
 
   it('should have plivo callback url set in env var', function() {
@@ -330,7 +330,7 @@ describe('phone model tests', function(done) {
       server: 'nginx/1.8.0',
       'content-length': '156',
       connection: 'Close' });
-      
+
     var p = new Phone({number: toNum});
     return p.save()
       .then(function() {
@@ -343,7 +343,7 @@ describe('phone model tests', function(done) {
   });
 
 
-  it('should set status to outgoing message when send', function() {    
+  it('should set status to outgoing message when send', function() {
     helper.nock('https://api.plivo.com:443')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"set status","url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"575e4f50-3025-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["71b3533b-eba3-4450-8473-49538XXXXXX"]}, { 'content-type': 'application/json',
@@ -351,7 +351,7 @@ describe('phone model tests', function(done) {
       server: 'nginx/1.8.0',
       'content-length': '156',
       connection: 'Close' });
-    
+
     var p = new Phone({number: toNum});
     return p.save()
       .then(function() {
@@ -366,7 +366,7 @@ describe('phone model tests', function(done) {
 
 
   it('should set outgoing message when send', function() {
-    
+
     helper.nock('https://api.plivo.com:443')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"text message","url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"c1bbfa9a-3026-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["512c8a20-3a8b-425b-924b-fc2b5eXXXXXX"]}, { 'content-type': 'application/json',
@@ -374,7 +374,7 @@ describe('phone model tests', function(done) {
       server: 'nginx/1.8.0',
       'content-length': '156',
       connection: 'Close' });
-    
+
     var p = new Phone({number: toNum});
     return p.save()
       .then(function() {
@@ -398,7 +398,7 @@ describe('phone model tests', function(done) {
   });
 
   it('should have a send text instance method', function() {
-    
+
     var m = helper.nock('https://api.plivo.com:443')
       .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":"text message body","url":process.env.PLIVO_CALLBACK_URL})
       .reply(202, {"api_id":"c1bbfa9a-3026-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["512c8a20-3a8b-425b-924b-fc2b5eXXXXXX"]}, { 'content-type': 'application/json',
@@ -406,7 +406,7 @@ describe('phone model tests', function(done) {
       server: 'nginx/1.8.0',
       'content-length': '156',
       connection: 'Close' });
-    
+
     var p = new Phone({number: toNum});
     return p.save().then(function() {
       return p.sendMessage('text message body');
@@ -420,7 +420,7 @@ describe('phone model tests', function(done) {
     var om = new OutgoingMessage({uuid: '6cfd5fa7-c708-4eef-8a77-ce79573b2f94', body: 'om'});
     p.outgoingMessages.push(om);
     return p.save().then(function() {
-      return assert.equal(p.outgoingMessages.length, 1);      
+      return assert.equal(p.outgoingMessages.length, 1);
     })
   });
 
@@ -448,7 +448,7 @@ describe('phone model tests', function(done) {
       })
   });
 
-  it('should create a record when createFromParams method is executed', function(){    
+  it('should create a record when createFromParams method is executed', function(){
     var m = helper.makeGenericNock();
     return Phone.count()
       .then(function(c1){
@@ -461,12 +461,12 @@ describe('phone model tests', function(done) {
         assert.equal(c, 1, 'count should be 1 but is: ' + c);
       })
   });
-  
+
   it('should have a create method - not sure this it the mongoose / node way...', function(){
     assert.isDefined(Phone.handleIncomingMessage);
   });
-  
-  
+
+
   it('should have a raw property on incoming message', function () {
     var p = new Phone({number: toNum})
     var im = new IncomingMessage({raw: 'raw', body: 'body', fromNumber: '18005551212'});
@@ -525,11 +525,10 @@ describe('phone model tests', function(done) {
       assert.equal(x.number, toNum);
     });
     // doing this for async error catching <---
-    new Phone({number: toNum}).save().then(function(){
-      return assert.isOk(false);
+    return new Phone({number: toNum}).save().then(function(result){
+      throw new Error('Promise was unexpectedly fulfilled. Result: ' + result);
     }).catch(function(e) {
-      console.log('got here!', e);
-      return assert.equal(e.name, "MongoError");
+      return assert.equal("MongoError", e.name);
     });
   });
 
@@ -546,9 +545,9 @@ describe('phone model tests', function(done) {
         return assert.equal(r, 3, 'r: ' + r);
       }
     );
-    
+
   });
-    
+
   it('should increment count to 1 on save', function(done) {
     count = -1;
     Phone.count(function (err, c) {
@@ -564,7 +563,7 @@ describe('phone model tests', function(done) {
       });
     })
   })
-  
+
   it('should start at count 0', function(done) {
     count = -1;
     Phone.count(function (err, c) {
@@ -574,11 +573,10 @@ describe('phone model tests', function(done) {
       done();
     });
   });
-  
+
   it('should exist and have number', function() {
     var p = new Phone({number: toNum});
     assert.equal(p.number, toNum);
   });
-  
-});
 
+});

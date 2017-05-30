@@ -1,3 +1,5 @@
+
+
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
@@ -16,6 +18,8 @@ var nock = require('nock');
 nock.disableNetConnect();
 // nock.enableNetConnect(/(127\.0\.0\.1|plivo\.com)/);
 nock.enableNetConnect(/127\.0\.0\.1/);
+
+require('./db-helper.js');
 
 
 var helper = module.exports = {};
@@ -47,7 +51,6 @@ helper.samplePlivoParams = {
   "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae383ea"
 };
 
-require('./db-helper.js');
 
 helper.mockReq = function() {
   var m = nock('https://api.plivo.com');
