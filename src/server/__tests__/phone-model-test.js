@@ -525,11 +525,18 @@ describe('phone model tests', function(done) {
       assert.equal(x.number, toNum);
     });
     // doing this for async error catching <---
-    return new Phone({number: toNum}).save().then(function(result){
-      throw new Error('Promise was unexpectedly fulfilled. Result: ' + result);
-    }).catch(function(e) {
-      return assert.equal("MongoError", e.name);
-    });
+    return assert.isRejected(new Phone({number: toNum}).save());
+    // assert.isRejected(function(){
+    //   return new Phone({number: toNum}).save().then().catch(function(e){
+    //     return assert.equal("MongoError", e.name);
+    //   });
+    // });
+
+    // return new Phone({number: toNum}).save().then(function(result){
+    //   throw new Error('Promise was unexpectedly fulfilled. Result: ' + result);
+    // }).catch(function(e) {
+    //   return assert.equal("MongoError", e.name);
+    // });
   });
 
   it('should work with promise syntax', function() {
