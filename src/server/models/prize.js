@@ -16,7 +16,7 @@ prizeSchema.virtual('numRemaining').get(function() {
 });
 
 prizeSchema.statics.findByIdAndIncrementNumAvail = function(did) {
-  return Prize.findById(did).execAsync()
+  return Prize.findById(did).exec()
     .then(function(p) {
       if(!p) {throw new Error('can not find prize with did: ' + did);}
       if (p.numClaimed > 0) {
@@ -27,7 +27,7 @@ prizeSchema.statics.findByIdAndIncrementNumAvail = function(did) {
 };
 
 prizeSchema.statics.findByIdAndDecrementNumAvail = function(did) {
-  return Prize.findById(did).execAsync()
+  return Prize.findById(did).exec()
     .then(function(p) {
       if(!p) {throw new Error('can not find prize with did: ' + did);}
       if (p.numClaimed < p.numAvailable) {
@@ -47,7 +47,7 @@ Prize.createNewFromPost = function(values) {
     numClaimed: values.numClaimed,
     imageUrl: values.imageUrl
   })
-  return prize.saveAsync();
+  return prize.save();
 };
 
 module.exports = {

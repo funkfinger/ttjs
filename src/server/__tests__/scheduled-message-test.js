@@ -21,12 +21,12 @@ describe('scheduled message tests', function() {
         connection: 'Close'
     });
     
-    return sm.saveAsync()
+    return sm.save()
       .then(function() {
-        return ph.saveAsync();
+        return ph.save();
       }).then(function() {
         pg.phones.addToSet(ph._id);
-        return pg.saveAsync();
+        return pg.save();
       }).then(function() {
         return sm.sendMessage();
       }).then(function() {

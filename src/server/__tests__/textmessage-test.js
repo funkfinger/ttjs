@@ -12,7 +12,7 @@ describe('text message tests', function() {
       'content-length': '156',
       connection: 'Close' });
     
-    return textMessage.send(process.env.TEST_NUMBER, 'this is a test')
+    textMessage.send(process.env.TEST_NUMBER, 'this is a test')
       .then(function() {
         return assert.ok(m.isDone());
       }).then(done);
@@ -20,7 +20,7 @@ describe('text message tests', function() {
 
   it('should have callback on send message', function(done) {
     var m = helper.mockReq();
-    var cb = function(res) {assert.equal(res[0].statusCode, 202); done();};
+    var cb = function(res) {assert.equal(res.statusCode, 202); done();};
     textMessage.send(666, 'test from test 2', cb);
   });
 
@@ -28,10 +28,9 @@ describe('text message tests', function() {
     var m = helper.mockReq();
     textMessage.send(555, 'test from test: ' + new Date())
       .then(function(res) {
-        assert.equal(res[0].statusCode, 202);
+        assert.equal(res.statusCode, 202);
         assert.ok(m.isDone());
-        done();
-    });
+    }).then(done);
   });
 
   it('should have send method', function() {

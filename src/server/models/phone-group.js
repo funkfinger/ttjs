@@ -19,7 +19,7 @@ phoneGroupSchema.methods.sendMessage = function(message) {
   var self = this;
   var phonesList = [];
   // this seems horrible - but can't figure out a way to populate self...
-  return PhoneGroup.findById(this._id).populate('phones').execAsync()
+  return PhoneGroup.findById(this._id).populate('phones').exec()
     .then(function(res) {
       return res.phones;
     }).each(function(phone) {
@@ -34,12 +34,12 @@ phoneGroupSchema.methods.sendBulkMessage = function(text) {
       return textMessage.send(tos, text);
     }).then(function(res) {
       // TODO: move to callback?...
-      if(/queued/.test(res[0].body.message)) {
+      if(/queued/.test(res.body.message)) {
         // TODO: fix this...
         // om = new OutgoingMessage({body: message})
         // om.messageStatus = 'queued';
         // om.uuid = res[0].body.message_uuid;
-        // return om.saveAsync();
+        // return om.save();
       }
       else {
         // do nothing now...
@@ -57,13 +57,13 @@ phoneGroupSchema.methods.addPhoneIdsToGroup = function(phoneIdArray) {
     phoneIdArray.forEach(function(pid) {
       pid = String(pid);
       if (mongoose.Types.ObjectId.isValid(pid)) {
-        return Phone.findById(pid).execAsync()
+        return Phone.findById(pid).exec()
           .then(function(p) {
             if(p) {
               return p.addToGroup(self);
             }
           }).then(function() {
-            return self.saveAsync();
+            return self.save();
           }).then(resolve);
       };
     }.bind(this));    
@@ -72,7 +72,7 @@ phoneGroupSchema.methods.addPhoneIdsToGroup = function(phoneIdArray) {
 
 phoneGroupSchema.methods.getActivePhonesAsString = function() {
   var phoneNumberArray = [];
-  return PhoneGroup.findById(this._id).populate('phones').execAsync()
+  return PhoneGroup.findById(this._id).populate('phones').exec()
     .then(function(res) {
       return res.phones;
     }).each(function(phone) {
@@ -86,12 +86,12 @@ phoneGroupSchema.methods.getActivePhonesAsString = function() {
 
 phoneGroupSchema.statics.findKeywordAndAddToGroup = function(keyword, phone) {
   var response = process.env.GENERIC_TEXT_RESPONSE;
-  return PhoneGroup.findOne({keyword: keyword.toLowerCase()}).execAsync()
+  return PhoneGroup.findOne({keyword: keyword.toLowerCase()}).exec()
     .then(function(g) {
       if (g) {
         response = g.signupResponse ? g.signupResponse : response;
         g.phones.addToSet(phone._id);
-        return Promise.resolve(g.saveAsync());
+        return Promise.resolve(g.save());
       }
       return;
     }).then(function() {
@@ -105,13 +105,13 @@ var PhoneGroup = mongoose.model('PhoneGroup', phoneGroupSchema);
 //   var genericResponse = Phone.genericResponse();
 //   var pid = phone._id;
 //   var pg;
-//   return Promise.resolve(PhoneGroup.findOne({keyword: keyword.toLowerCase()}).execAsync()
+//   return Promise.resolve(PhoneGroup.findOne({keyword: keyword.toLowerCase()}).exec()
 //     .then(function(g) {
 //       pg = g;
 //       if (pg) {
 //         // if (pid) {
 //           pg.phones.push(pid);
-//           return pg.saveAsync()
+//           return pg.save()
 //             .then(function() {
 //               return pg.signupResponse ? phone.sendMessage(pg.signupResponse) : phone.sendMessage(genericResponse);
 //             });
@@ -128,7 +128,7 @@ var PhoneGroup = mongoose.model('PhoneGroup', phoneGroupSchema);
 // });
 
 
-//.execAsync()
+//.exec()
 //  .then(function() {
 //    console.log('help phone group created...');
 //  });

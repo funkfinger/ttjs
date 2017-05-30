@@ -23,7 +23,7 @@ router.get('/send_bulk', function(req, res) {
 });
 
 router.get('/keywords.json', function(req, res) {
-  return db.PhoneGroup.find().select('keyword id').execAsync()
+  return db.PhoneGroup.find().select('keyword id').exec()
   .then(function(kws) {
     res.send(kws);
   })
@@ -35,7 +35,7 @@ router.get('/requests.json', function(req, res) {
             // .populate('phone.number')
             .sort('-createdAt')
             .limit(100)
-            .execAsync()
+            .exec()
     .then(function(ims) {
       res.send(ims)
     });

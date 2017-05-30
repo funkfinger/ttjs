@@ -11,25 +11,25 @@ describe('phone model tests', function(done) {
   it('should be able to add self to group', function(done) {
     pg = new db.PhoneGroup({keyword: 'kw'});
     p = new Phone({number: 18005551212});
-    return pg.saveAsync()
+    pg.save()
       .then(function (){
-        return p.saveAsync();
+        return p.save();
     }).then(function() {
-      return db.PhoneGroup.findById(pg._id).execAsync()
+      return db.PhoneGroup.findById(pg._id).exec()
     }).then(function(pg1) {
       pg = pg1;
       return assert.equal(pg.phones.length, 0);
     }).then(function() {
       return p.addToGroup(pg);
     }).then(function() {
-      return db.PhoneGroup.findById(pg._id).execAsync()
+      return db.PhoneGroup.findById(pg._id).exec()
     }).then(function(pg1) {
       pg = pg1;
       return assert.equal(pg.phones.length, 1);
     }).then(function() {
       return p.addToGroup(pg);
     }).then(function() {
-      return db.PhoneGroup.findById(pg._id).execAsync()
+      return db.PhoneGroup.findById(pg._id).exec()
     }).then(function(pg1) {
       pg = pg1;
       return assert.equal(pg.phones.length, 1);
@@ -48,11 +48,11 @@ describe('phone model tests', function(done) {
     
     var phoneId;
     var word;
-    return new Phone({number: toNum}).saveAsync()
+    new Phone({number: toNum}).save()
       .then(function(newNum) {
         word = 'help';
-        phoneId = newNum[0]._id;
-        return assert.ok(newNum[0].active, 'should be true');
+        phoneId = newNum._id;
+        return assert.ok(newNum.active, 'should be true');
       }).then(function() {
         var helpMessage = {
           "From": toNum,
@@ -72,31 +72,52 @@ describe('phone model tests', function(done) {
       });
   });
 
-  it('should have a createdAt and updatedAt date', function() {
+  it('phone should have a createdAt and updatedAt date', function() {
+    var now = new Date();
     var p = new Phone({number: toNum});
-    var om = new OutgoingMessage({body: 'outgoing message body'});
-    return om.saveAsync()
-      .then(function() {
-        p.outgoingMessages.push( om );
-        return p.saveAsync();
-      }).then(function(newNum) {
-        return Phone.findById(p._id).populate('outgoingMessages').execAsync();
-      }).then(function(phone) {
-        assert.ok(phone.createdAt);
-        assert.ok(phone.updatedAt);
-        return assert.ok(phone.outgoingMessages[0].createdAt);
-        // TODO: this test is doing too much - and therefore the below line will fail... fix it...
-        //assert.equal(phone.createdAt, phone.updatedAt);
-      }).then(function() {
-        
-      });
+    return p.save().then(function() {
+      assert.isAtLeast(p.createdAt, now);
+      assert.isAtLeast(p.updatedAt, now);
+      assert.equal(p.createdAt, p.updatedAt);
+    });
+    //
+    //
+    //
+    // var p = new Phone({number: toNum});
+    // var om = new OutgoingMessage({body: 'outgoing message body'});
+    // om.save()
+    //   .then(function() {
+    //     p.outgoingMessages.push( om );
+    //     return p.save();})
+    //       .then(function(newNum) {
+    //         Phone.find({}).exec().then(function(ps){console.log('ps: ' + ps)});
+    //         return Phone.findById(p._id).populate('outgoingMessages').exec()
+    //       .then(function(phone) {
+    //       // console.log('phone:' + phone);
+    //       assert.ok(phone.createdAt);
+    //       assert.ok(phone.updatedAt);
+    //       return assert.ok(phone.outgoingMessages.createdAt);
+    //       // TODO: this test is doing too much - and therefore the below line will fail... fix it...
+    //       //assert.equal(phone.createdAt, phone.updatedAt);
+    //     })
+    //   });
+    //   // }).then(function(phone) {
+    //   //   console.log('phone:' + phone);
+    //   //   assert.ok(phone.createdAt);
+    //   //   assert.ok(phone.updatedAt);
+    //   //   return assert.ok(phone.outgoingMessages.createdAt);
+    //   //   // TODO: this test is doing too much - and therefore the below line will fail... fix it...
+    //   //   //assert.equal(phone.createdAt, phone.updatedAt);
+    //   // }).then(function() {
+    //
+    //   // });
   });
 
   it('should have a catchall keyword', function(done) {
 
     var m = helper.makeGenericNock();
     
-    return new Phone({number: toNum}).saveAsync()
+    new Phone({number: toNum}).save()
       .then(function(newNum) {
         var noKeywordMessage = {
           "From": toNum,
@@ -129,11 +150,11 @@ describe('phone model tests', function(done) {
     
     var phoneId;
     var word;
-    return new Phone({number: toNum}).saveAsync()
+    new Phone({number: toNum}).save()
       .then(function(newNum) {
         word = 'stop';
-        phoneId = newNum[0]._id;
-        return assert.ok(newNum[0].active, 'should be true');
+        phoneId = newNum._id;
+        return assert.ok(newNum.active, 'should be true');
       }).then(function() {
         var stopMessage = {
           "From": toNum,
@@ -147,7 +168,7 @@ describe('phone model tests', function(done) {
         };
         return Phone.handleIncomingMessage(stopMessage);
       }).then(function() {
-        return Phone.findById(phoneId).execAsync()
+        return Phone.findById(phoneId).exec()
       }).then(function(updatedNum) {
         return assert.isFalse(updatedNum.active, word);
       }).then(function() {
@@ -157,7 +178,7 @@ describe('phone model tests', function(done) {
       });
   });
 
-  it('should only create one phone on handleIncomingMessage', function() {
+    it('should only create one phone on handleIncomingMessage', function() {
     helper.makeGenericNock();
     helper.makeGenericNock();
     return Phone.handleIncomingMessage({
@@ -181,21 +202,27 @@ describe('phone model tests', function(done) {
         "MessageUUID": "d709da80-7dc4-11e4-a77d-22000ae383ea"
     });
   }).then(function() {
-    return Phone.find({number: toNum}).execAsync()
+    return Phone.find({number: toNum}).exec()
     }).then(function(phones) {
       assert.equal(phones.length, 1);
     })
   });
 
   it('should deactivate on end keyword', function() {
-    helper.makeGenericNock();
+    var m = helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":process.env.UNSUB_MESSAGE,"url":process.env.PLIVO_CALLBACK_URL})
+      .reply(202, {"api_id":"c1bbfa9a-3026-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["512c8a20-3a8b-425b-924b-fc2b5eXXXXXX"]}, { 'content-type': 'application/json',
+      date: 'Wed, 22 Jul 2015 04:10:51 GMT',
+      server: 'nginx/1.8.0',
+      'content-length': '156',
+      connection: 'Close' });
     var phoneId;
     var word;
-    return new Phone({number: toNum}).saveAsync()
+    return new Phone({number: toNum}).save()
       .then(function(newNum) {
         word = 'end';
-        phoneId = newNum[0]._id;
-        return assert.ok(newNum[0].active, 'should be true');
+        phoneId = newNum._id;
+        return assert.ok(newNum.active, 'should be true');
       }).then(function() {
         var stopMessage = {
           "From": toNum,
@@ -209,7 +236,7 @@ describe('phone model tests', function(done) {
         };
         return Phone.handleIncomingMessage(stopMessage);
       }).then(function() {
-        return Phone.findById(phoneId).execAsync()
+        return Phone.findById(phoneId).exec()
       }).then(function(updatedNum) {
         return assert.isFalse(updatedNum.active, word);
       });
@@ -218,11 +245,19 @@ describe('phone model tests', function(done) {
   it('should deactivate on stop keyword', function() {
     var phoneId;
     var word;
-    return new Phone({number: toNum}).saveAsync()
+    var m = helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":process.env.UNSUB_MESSAGE,"url":process.env.PLIVO_CALLBACK_URL})
+      .reply(202, {"api_id":"c1bbfa9a-3026-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["512c8a20-3a8b-425b-924b-fc2b5eXXXXXX"]}, { 'content-type': 'application/json',
+      date: 'Wed, 22 Jul 2015 04:10:51 GMT',
+      server: 'nginx/1.8.0',
+      'content-length': '156',
+      connection: 'Close' });
+    
+    return new Phone({number: toNum}).save()
       .then(function(newNum) {
         word = 'StoP';
-        phoneId = newNum[0]._id;
-        return assert.ok(newNum[0].active, 'should be true');
+        phoneId = newNum._id;
+        return assert.ok(newNum.active, 'should be true');
       }).then(function() {
         var stopMessage = {
           "From": toNum,
@@ -236,17 +271,23 @@ describe('phone model tests', function(done) {
         };
         return Phone.handleIncomingMessage(stopMessage);
       }).then(function() {
-        return Phone.findById(phoneId).execAsync()
+        return Phone.findById(phoneId).exec()
       }).then(function(updatedNum) {
         return assert.isFalse(updatedNum.active, word);
       });
   });
 
   it('should set active on incoming message', function() {
-    // db.mongoose.set('debug', true)
-    return new Phone({number: toNum, active: false}).saveAsync()
+    var m = helper.nock('https://api.plivo.com:443')
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":process.env.GENERIC_TEXT_RESPONSE,"url":process.env.PLIVO_CALLBACK_URL})
+      .reply(202, {"api_id":"c1bbfa9a-3026-11e5-a541-22000aXXXXXX","message":"message(s) queued","message_uuid":["512c8a20-3a8b-425b-924b-fc2b5eXXXXXX"]}, { 'content-type': 'application/json',
+      date: 'Wed, 22 Jul 2015 04:10:51 GMT',
+      server: 'nginx/1.8.0',
+      'content-length': '156',
+      connection: 'Close' });
+    return new Phone({number: toNum, active: false}).save()
       .then(function(newPhone) {
-        return assert.isFalse(newPhone[0].active, 'should be false');
+        return assert.isFalse(newPhone.active, 'should be false');
       }).then(function() {
         return Phone.handleIncomingMessage(helper.samplePlivoParams);
       }).then(function(p) {
@@ -266,11 +307,13 @@ describe('phone model tests', function(done) {
       'content-length': '156',
       connection: 'Close' });
     var p = new Phone({number: toNum, active: false});
-    return p.saveAsync().then(function() {
-      console.log('>>>>>>>>>>>>>>FIX THIS NOW>>>>>>>>>>>>>');
-      // assert.throws(function() {
-      //   p.sendMessage('should not sendx');
-      // })
+    p.save().then(function() {
+      p.sendMessage('should not sendx').then(function() {
+        // should not get here...
+        assert.isOk(false);
+      }).catch(function(e) {
+        return assert.equal(e.message, 'message creation error 0');
+      });
     });    
   });
 
@@ -289,11 +332,11 @@ describe('phone model tests', function(done) {
       connection: 'Close' });
       
     var p = new Phone({number: toNum});
-    return p.saveAsync()
+    return p.save()
       .then(function() {
         return p.sendMessage('uuid should be set');
       }).then(function() {
-        return Phone.findById(p._id).populate('outgoingMessages').execAsync();
+        return Phone.findById(p._id).populate('outgoingMessages').exec();
       }).then(function(phone) {
         return assert.equal(phone.outgoingMessages[0].uuid, "451eb6f2-58c5-49bc-b58f-3f2ed7XXXXXX");
       });
@@ -314,7 +357,7 @@ describe('phone model tests', function(done) {
       .then(function() {
         return p.sendMessage('set status')
       }).then(function() {
-        return Phone.findById(p._id).populate('outgoingMessages').execAsync();
+        return Phone.findById(p._id).populate('outgoingMessages').exec();
       }).then(function(phone) {
         assert.equal(phone.outgoingMessages[0].body, 'set status');
         return assert.equal(phone.outgoingMessages[0].messageStatus, 'queued');
@@ -337,7 +380,7 @@ describe('phone model tests', function(done) {
       .then(function() {
         return p.sendMessage('text message')
       }).then(function() {
-        return Phone.findById(p._id).populate('outgoingMessages').execAsync();
+        return Phone.findById(p._id).populate('outgoingMessages').exec();
       }).then(function(phone) {
         return assert.equal(phone.outgoingMessages[0].body, 'text message');
       });
@@ -432,7 +475,7 @@ describe('phone model tests', function(done) {
         p.incomingMessages.push(im);
         return p.save()
       }).then(function() {
-        return Phone.findById(p._id).populate('incomingMessages').execAsync();
+        return Phone.findById(p._id).populate('incomingMessages').exec();
       }).then(function(phone) {
         return assert.equal(phone.incomingMessages[0].raw, 'raw');
       });
@@ -475,12 +518,19 @@ describe('phone model tests', function(done) {
       });
   });
 
-  it('should have a number that is unique', function(done) {
-    var x = new Phone({number: toNum}).save().then(function(){return(Phone.count());});
-    assert.isFulfilled(x);
-    assert.eventually.equal(x, toNum);
-    var y = new Phone({number: toNum}).save().then(function(){return(Phone.count());});
-    assert.isRejected(y).notify(done);
+  it('should have a number that is unique', function() {
+    console.log('got here...');
+    var x = new Phone({number: toNum});
+    assert.isFulfilled(x.save()).then(function(x){
+      assert.equal(x.number, toNum);
+    });
+    // doing this for async error catching <---
+    new Phone({number: toNum}).save().then(function(){
+      return assert.isOk(false);
+    }).catch(function(e) {
+      console.log('got here!', e);
+      return assert.equal(e.name, "MongoError");
+    });
   });
 
   it('should work with promise syntax', function() {
@@ -491,8 +541,12 @@ describe('phone model tests', function(done) {
     ]).then(
       function(){
         return Phone.count();
-    });
-    return assert.eventually.equal(r, 3, 'r: ' + r);
+    }).then(
+      function(r) {
+        return assert.equal(r, 3, 'r: ' + r);
+      }
+    );
+    
   });
     
   it('should increment count to 1 on save', function(done) {

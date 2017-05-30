@@ -10,7 +10,7 @@ describe('prize model tests', function(done) {
       numClaimed: 0,
       imageUrl: 'http://blah.com/image.jpg'
     });
-    return p.saveAsync()
+    return p.save()
       .then(function() {
         return Prize.findById(p._id);
       }).then(function(prize) {
@@ -26,13 +26,13 @@ describe('prize model tests', function(done) {
       numClaimed: 0,
       imageUrl: 'http://blah.com/image.jpg'      
     });
-    return p.saveAsync()
+    return p.save()
       .then(function() {
         return Prize.findById(p._id);
       }).then(function(prize) {
         assert.equal(prize.numRemaining, 2);
         prize.numClaimed = 1;
-        return prize.saveAsync();
+        return prize.save();
       }).then(function() {
         return Prize.findById(p._id);
       }).then(function(prize) {
@@ -47,7 +47,7 @@ describe('prize model tests', function(done) {
       numClaimed: 0,
       imageUrl: 'http://blah.com/image.jpg'
     });
-    return p.saveAsync()
+    return p.save()
       .then(function() {
         return assert.equal(p.numClaimed, 0);
       }).then(function() {
@@ -57,7 +57,7 @@ describe('prize model tests', function(done) {
       }).then(function() {
         return Prize.findByIdAndDecrementNumAvail(p._id);
       }).then(function() {
-        return Prize.findById(p._id).execAsync();
+        return Prize.findById(p._id).exec();
       }).then(function(prize) {
         return assert.equal(prize.numClaimed, 1);
       });

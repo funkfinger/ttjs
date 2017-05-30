@@ -11,12 +11,12 @@ var scheduledMessageSchema = new mongoose.Schema( {
 
 scheduledMessageSchema.methods.sendMessage = function() {
   var self = this;
-  return PhoneGroup.findOne({keyword: this.keyword}).execAsync()
+  return PhoneGroup.findOne({keyword: this.keyword}).exec()
     .then(function(pg) {
       return pg.sendMessage(self.message);
     }).then(function() {
       self.state = 'sent';
-      return self.saveAsync();
+      return self.save();
     });
 };
 

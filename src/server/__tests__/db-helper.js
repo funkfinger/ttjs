@@ -1,19 +1,19 @@
 global.db = require('../db');
 
 function dropCollections() {
-  return db.Prize.remove({}).execAsync()
+  return db.Prize.remove({}).exec()
     .then(function() {
-      db.Phone.remove({}).execAsync();
+      db.Phone.remove({}).exec();
     }).then(function() {
-      db.PhoneGroup.remove({}).execAsync();
+      db.PhoneGroup.remove({}).exec();
     }).then(function() {
-      db.AccessLog.remove({}).execAsync();
+      db.AccessLog.remove({}).exec();
     }).then(function() {
-      db.ScheduledMessage.remove({}).execAsync();
+      db.ScheduledMessage.remove({}).exec();
     }).then(function() {
-      db.OutgoingMessage.remove({}).execAsync();
+      db.OutgoingMessage.remove({}).exec();
     }).then(function() {
-      db.IncomingMessage.remove({}).execAsync();
+      db.IncomingMessage.remove({}).exec();
     })
 }
 

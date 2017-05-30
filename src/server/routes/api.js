@@ -18,7 +18,7 @@ var OutgoingMessage = db.OutgoingMessage;
 router.all('*', function (req, res, next) {
   var data = JSON.stringify({url: req.url, body: req.body});
   al = new AccessLog({data: data});
-  al.saveAsync().then(function() {
+  al.save().then(function() {
     next();
   });
 });
@@ -30,7 +30,7 @@ router.get('/prizes', function (req, res) {
   Prize
     .find(limit)
     .sort([['_id', 'descending']])
-    .execAsync()
+    .exec()
     .then(function(prizes) {
       res.send(prizes);
     })
@@ -40,13 +40,13 @@ router.get('/prizes', function (req, res) {
 router.post('/om', function (req, res) {
   // var jsonReq =  JSON.stringify(req.body);
   // var al = new AccessLog({data: jsonReq});
-  // al.saveAsync()
+  // al.save()
   //   .then(function() {
-  //     return OutgoingMessage.findOne({uuid: req.body.ParentMessageUUID}).execAsync();
-  OutgoingMessage.findOne({uuid: req.body.ParentMessageUUID}).execAsync().then(function(om) {
+  //     return OutgoingMessage.findOne({uuid: req.body.ParentMessageUUID}).exec();
+  OutgoingMessage.findOne({uuid: req.body.ParentMessageUUID}).exec().then(function(om) {
     if (om) {
       om.messageStatus = req.body.Status;
-      return om.saveAsync();
+      return om.save();
     }
   }).then(function(){
     res.send({ok: true});
@@ -80,7 +80,7 @@ router.get('/keyword/add_to_all', function(req, res) {
   return Phone.
     find({ active: true }).
     select('_id').
-    execAsync()
+    exec()
     .then(function(result) {
       result.forEach(function(id) {
         phoneIdArray.push(id._id);
@@ -88,7 +88,7 @@ router.get('/keyword/add_to_all', function(req, res) {
         // res.write(id._id);
       })
     }).then(function() {
-      return PhoneGroup.findOne({keyword: "all"}).execAsync()
+      return PhoneGroup.findOne({keyword: "all"}).exec()
     }).then(function(pg) {
       return pg.addPhoneIdsToGroup(phoneIdArray);
     }).then(function() {
@@ -114,7 +114,7 @@ router.post('/im', function (req, res) {
 
 // list access log (al)
 router.get('/al', function (req, res) {
-  AccessLog.find().execAsync()
+  AccessLog.find().exec()
     .then(function (als) {
       res.send(als);
     })
@@ -122,7 +122,7 @@ router.get('/al', function (req, res) {
 
 // list outgoing messages (om)
 router.get('/om', function (req, res) {
-  OutgoingMessage.find().execAsync()
+  OutgoingMessage.find().exec()
     .then(function (oms) {
       res.send(oms);
     })
@@ -131,7 +131,7 @@ router.get('/om', function (req, res) {
 // bulk send sms
 router.post('/keyword/:id/bulk_send', function(req, res) {
   res.writeHead(201, {'Content-Type': 'text/plain'});
-  PhoneGroup.findById(req.params.id).execAsync()
+  PhoneGroup.findById(req.params.id).exec()
     .then(function(pg) {
       return pg.sendBulkMessage(req.body.text);
     }).then(function() {
@@ -142,7 +142,7 @@ router.post('/keyword/:id/bulk_send', function(req, res) {
 // send message to keyword group
 router.post('/keyword/:id/send', function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'})
-  PhoneGroup.findById(req.params.id).execAsync()
+  PhoneGroup.findById(req.params.id).exec()
     .then(function(pg) {
       pg.phones.forEach(function() {
         
@@ -157,7 +157,7 @@ router.post('/keyword/:id/send', function (req, res) {
 // add phone ids to phonegroup keyword
 router.post('/keyword/:id/add_ids', function(req, res) {
   var phoneIdArray = req.body.phoneIds;
-  return PhoneGroup.findById(req.params.id).execAsync()
+  return PhoneGroup.findById(req.params.id).exec()
     .then(function(pg) {
       return pg.addPhoneIdsToGroup(phoneIdArray);
     }).then(function() {
@@ -170,7 +170,7 @@ router.post('/keyword', function (req, res) {
   var kw = req.body.keyword;
   var sr = req.body.signupResponse
   var vals = sr ? {keyword: kw, signupResponse: sr} : {keyword: kw};
-  var pg = new PhoneGroup(vals).saveAsync()
+  var pg = new PhoneGroup(vals).save()
     .then(function() {
       res.status(201).send({ok: true});
     });
@@ -178,7 +178,7 @@ router.post('/keyword', function (req, res) {
 
 // read single phonegroup keyword
 router.get('/keyword/:id', function (req, res) {
-  PhoneGroup.findById(req.params.id).execAsync()
+  PhoneGroup.findById(req.params.id).exec()
     .then(function(pg) {
       res.send(pg);
     });
@@ -186,7 +186,7 @@ router.get('/keyword/:id', function (req, res) {
 
 // read list of phonegroup keywords
 router.get('/keywords', function (req, res) {
-  PhoneGroup.find().execAsync()
+  PhoneGroup.find().exec()
     .then(function(pgs) {
       res.send(pgs);
     })
@@ -194,11 +194,11 @@ router.get('/keywords', function (req, res) {
 
 // update phonegroup keyword
 router.put('/keyword/:id', function (req, res) {
-  PhoneGroup.findById(req.params.id).execAsync()
+  PhoneGroup.findById(req.params.id).exec()
     .then(function(pg) {
       pg.keyword = req.body.keyword ? req.body.keyword : pg.keyword;
       pg.signupResponse = req.body.signupResponse ? req.body.signupResponse : pg.signupResponse;
-      return pg.saveAsync();
+      return pg.save();
     }).then(function() {
       res.send({ok: true});
     })
@@ -232,7 +232,7 @@ router.post('/prizes', function (req, res) {
 // update prizes
 router.put('/prize/:id', function(req, res) {
   if (db.mongoose.Types.ObjectId.isValid(req.params.id)) {
-    Prize.findById(req.params.id).execAsync()
+    Prize.findById(req.params.id).exec()
       .then(function(prize) {
         if (prize) {
           prize.name = req.body.name ? req.body.name : prize.name;
@@ -256,21 +256,21 @@ router.put('/prize/:id', function(req, res) {
 
 // delete prizes
 router.delete('/prize/:id', function (req, res) {
-  Prize.findOneAndRemove(req.params.id).execAsync().then(function(p) {
+  Prize.findOneAndRemove(req.params.id).exec().then(function(p) {
     p ? res.send({ok: true}) : res.status(404).send('not found');
   })
 });
 
 // read phone list
 router.get('/phones', function (req, res) {
-  Phone.find({}).execAsync().then(function(phones) {
+  Phone.find({}).exec().then(function(phones) {
     res.send(phones);
   })
 });
 
 // delete phone
 router.delete('/phones/:id', function (req, res) {
-  Phone.findOneAndRemove(req.params.id).execAsync().then(function(p) {
+  Phone.findOneAndRemove(req.params.id).exec().then(function(p) {
     p ? res.send({ok: true}) : res.status(404).send('not found');
   })
 });

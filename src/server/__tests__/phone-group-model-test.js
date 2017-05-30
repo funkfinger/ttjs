@@ -7,7 +7,12 @@ describe('phone group model tests', function(done) {
   it('should be able to send bulk sms', function(done) {
         
     helper.nock('https://api.plivo.com:443')
-      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":"18005551211<18005551212<18005551213","text":"this is a bulk send","url":process.env.PLIVO_CALLBACK_URL})
+      .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {
+        "src": process.env.PLIVO_NUMBER,
+        "dst": /1800555121\d\<1800555121\d\<1800555121\d/,
+        "text": "this is a bulk send",
+        "url":process.env.PLIVO_CALLBACK_URL
+      })
       .reply(202, {"api_id":"710c4c78-c9a8-11e5-b9e9-22000acbxxxx","message":"message(s) queued","message_uuid":["8e467b93-3de9-4b69-aff5-0bf75f23xxxx","c99b44d2-127a-47a9-abd5-4df69f4exxxx","be9510cd-b8ff-46f0-b647-157c88d9xxxx"]}, { 'content-type': 'application/json',
       date: 'Tue, 02 Feb 2016 12:28:19 GMT',
       server: 'nginx/1.6.2',
@@ -23,13 +28,13 @@ describe('phone group model tests', function(done) {
     pa.push(ph2._id);
     pa.push(ph3._id);
 
-  return pg.saveAsync()
+  pg.save()
     .then(function() {
-      return ph1.saveAsync();
+      return ph1.save();
     }).then(function() {
-      return ph2.saveAsync();
+      return ph2.save();
     }).then(function() {
-      return ph3.saveAsync();
+      return ph3.save();
     }).then(function() {
       return pg.addPhoneIdsToGroup(pa);
     }).then(function() {
@@ -49,22 +54,22 @@ describe('phone group model tests', function(done) {
     pa.push(ph2._id);
     pa.push(ph3._id);
 
-  return pg.saveAsync()
+  pg.save()
     .then(function() {
-      return ph1.saveAsync();
+      return ph1.save();
     }).then(function() {
-      return ph2.saveAsync();
+      return ph2.save();
     }).then(function() {
-      return ph3.saveAsync();
+      return ph3.save();
     }).then(function() {
       return pg.addPhoneIdsToGroup(pa);
     }).then(function() {
-      return PhoneGroup.findById(pg._id).execAsync();
+      return PhoneGroup.findById(pg._id).exec();
     }).then(function(pgs) {
       return assert.equal(pgs.phones.length, 3);
     }).then(function() {
       ph1.active = false;
-      return ph1.saveAsync();
+      return ph1.save();
     }).then(function(p) {
       return pg.getActivePhonesAsString();
     }).then(function(st) {
@@ -82,24 +87,24 @@ describe('phone group model tests', function(done) {
     var ph2 = new Phone({number: 18005551212});
     var ph3 = new Phone({number: 18005551213});
     
-    return pg.saveAsync()
+    pg.save()
       .then(function() {
-        return ph1.saveAsync();
+        return ph1.save();
       }).then(function() {
-        return Phone.findById(ph1._id).execAsync();
+        return Phone.findById(ph1._id).exec();
       }).then(function(ph) {
       }).then(function() {
-        return ph2.saveAsync();
+        return ph2.save();
       }).then(function() {
-        return ph3.saveAsync();
+        return ph3.save();
       }).then(function() {
-        return PhoneGroup.findById(pg._id).execAsync();
+        return PhoneGroup.findById(pg._id).exec();
       }).then(function(pg1) {
         return assert.equal(pg1.phones.length, 0);
       }).then(function() {
         return ph1.addToGroup(pg);
       }).then(function() {
-        return PhoneGroup.findById(pg._id).execAsync();
+        return PhoneGroup.findById(pg._id).exec();
       }).then(function(pg1) {
         return assert.equal(pg1.phones.length, 1);
       }).then(done);
@@ -107,7 +112,7 @@ describe('phone group model tests', function(done) {
   });
   
   // it('should have help group initialized with response', function() {
-  //   return PhoneGroup.findOne({keyword: 'help'}).execAsync()
+  //   return PhoneGroup.findOne({keyword: 'help'}).exec()
   //     .then(function(pg) {
   //       return assert.equal(pg.signupResponse, process.env.HELP_RESPONSE);
   //     });
@@ -122,9 +127,9 @@ describe('phone group model tests', function(done) {
     ph = new Phone({number: toNum});
     pg = new PhoneGroup({keyword: kw});
 
-    return ph.saveAsync()
+    return ph.save()
       .then(function() {
-        return pg.saveAsync();
+        return pg.save();
       }).then(function() {
         var nock = helper.nock('https://api.plivo.com:443')
           .post('/v1/Account/' + process.env.PLIVO_AUTHID + '/Message/', {"src":process.env.PLIVO_NUMBER,"dst":toNum,"text":message,"url":process.env.PLIVO_CALLBACK_URL})
@@ -145,7 +150,7 @@ describe('phone group model tests', function(done) {
         return PhoneGroup.findKeywordAndAddToGroup(kw, ph);
     
       }).then(function() {
-        return PhoneGroup.findById(pg._id).execAsync()
+        return PhoneGroup.findById(pg._id).exec()
       }).then(function(pgNew) {
         return assert.equal(pgNew.phones.length, 1);
       })
@@ -179,7 +184,7 @@ describe('phone group model tests', function(done) {
     pg = new PhoneGroup({keyword: 'group'});
     pg.phones.push(ph1);
     pg.phones.push(ph2);
-    return pg.saveAsync()
+    return pg.save()
       .then(function() {
         return pg.sendMessage('group_message');
       }).then(function() {
@@ -192,7 +197,7 @@ describe('phone group model tests', function(done) {
 
   it('should have signup text response text', function() {
     pg = new PhoneGroup({keyword: 'signup', signupResponse: 'welcome you'});
-    return pg.saveAsync()
+    return pg.save()
       .then(function() {
         return assert.equal(pg.signupResponse, 'welcome you');
       })
@@ -222,7 +227,7 @@ describe('phone group model tests', function(done) {
     var pgid = phoneGroup.id;
     return phoneGroup.save()
       .then(function() {
-        return PhoneGroup.findById(pgid).populate('phones').execAsync()
+        return PhoneGroup.findById(pgid).populate('phones').exec()
       }).then(function(pg) {
         assert.equal(1, pg.phones.length);
         assert.equal(18005551212, pg.phones[0].number)

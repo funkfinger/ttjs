@@ -11,9 +11,9 @@ describe('api tests', function() {
     var pg2 = new db.PhoneGroup({keyword: 'kw2'});
     var pg1Id = pg1._id
 
-    return pg1.saveAsync()
+    pg1.save()
       .then(function() {
-        return pg2.saveAsync()
+        return pg2.save()
       }).then(function() {
         return request(app)
           .get('/admin/keywords.json')
@@ -33,7 +33,7 @@ describe('api tests', function() {
   });
 
   it('should send send_bulk.html file', function(done) {
-    return request(app)
+    request(app)
       .get('/admin/send_bulk')
       .expect('Content-Type', /text\/html/)
       .auth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS)
@@ -63,7 +63,7 @@ describe('api tests', function() {
 
     var pg = new db.PhoneGroup({keyword: 'request'});
 
-    return pg.saveAsync()
+    return pg.save()
       .then(function() {
         return Phone.handleIncomingMessage({'Text': 'Request prince, erotic city', 'From': 18005551212})
       }).then(function() {

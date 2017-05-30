@@ -60,36 +60,35 @@ phoneSchema.pre('save', function(next){
 
 phoneSchema.methods.addToGroup = function(group) {
   group.phones.addToSet(this._id)
-  return group.saveAsync();
+  return group.save();
 }
 
 phoneSchema.methods.sendMessage = function(message) {
   var self = this;
   if (!self.active) {
-    // do nothing now...
-    //throw new Error('can not send to inactive phone');
+    return Promise.reject(new Error('message creation error 0'));
   }
   else {
     var om = new OutgoingMessage({body: message})
     return om.save().then(function() {
       self.outgoingMessages.push(om);
-      return self.saveAsync();
+      return self.save();
     }).then(function() {
       return textMessage.send(self.number, message);
     }).then(function(res) {
       // TODO: move to callback?...
-      if(/queued/.test(res[0].body.message)) {
+      if(/queued/.test(res.body.message)) {
         om.messageStatus = 'queued';
-        om.uuid = res[0].body.message_uuid;
-        return om.saveAsync();
+        om.uuid = res.body.message_uuid;
+        return om.save();
       }
       else {
-        console.log(res[0].body);
-        // do nothing now...
-        //throw new Error('something went wrong with text message creation');
+        console.log(res.body);
+        return Promise.reject(new Error('message creation error 1'));
       }
     });
   }
+  return Promise.reject(new Error('message creation error 2'));
 };
 
 phoneSchema.methods.processStopKeywords = function(kw) {
@@ -120,7 +119,7 @@ Phone.handleIncomingMessage = function(values) {
   var firstWord = im.body.trim().split(' ')[0];
   var phoneId;
   var p;
-  return Phone.findOne({number: values.From}).execAsync()
+  return Phone.findOne({number: values.From}).exec()
     .then(function(ph) {
       p = ph;
       return im.save();
@@ -132,14 +131,14 @@ Phone.handleIncomingMessage = function(values) {
         p.processHelpKeyword();
       }
       phoneId = p._id;
-      return p.saveAsync();
+      return p.save();
     }).then(function(p1) {
       if(firstWord != 'help') {
-        return p1[0].active ? PhoneGroup.findKeywordAndAddToGroup(firstWord, p1[0]) : null;
+        return p1.active ? PhoneGroup.findKeywordAndAddToGroup(firstWord, p1) : null;
       }
       // return PhoneGroup.findKeywordAndAddToGroup(firstWord, p1[0]);
     }).then(function(){
-      return Phone.findById(phoneId).execAsync();
+      return Phone.findById(phoneId).exec();
     }).then(function(rp) {
       return rp;
     })

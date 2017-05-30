@@ -1,4 +1,6 @@
-var mongoose = Promise.promisifyAll(require('mongoose'));
+// var mongoose = Promise.promisifyAll(require('mongoose'));
+var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 
 mongoose.connection.on('connected', function(ref) {
   console.log('connected to db.');
