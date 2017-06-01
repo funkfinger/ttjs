@@ -45,6 +45,7 @@ var phoneSchema = new mongoose.Schema({
   //   body: { type: String }
   // }],
   outgoingMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OutgoingMessage' }],
+  inSns: { type: Boolean, required: false, default: false },
   createdAt: { type: Date },
   updatedAt: { type: Date }
 });
@@ -109,9 +110,15 @@ phoneSchema.methods.processHelpKeyword = function() {
 }
 
 
+
 var Phone = mongoose.model('Phone', phoneSchema);
 var OutgoingMessage = mongoose.model('OutgoingMessage', outgoingMessageSchema);
 var IncomingMessage = mongoose.model('IncomingMessage', incomingMessageSchema);
+
+Phone.setAllSnsToFalse = function() {
+  return Phone.update({}, {inSns: false}, {multi: true}).exec();
+}
+
 
 Phone.handleIncomingMessage = function(values) {
   //if ( !values['From'] ) { throw 'from value is undef.' }

@@ -8,6 +8,45 @@ var toNum = 18005551212
 
 describe('phone model tests', function(done) {
 
+  it('should be able to set all sns fields to false', function() {
+    var r = Promise;
+    return r.all([
+      new Phone({number: toNum, inSns: true}).save(),
+      new Phone({number: toNum+1, inSns: true}).save(),
+      new Phone({number: toNum+2, inSns: true}).save()
+    ]).then(function() {
+      return Phone.count({inSns: true});
+    }).then(function(c) {
+      return assert.equal(3, c);
+    }).then(function() {
+      return Phone.setAllSnsToFalse();
+    }).then(function() {
+      return Phone.count({inSns: true});
+    }).then(function(c) {
+      return assert.equal(0, c);
+    }).catch(function(e) {
+      // throw('should not get here');
+      throw(e);
+      return assert.isOk(false, e);
+    });
+    
+    
+  });
+
+  it('should have a amazon sns field', function() {
+    p = new Phone({number: toNum, inSns: false});
+    return p.save().then(function() {
+      return assert.equal(false, p.inSns);
+    }).then(function(){
+      p.inSns = true;
+      return p.save();
+    }).then(function(){
+      return Phone.findById(p.id).exec();
+    }).then(function(p2) {
+      return assert.equal(true, p2.inSns);      
+    });
+  });
+
   it('should be able to add self to group', function(done) {
     pg = new db.PhoneGroup({keyword: 'kw'});
     p = new Phone({number: 18005551212});
@@ -505,7 +544,9 @@ describe('phone model tests', function(done) {
         return num;
       }).then(function(num) {
         return assert.isFalse(num.active);
-      })
+      }).then(function() {
+        return assert.isTrue(true);
+      });
   });
 
   it('should have an active property which defaults to true', function(){
