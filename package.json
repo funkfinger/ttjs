@@ -41,7 +41,7 @@
     "mongoose": "^4.6.8",
     "node-libs-browser": "^0.5.2",
     "plivo-node": "^0.2.5",
-    "react": "^0.13.3",
+    "react": "^16.13.1",
     "react-bootstrap": "^0.23.7",
     "request": "^2.78.0",
     "request-promise": "^4.1.1",
